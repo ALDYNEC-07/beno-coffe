@@ -1,12 +1,12 @@
 /*
  Этот файл определяет секцию "Новинка месяца".
  Он показывает описание сезонного предложения, карточку напитка и краткие анонсы.
- Человек может узнать о новинке и перейти в меню или новости.
+ Человек может узнать о новинке и перейти в меню.
 */
 import Link from "next/link";
 import styles from "./NewMonth.module.css";
 
-// Этот объект хранит данные о напитке месяца и кнопках для перехода.
+// Этот объект хранит данные о напитке месяца и кнопке для перехода.
 const monthlySpecial = {
   title: "Пряный тыквенный латте",
   description: "«Специально к осени — пряный тыквенный латте».",
@@ -16,8 +16,6 @@ const monthlySpecial = {
   mediaNote: "Плейсхолдер: фото чашки / сезонного напитка",
   menuLabel: "Посмотреть в меню",
   menuLink: "/menu#seasonal",
-  newsLabel: "Все новости",
-  newsLink: "/news",
 };
 
 // Этот список хранит короткие анонсы, которые дополняют новинку месяца.
@@ -54,13 +52,10 @@ export default function NewMonth() {
                 </div>
                 <h3 className={styles.subtitle}>{monthlySpecial.title}</h3>
                 <p className={styles.note}>{monthlySpecial.description}</p>
-                {/* Этот блок показывает кнопки для перехода к меню и новостям. */}
+                {/* Этот блок показывает кнопку для перехода к меню. */}
                 <div className={styles.metaRow}>
                   <Link className={styles.button} href={monthlySpecial.menuLink}>
                     {monthlySpecial.menuLabel}
-                  </Link>
-                  <Link className={styles.button} href={monthlySpecial.newsLink}>
-                    {monthlySpecial.newsLabel}
                   </Link>
                 </div>
               </div>

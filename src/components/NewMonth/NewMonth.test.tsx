@@ -20,8 +20,8 @@ describe("NewMonth", () => {
     ).toBeInTheDocument();
   });
 
-  // Этот тест убеждается, что карточка и ссылки на действие видны.
-  it("показывает карточку с напитком и ссылками", () => {
+  // Этот тест убеждается, что карточка и ссылка на действие видны.
+  it("показывает карточку с напитком и ссылкой", () => {
     render(<NewMonth />);
 
     expect(screen.getByText("Пряный тыквенный латте")).toBeInTheDocument();
@@ -31,9 +31,5 @@ describe("NewMonth", () => {
     expect(
       screen.getByRole("link", { name: "Посмотреть в меню" })
     ).toHaveAttribute("href", "/menu#seasonal");
-    expect(screen.getByRole("link", { name: "Все новости" })).toHaveAttribute(
-      "href",
-      "/news"
-    );
   });
 });
