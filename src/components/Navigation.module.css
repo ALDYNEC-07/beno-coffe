@@ -143,6 +143,12 @@
   display: inline-flex;
   flex-direction: column;
   gap: 4px;
+  position: relative;
+  width: 24px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.25s ease, width 0.25s ease, height 0.25s ease;
 }
 
 .burgerLine {
@@ -150,6 +156,37 @@
   height: 2px;
   background: #1b1b1b;
   border-radius: 999px;
+  transition: transform 0.25s ease, opacity 0.2s ease, width 0.25s ease;
+}
+
+.menu[open] .burgerIcon {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #1b1b1b;
+  border-radius: 999px;
+}
+
+.menu[open] .burgerLine {
+  width: 14px;
+}
+
+.menu[open] .burgerLine:nth-child(1),
+.menu[open] .burgerLine:nth-child(2) {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.menu[open] .burgerLine:nth-child(1) {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.menu[open] .burgerLine:nth-child(2) {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.menu[open] .burgerLine:nth-child(3) {
+  opacity: 0;
 }
 
 .srOnly {
