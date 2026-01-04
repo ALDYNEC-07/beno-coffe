@@ -5,6 +5,7 @@
 */
 "use client";
 
+import Link from "next/link";
 import { useRef, useState, type MouseEvent } from "react";
 import styles from "./Navigation.module.css";
 
@@ -17,6 +18,33 @@ const navLinks: { href: string; label: string }[] = [
   { href: "#footer", label: "Контакты" },
   { href: "/menu", label: "Полное меню" },
 ];
+
+// Этот набор параметров нужен, чтобы показать список ссылок в нужном виде.
+type NavigationLinksListProps = {
+  listClassName: string;
+  linkClassName: string;
+  onLinkClick?: () => void;
+};
+
+// Этот компонент рисует список ссылок навигации с нужным оформлением.
+function NavigationLinksList({
+  listClassName,
+  linkClassName,
+  onLinkClick,
+}: NavigationLinksListProps) {
+  // Этот список показывает все доступные пункты меню.
+  return (
+    <ul className={listClassName}>
+      {navLinks.map((link) => (
+        <li key={link.href}>
+          <a className={linkClassName} href={link.href} onClick={onLinkClick}>
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export default function Navigation() {
   // Этот счетчик помогает заново запускать анимацию при каждом открытии меню.
@@ -58,7 +86,7 @@ export default function Navigation() {
   };
 
   // Этот обработчик срабатывает при клике по кнопке меню.
-  const handleMenuButtonClick = (event: MouseEvent<HTMLSummaryElement>) => {
+  const handleMenuButtonClick = (event: MouseEvent<HTMLElement>) => {
     event.preventDefault();
     if (isMenuOpen && !isMenuClosing) {
       closeMenu();
@@ -84,9 +112,9 @@ export default function Navigation() {
       <header className={styles.header}>
         <div className={styles.container}>
           {/* Этот блок ведет на главную страницу и показывает название кофейни. */}
-          <a className={styles.brand} href="/" aria-label="BENO coffee — на главную">
+          <Link className={styles.brand} href="/" aria-label="BENO coffee — на главную">
             <span className={styles.brandName}>BENO кофейня</span>
-          </a>
+          </Link>
           {/* Этот блок открывает основную навигацию по разделам. */}
           <nav className={styles.nav} aria-label="Основная навигация">
             {/* Этот элемент раскрывает список ссылок и удерживает страницу на месте при открытом меню. */}
@@ -109,33 +137,20 @@ export default function Navigation() {
               <div className={styles.navPanel} key={menuOpenKey}>
                 {/* Этот блок держит список ссылок по центру экрана. */}
                 <div className={styles.navSheet}>
-                  {/* Этот список показывает все доступные пункты меню. */}
-                  <ul className={styles.navList}>
-                    {navLinks.map((link) => (
-                      <li key={link.href}>
-                        <a
-                          className={styles.navLink}
-                          href={link.href}
-                          onClick={handleMenuLinkClick}
-                        >
-                          {link.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
+                  {/* Этот блок показывает ссылки внутри мобильного меню. */}
+                  <NavigationLinksList
+                    listClassName={styles.navList}
+                    linkClassName={styles.navLink}
+                    onLinkClick={handleMenuLinkClick}
+                  />
                 </div>
               </div>
             </details>
             {/* Этот список показывает все ссылки сразу на широких экранах. */}
-            <ul className={styles.desktopList}>
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <a className={styles.desktopLink} href={link.href}>
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <NavigationLinksList
+              listClassName={styles.desktopList}
+              linkClassName={styles.desktopLink}
+            />
           </nav>
         </div>
       </header>
