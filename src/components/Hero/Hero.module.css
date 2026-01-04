@@ -161,6 +161,14 @@
     grid-template-columns: 1.2fr 1fr;
   }
 
+  .quickLinks {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    width: auto;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
   .metaBlock {
     min-width: 340px;
   }
