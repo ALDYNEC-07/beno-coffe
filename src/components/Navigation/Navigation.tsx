@@ -13,7 +13,7 @@ import styles from "./Navigation.module.css";
 const navLinks: { href: string; label: string }[] = [
   { href: "#features", label: "Преимущества" },
   { href: "#new", label: "Новинка месяца" },
-  { href: "#gallery", label: "Фото / Instagram" },
+  { href: "#hits", label: "Хиты" },
   { href: "#about", label: "О нас" },
   { href: "#footer", label: "Контакты" },
   { href: "/menu", label: "Полное меню" },
