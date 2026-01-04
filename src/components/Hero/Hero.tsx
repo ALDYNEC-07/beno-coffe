@@ -65,7 +65,11 @@ export default function Hero() {
               </div>
 
               {/* Этот блок дает быстрые переходы к важным разделам и контактам. */}
-              <div className={`${styles.metaRow} ${styles.metaRowSpaced}`} aria-label="Быстрые переходы">
+              {/* Ссылки идут в одну линию, их можно листать вправо. */}
+              <div
+                className={`${styles.metaRow} ${styles.metaRowSpaced} ${styles.quickLinks}`}
+                aria-label="Быстрые переходы"
+              >
                 <a className={styles.button} href="#footer" aria-label="Перейти к контактам и адресу">
                   Контакты
                   <span aria-hidden="true">→</span>
