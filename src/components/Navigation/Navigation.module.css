@@ -215,13 +215,14 @@
 .burgerLine {
   position: absolute;
   left: 50%;
+  top: 50%;
   width: 20px;
   height: 1px;
   background: #1b1b1b;
   border: 0 solid transparent;
   box-sizing: border-box;
   border-radius: 999px;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%) translateY(var(--line-offset, 0));
   transition:
     transform 0.45s ease,
     opacity 0.35s ease,
@@ -229,20 +230,19 @@
     height 0.45s ease,
     border-color 0.45s ease,
     border-width 0.45s ease,
-    background-color 0.45s ease,
-    top 0.45s ease;
+    background-color 0.45s ease;
 }
 
 .burgerLine:nth-child(1) {
-  top: 2px;
+  --line-offset: -8px;
 }
 
 .burgerLine:nth-child(2) {
-  top: 9px;
+  --line-offset: -1px;
 }
 
 .burgerLine:nth-child(3) {
-  top: 16px;
+  --line-offset: 6px;
 }
 
 .menu[open] .burgerIcon {
@@ -250,8 +250,11 @@
   height: 28px;
 }
 
+.menu[open] .burgerLine {
+  --line-offset: 0;
+}
+
 .menu[open] .burgerLine:nth-child(1) {
-  top: 50%;
   width: 26px;
   height: 26px;
   background-color: transparent;
@@ -261,13 +264,11 @@
 }
 
 .menu[open] .burgerLine:nth-child(2) {
-  top: 50%;
   width: 14px;
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .menu[open] .burgerLine:nth-child(3) {
-  top: 50%;
   width: 14px;
   transform: translate(-50%, -50%) rotate(-45deg);
 }

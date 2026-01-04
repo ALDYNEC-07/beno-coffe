@@ -1,9 +1,10 @@
 /*
  Этот файл определяет главную страницу.
- Он показывает верхнюю навигацию и стартовый блок текста.
- Человек может использовать навигацию и заменить контент на свой.
+ Он показывает верхнюю навигацию и главный приветственный блок.
+ Человек может перейти по ссылкам в навигации и в первом экране.
 */
-import Navigation from "@/components/Navigation";
+import Hero from "@/components/Hero/Hero";
+import Navigation from "@/components/Navigation/Navigation";
 
 // Этот блок собирает основные части главной страницы.
 export default function Home() {
@@ -13,8 +14,8 @@ export default function Home() {
       <Navigation />
       {/* Этот блок содержит основное содержимое главной страницы. */}
       <main id="main">
-        <h1>New site</h1>
-        <p>Start building your content here.</p>
+        {/* Этот блок показывает главный приветственный экран. */}
+        <Hero />
       </main>
     </>
   );
