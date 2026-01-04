@@ -7,6 +7,7 @@ import Hero from "@/components/Hero/Hero";
 import Features from "@/components/Features/Features";
 import NewMonth from "@/components/NewMonth/NewMonth";
 import Hits from "@/components/Hits/Hits";
+import About from "@/components/About/About";
 import Navigation from "@/components/Navigation/Navigation";
 
 // Этот блок собирает основные части главной страницы.
@@ -25,6 +26,8 @@ export default function Home() {
         <NewMonth />
         {/* Этот блок показывает секцию с самыми популярными позициями. */}
         <Hits />
+        {/* Этот блок показывает секцию с краткой историей кофейни. */}
+        <About />
       </main>
     </>
   );
