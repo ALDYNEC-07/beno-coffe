@@ -1,9 +1,11 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает крупный заголовок, подзаголовок, место для фото и быстрые факты.
+ Он показывает крупный заголовок, подзаголовок, фото и быстрые факты.
  Человек может перейти к контактам, меню и ключевым разделам.
 */
+import Image from "next/image";
 import Link from "next/link";
+import heroImage from "@/assets/BenoArt.png";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
@@ -13,16 +15,21 @@ export default function Hero() {
       <div className={styles.container}>
         {/* Этот блок делит секцию на медиа и текстовую часть. */}
         <div className={styles.layout}>
-          {/* Этот блок показывает место для фото или видео кофейни. */}
+          {/* Этот блок показывает фото кофейни из папки assets. */}
           <div
             className={styles.media}
             role="img"
-            aria-label="Фоновое фото или короткое видео интерьера или приготовления кофе"
+            aria-label="Фото интерьера и атмосферы кофейни"
           >
-            {/* Этот текст подсказывает, что здесь будет медиа. */}
-            <div className={styles.mediaHint}>
-              Плейсхолдер для фото или короткого видео кофейни.
-            </div>
+            {/* Этот элемент выводит изображение, чтобы задать настроение первой секции. */}
+            <Image
+              className={styles.mediaImage}
+              src={heroImage}
+              alt="Интерьер кофейни BENO с тёплым светом и чашкой кофе"
+              fill
+              priority
+              sizes="(min-width: 1024px) 50vw, (min-width: 720px) 55vw, 100vw"
+            />
           </div>
 
           {/* Этот блок показывает текст, факты и быстрые ссылки. */}
