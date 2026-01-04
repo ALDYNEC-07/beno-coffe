@@ -1,17 +1,17 @@
 /*
- This file defines the base shell for every page.
- It shows the shared HTML and body wrapper.
- A person can place shared elements here later.
+ Этот файл задает общий каркас для всех страниц.
+ Он показывает общий HTML и обертку body.
+ Здесь позже можно разместить общие элементы.
 */
 import type { Metadata } from "next";
 
-// This stores the page title and short description for the browser.
+// Здесь хранится заголовок страницы и короткое описание для браузера.
 export const metadata: Metadata = {
   title: "New Site",
   description: "Clean starting point",
 };
 
-// This runs automatically for every page to wrap its content.
+// Этот блок автоматически оборачивает содержимое каждой страницы.
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* This is where each page is shown inside the shared shell. */}
+        {/* Здесь показывается каждая страница внутри общего каркаса. */}
         {children}
       </body>
     </html>
