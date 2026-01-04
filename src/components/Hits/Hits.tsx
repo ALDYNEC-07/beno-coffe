@@ -30,11 +30,10 @@ const hitItems = [
   },
 ];
 
-// Этот объект хранит данные для кнопки и подсказки под сеткой.
+// Этот объект хранит данные для кнопки под сеткой.
 const hitsAction = {
   label: "Смотреть все хиты в меню",
   link: "/menu#hits",
-  hint: "Подсказка: оставьте рядом место для сезонных новинок.",
 };
 
 export default function Hits() {
@@ -64,12 +63,11 @@ export default function Hits() {
           ))}
         </div>
 
-        {/* Этот блок показывает кнопку перехода в меню и поясняющую подсказку. */}
+        {/* Этот блок показывает кнопку перехода в меню. */}
         <div className={styles.metaRow}>
           <Link className={styles.button} href={hitsAction.link}>
             {hitsAction.label}
           </Link>
-          <span className={styles.muted}>{hitsAction.hint}</span>
         </div>
       </div>
     </section>
