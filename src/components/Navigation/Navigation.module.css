@@ -224,7 +224,8 @@
   border: 0 solid transparent;
   box-sizing: border-box;
   border-radius: 999px;
-  transform: translate(-50%, -50%) translateY(var(--line-offset, 0));
+  transform: translate(-50%, -50%) translateY(var(--line-offset, 0)) translateZ(0);
+  will-change: transform;
   transition:
     transform 0.45s ease,
     opacity 0.35s ease,
@@ -247,37 +248,40 @@
   --line-offset: 6px;
 }
 
-.menu[data-menu-state="open"] .burgerIcon,
-.menu[data-menu-state="closing"] .burgerIcon {
+.menu[data-menu-state="open"] .burgerIcon {
   width: 28px;
   height: 28px;
 }
 
-.menu[data-menu-state="open"] .burgerLine,
-.menu[data-menu-state="closing"] .burgerLine {
+.menu[data-menu-state="open"] .burgerLine {
   --line-offset: 0;
 }
 
-.menu[data-menu-state="open"] .burgerLine:nth-child(1),
-.menu[data-menu-state="closing"] .burgerLine:nth-child(1) {
+.menu[data-menu-state="open"] .burgerLine:nth-child(1) {
   width: 26px;
   height: 26px;
   background-color: transparent;
   border-width: 1px;
   border-color: #1b1b1b;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) translateZ(0);
 }
 
-.menu[data-menu-state="open"] .burgerLine:nth-child(2),
-.menu[data-menu-state="closing"] .burgerLine:nth-child(2) {
+.menu[data-menu-state="open"] .burgerLine:nth-child(2) {
   width: 14px;
-  transform: translate(-50%, -50%) rotate(45deg);
+  transform: translate(-50%, -50%) rotate(45deg) translateZ(0);
 }
 
-.menu[data-menu-state="open"] .burgerLine:nth-child(3),
-.menu[data-menu-state="closing"] .burgerLine:nth-child(3) {
+.menu[data-menu-state="open"] .burgerLine:nth-child(3) {
   width: 14px;
-  transform: translate(-50%, -50%) rotate(-45deg);
+  transform: translate(-50%, -50%) rotate(-45deg) translateZ(0);
+}
+
+.menu[data-menu-state="closing"] .burgerIcon {
+  transition-duration: 0.3s;
+}
+
+.menu[data-menu-state="closing"] .burgerLine {
+  transition-duration: 0.3s;
 }
 
 .srOnly {
