@@ -94,11 +94,12 @@
 .quickLinks {
   flex-wrap: nowrap;
   overflow-x: auto;
-  padding-bottom: 0.25rem;
+  padding-bottom: var(--space-2);
   -webkit-overflow-scrolling: touch;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
+  scrollbar-gutter: stable;
 }
 
 .quickLinks .button {
@@ -167,6 +168,8 @@
     width: auto;
     margin-left: 0;
     margin-right: 0;
+    padding-bottom: 0;
+    scrollbar-gutter: auto;
   }
 
   .metaBlock {
