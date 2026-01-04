@@ -42,24 +42,14 @@ export default function Hero() {
 
             {/* Этот блок собирает ключевую информацию одним взглядом. */}
             <div className={styles.heroMeta} aria-label="Ключевая информация одним взглядом">
-              {/* Этот блок показывает статус кофейни и кнопку контактов. */}
+              {/* Этот блок показывает статус и часы работы в одной строке. */}
               <div className={styles.metaRow}>
-                {/* Этот индикатор сообщает, открыта ли кофейня сейчас. */}
+                {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
                 <span className={styles.pill} aria-live="polite">
-                  <strong>Статус:</strong>
                   <span data-open-status>Открыто сейчас</span>
+                  <span aria-hidden="true">•</span>
+                  <span>с 7:00 до 01:00</span>
                 </span>
-
-                <a className={styles.button} href="#footer" aria-label="Перейти к контактам и адресу">
-                  Контакты
-                  <span aria-hidden="true">→</span>
-                </a>
-              </div>
-
-              {/* Этот блок показывает сегодняшние часы работы. */}
-              <div className={styles.metaBlock} aria-label="Сегодняшние часы работы">
-                <p className={styles.metaTitle}>Сегодня открыто</p>
-                <p className={styles.metaValue}>8:00–20:00</p>
               </div>
 
               {/* Этот блок показывает адрес и быстрый переход к карте. */}
@@ -74,8 +64,12 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Этот блок дает быстрые переходы к важным разделам. */}
+              {/* Этот блок дает быстрые переходы к важным разделам и контактам. */}
               <div className={`${styles.metaRow} ${styles.metaRowSpaced}`} aria-label="Быстрые переходы">
+                <a className={styles.button} href="#footer" aria-label="Перейти к контактам и адресу">
+                  Контакты
+                  <span aria-hidden="true">→</span>
+                </a>
                 <Link className={styles.button} href="/menu">
                   Смотреть меню
                 </Link>
