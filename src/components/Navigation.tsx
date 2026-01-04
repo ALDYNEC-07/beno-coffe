@@ -67,6 +67,13 @@ export default function Navigation() {
     openMenu();
   };
 
+  // Этот обработчик закрывает меню, когда человек выбирает пункт.
+  const handleMenuLinkClick = () => {
+    if (isMenuOpen && !isMenuClosing) {
+      closeMenu();
+    }
+  };
+
   return (
     <>
       {/* Этот элемент помогает сразу перейти к основному содержимому страницы. */}
@@ -105,7 +112,11 @@ export default function Navigation() {
                   <ul className={styles.navList}>
                     {navLinks.map((link) => (
                       <li key={link.href}>
-                        <a className={styles.navLink} href={link.href}>
+                        <a
+                          className={styles.navLink}
+                          href={link.href}
+                          onClick={handleMenuLinkClick}
+                        >
                           {link.label}
                         </a>
                       </li>
