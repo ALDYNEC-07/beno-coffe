@@ -205,53 +205,71 @@
 }
 
 .burgerIcon {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 4px;
+  display: inline-block;
   position: relative;
   width: 24px;
   height: 20px;
-  align-items: center;
-  justify-content: center;
-  transition: border-color 0.25s ease, width 0.25s ease, height 0.25s ease;
+  transition: width 0.45s ease, height 0.45s ease;
 }
 
 .burgerLine {
+  position: absolute;
+  left: 50%;
   width: 20px;
-  height: 2px;
+  height: 1px;
   background: #1b1b1b;
+  border: 0 solid transparent;
+  box-sizing: border-box;
   border-radius: 999px;
-  transition: transform 0.25s ease, opacity 0.2s ease, width 0.25s ease;
+  transform: translateX(-50%);
+  transition:
+    transform 0.45s ease,
+    opacity 0.35s ease,
+    width 0.45s ease,
+    height 0.45s ease,
+    border-color 0.45s ease,
+    border-width 0.45s ease,
+    background-color 0.45s ease,
+    top 0.45s ease;
+}
+
+.burgerLine:nth-child(1) {
+  top: 2px;
+}
+
+.burgerLine:nth-child(2) {
+  top: 9px;
+}
+
+.burgerLine:nth-child(3) {
+  top: 16px;
 }
 
 .menu[open] .burgerIcon {
   width: 28px;
   height: 28px;
-  border: 1px solid #1b1b1b;
-  border-radius: 999px;
-}
-
-.menu[open] .burgerLine {
-  width: 14px;
-}
-
-.menu[open] .burgerLine:nth-child(1),
-.menu[open] .burgerLine:nth-child(2) {
-  position: absolute;
-  top: 50%;
-  left: 50%;
 }
 
 .menu[open] .burgerLine:nth-child(1) {
-  transform: translate(-50%, -50%) rotate(45deg);
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  background-color: transparent;
+  border-width: 1px;
+  border-color: #1b1b1b;
+  transform: translate(-50%, -50%);
 }
 
 .menu[open] .burgerLine:nth-child(2) {
-  transform: translate(-50%, -50%) rotate(-45deg);
+  top: 50%;
+  width: 14px;
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .menu[open] .burgerLine:nth-child(3) {
-  opacity: 0;
+  top: 50%;
+  width: 14px;
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .srOnly {
