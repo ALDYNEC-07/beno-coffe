@@ -31,7 +31,7 @@ export default function Navigation() {
           </a>
           {/* Этот блок открывает основную навигацию по разделам. */}
           <nav className={styles.nav} aria-label="Основная навигация">
-            {/* Этот элемент раскрывает список ссылок для перехода. */}
+            {/* Этот элемент раскрывает список ссылок для перехода на мобильных экранах. */}
             <details className={styles.menu}>
               <summary className={styles.menuToggle}>Меню</summary>
               {/* Этот блок содержит список разделов, доступных в меню. */}
@@ -48,6 +48,16 @@ export default function Navigation() {
                 </ul>
               </div>
             </details>
+            {/* Этот список показывает все ссылки сразу на широких экранах. */}
+            <ul className={styles.desktopList}>
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <a className={styles.desktopLink} href={link.href}>
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </nav>
         </div>
       </header>
