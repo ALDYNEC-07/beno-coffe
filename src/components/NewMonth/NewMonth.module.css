@@ -130,6 +130,37 @@
   color: rgba(27, 27, 27, 0.75);
 }
 
+@media (max-width: 719px) {
+  .aside {
+    box-sizing: border-box;
+    grid-auto-flow: column;
+    grid-auto-columns: 80vw;
+    overflow-x: auto;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding-inline: 10vw;
+    padding-bottom: var(--space-2);
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: #1b1b1b rgba(27, 27, 27, 0.2);
+  }
+
+  .aside::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .aside::-webkit-scrollbar-track {
+    background: rgba(27, 27, 27, 0.15);
+    border-radius: 999px;
+  }
+
+  .aside::-webkit-scrollbar-thumb {
+    background: #1b1b1b;
+    border-radius: 999px;
+  }
+}
+
 @media (min-width: 900px) {
   .layout {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
