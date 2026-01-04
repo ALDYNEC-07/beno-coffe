@@ -4,6 +4,7 @@
  Человек может перейти по ссылкам в навигации и в первом экране.
 */
 import Hero from "@/components/Hero/Hero";
+import Features from "@/components/Features/Features";
 import Navigation from "@/components/Navigation/Navigation";
 
 // Этот блок собирает основные части главной страницы.
@@ -16,6 +17,8 @@ export default function Home() {
       <main id="main">
         {/* Этот блок показывает главный приветственный экран. */}
         <Hero />
+        {/* Этот блок показывает секцию ключевых преимуществ. */}
+        <Features />
       </main>
     </>
   );
