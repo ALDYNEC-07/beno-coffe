@@ -4,6 +4,7 @@
  Здесь позже можно разместить общие элементы.
 */
 import type { Metadata } from "next";
+import "./globals.css";
 
 // Здесь хранится заголовок страницы и короткое описание для браузера.
 export const metadata: Metadata = {
