@@ -16,11 +16,7 @@ export default function Hero() {
         {/* Этот блок делит секцию на медиа и текстовую часть. */}
         <div className={styles.layout}>
           {/* Этот блок показывает фото кофейни из папки assets. */}
-          <div
-            className={styles.media}
-            role="img"
-            aria-label="Фото интерьера и атмосферы кофейни"
-          >
+          <div className={styles.media}>
             {/* Этот элемент выводит изображение, чтобы задать настроение первой секции. */}
             <Image
               className={styles.mediaImage}
@@ -46,7 +42,7 @@ export default function Hero() {
               <div className={styles.metaRow}>
                 {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
                 <span className={styles.pill} aria-live="polite">
-                  <span data-open-status>Открыто сейчас</span>
+                  <span>Открыто сейчас</span>
                   <span aria-hidden="true">•</span>
                   <span>с 7:00 до 01:00</span>
                 </span>

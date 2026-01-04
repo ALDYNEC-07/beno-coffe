@@ -60,6 +60,8 @@ export default function Navigation() {
   const closeAnimationMs = 360;
   // Этот текст помогает стилям понять, как именно ведет себя меню.
   const menuState = isMenuClosing ? "closing" : isMenuOpen ? "open" : "closed";
+  // Этот признак показывает, видно ли мобильное меню на экране.
+  const isPanelVisible = menuState !== "closed";
 
   // Этот блок открывает меню и запускает анимацию заново.
   const openMenu = () => {
@@ -118,23 +120,29 @@ export default function Navigation() {
           {/* Этот блок открывает основную навигацию по разделам. */}
           <nav className={styles.nav} aria-label="Основная навигация">
             {/* Этот элемент раскрывает список ссылок и удерживает страницу на месте при открытом меню. */}
-            <details
-              className={styles.menu}
-              data-nav-menu
-              data-menu-state={menuState}
-              open={isMenuOpen}
-            >
+            <div className={styles.menu} data-nav-menu data-menu-state={menuState}>
               {/* Этот элемент выглядит как иконка и открывает список ссылок. */}
-              <summary className={styles.menuToggle} onClick={handleMenuButtonClick}>
+              <button
+                type="button"
+                className={styles.menuToggle}
+                onClick={handleMenuButtonClick}
+                aria-expanded={isMenuOpen}
+                aria-controls="nav-panel"
+              >
                 <span className={styles.burgerIcon} aria-hidden="true">
                   <span className={styles.burgerLine} />
                   <span className={styles.burgerLine} />
                   <span className={styles.burgerLine} />
                 </span>
                 <span className={styles.srOnly}>Меню</span>
-              </summary>
+              </button>
               {/* Этот блок содержит список разделов, доступных в меню. */}
-              <div className={styles.navPanel} key={menuOpenKey}>
+              <div
+                className={styles.navPanel}
+                id="nav-panel"
+                aria-hidden={!isPanelVisible}
+                key={menuOpenKey}
+              >
                 {/* Этот блок держит список ссылок по центру экрана. */}
                 <div className={styles.navSheet}>
                   {/* Этот блок показывает ссылки внутри мобильного меню. */}
@@ -145,7 +153,7 @@ export default function Navigation() {
                   />
                 </div>
               </div>
-            </details>
+            </div>
             {/* Этот список показывает все ссылки сразу на широких экранах. */}
             <NavigationLinksList
               listClassName={styles.desktopList}
