@@ -33,7 +33,15 @@ export default function Navigation() {
           <nav className={styles.nav} aria-label="Основная навигация">
             {/* Этот элемент раскрывает список ссылок для перехода на мобильных экранах. */}
             <details className={styles.menu}>
-              <summary className={styles.menuToggle}>Меню</summary>
+              {/* Этот элемент выглядит как иконка и открывает список ссылок. */}
+              <summary className={styles.menuToggle}>
+                <span className={styles.burgerIcon} aria-hidden="true">
+                  <span className={styles.burgerLine} />
+                  <span className={styles.burgerLine} />
+                  <span className={styles.burgerLine} />
+                </span>
+                <span className={styles.srOnly}>Меню</span>
+              </summary>
               {/* Этот блок содержит список разделов, доступных в меню. */}
               <div className={styles.navPanel}>
                 {/* Этот список показывает все доступные пункты меню. */}
