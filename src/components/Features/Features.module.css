@@ -60,6 +60,14 @@
   margin-top: var(--space-4);
 }
 
+@media (max-width: 719px) {
+  .featuresGrid {
+    box-sizing: border-box;
+    grid-auto-columns: 80vw;
+    padding-inline: 10vw;
+  }
+}
+
 .card {
   border: var(--border);
   border-radius: var(--radius);
