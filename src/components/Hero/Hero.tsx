@@ -72,7 +72,6 @@ export default function Hero() {
               >
                 <a className={styles.button} href="#footer" aria-label="Перейти к контактам и адресу">
                   Контакты
-                  <span aria-hidden="true">→</span>
                 </a>
                 <Link className={styles.button} href="/menu">
                   Смотреть меню
