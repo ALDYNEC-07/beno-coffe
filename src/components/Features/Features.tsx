@@ -44,7 +44,7 @@ export default function Features() {
         {/* Этот блок показывает карточки с ключевыми преимуществами. */}
         <div className={styles.featuresGrid}>
           {features.map((feature) => (
-            <article key={feature.title} className={`${styles.card} ${styles.feature}`}>
+            <article key={feature.title} className={styles.featureCard}>
               {/* Этот блок показывает иконку и основные тексты преимущества. */}
               <div className={styles.featureTop}>
                 <div className={styles.iconBox} aria-hidden="true">
