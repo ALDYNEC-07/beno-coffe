@@ -31,8 +31,8 @@ export default function Navigation() {
           </a>
           {/* Этот блок открывает основную навигацию по разделам. */}
           <nav className={styles.nav} aria-label="Основная навигация">
-            {/* Этот элемент раскрывает список ссылок для перехода на мобильных экранах. */}
-            <details className={styles.menu}>
+            {/* Этот элемент раскрывает список ссылок и удерживает страницу на месте при открытом меню. */}
+            <details className={styles.menu} data-nav-menu>
               {/* Этот элемент выглядит как иконка и открывает список ссылок. */}
               <summary className={styles.menuToggle}>
                 <span className={styles.burgerIcon} aria-hidden="true">

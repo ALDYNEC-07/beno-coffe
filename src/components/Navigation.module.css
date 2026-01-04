@@ -15,6 +15,14 @@
   top: clamp(1rem, 2.6vw, 1.5rem);
 }
 
+:global(body) {
+  scrollbar-gutter: stable;
+}
+
+:global(body:has(details[data-nav-menu][open])) {
+  overflow: hidden;
+}
+
 .header {
   border-bottom: 1px solid #1b1b1b;
   padding-block: clamp(1rem, 2.6vw, 1.5rem);
