@@ -1,11 +1,12 @@
 /*
  Этот файл определяет главную страницу.
- Он показывает навигацию, первый экран, преимущества и новинку месяца.
+ Он показывает навигацию, первый экран, преимущества, новинку месяца и хиты.
  Человек может перейти по ссылкам в навигации и в ключевых секциях.
 */
 import Hero from "@/components/Hero/Hero";
 import Features from "@/components/Features/Features";
 import NewMonth from "@/components/NewMonth/NewMonth";
+import Hits from "@/components/Hits/Hits";
 import Navigation from "@/components/Navigation/Navigation";
 
 // Этот блок собирает основные части главной страницы.
@@ -22,6 +23,8 @@ export default function Home() {
         <Features />
         {/* Этот блок показывает секцию новинки месяца. */}
         <NewMonth />
+        {/* Этот блок показывает секцию с самыми популярными позициями. */}
+        <Hits />
       </main>
     </>
   );
