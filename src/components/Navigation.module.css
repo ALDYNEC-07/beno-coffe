@@ -111,6 +111,23 @@
   border-radius: 18px;
   background: transparent;
   text-align: left;
+  transform-origin: top center;
+}
+
+.menu[data-menu-state="open"] .navPanel {
+  animation: panelFade 0.3s ease-out;
+}
+
+.menu[data-menu-state="closing"] .navPanel {
+  animation: panelFadeOut 0.28s ease-in forwards;
+}
+
+.menu[data-menu-state="open"] .navSheet {
+  animation: sheetDrop 0.48s cubic-bezier(0.18, 0.84, 0.2, 1);
+}
+
+.menu[data-menu-state="closing"] .navSheet {
+  animation: sheetLift 0.34s ease-in forwards;
 }
 
 .navList {
@@ -122,6 +139,46 @@
   justify-items: start;
   text-align: left;
   width: 100%;
+}
+
+.navList li {
+  opacity: 0;
+  transform: translateY(-12px) scaleY(0.9);
+}
+
+.menu[data-menu-state="open"] .navList li {
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+  animation: linkReveal 0.4s ease-out;
+}
+
+.menu[data-menu-state="closing"] .navList li {
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+}
+
+.menu[data-menu-state="open"] .navList li:nth-child(1) {
+  animation-delay: 0.08s;
+}
+
+.menu[data-menu-state="open"] .navList li:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.menu[data-menu-state="open"] .navList li:nth-child(3) {
+  animation-delay: 0.16s;
+}
+
+.menu[data-menu-state="open"] .navList li:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.menu[data-menu-state="open"] .navList li:nth-child(5) {
+  animation-delay: 0.24s;
+}
+
+.menu[data-menu-state="open"] .navList li:nth-child(6) {
+  animation-delay: 0.28s;
 }
 
 .navLink {
@@ -252,5 +309,66 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+  }
+}
+
+@keyframes panelFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheetDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-28px) scaleY(0.9);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(2px) scaleY(1.01);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes sheetLift {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-18px) scaleY(0.96);
+  }
+}
+
+@keyframes linkReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scaleY(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes panelFadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
   }
 }
