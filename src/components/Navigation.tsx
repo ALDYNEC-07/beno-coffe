@@ -38,22 +38,24 @@ export default function Navigation() {
                 <span className={styles.burgerIcon} aria-hidden="true">
                   <span className={styles.burgerLine} />
                   <span className={styles.burgerLine} />
-                  <span className={styles.burgerLine} />
                 </span>
                 <span className={styles.srOnly}>Меню</span>
               </summary>
               {/* Этот блок содержит список разделов, доступных в меню. */}
               <div className={styles.navPanel}>
-                {/* Этот список показывает все доступные пункты меню. */}
-                <ul className={styles.navList}>
-                  {navLinks.map((link) => (
-                    <li key={link.href}>
-                      <a className={styles.navLink} href={link.href}>
-                        {link.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                {/* Этот блок держит список ссылок по центру экрана. */}
+                <div className={styles.navSheet}>
+                  {/* Этот список показывает все доступные пункты меню. */}
+                  <ul className={styles.navList}>
+                    {navLinks.map((link) => (
+                      <li key={link.href}>
+                        <a className={styles.navLink} href={link.href}>
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </details>
             {/* Этот список показывает все ссылки сразу на широких экранах. */}

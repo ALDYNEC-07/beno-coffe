@@ -65,6 +65,8 @@
   width: 32px;
   height: 32px;
   gap: 0.35rem;
+  position: relative;
+  z-index: 30;
 }
 
 .menuToggle::-webkit-details-marker {
@@ -80,20 +82,54 @@
   background: #fff;
 }
 
+.menu[open] .navPanel {
+  position: fixed;
+  inset: 0;
+  margin-top: 0;
+  border: none;
+  border-radius: 0;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  display: grid;
+  place-items: center;
+  z-index: 20;
+}
+
+.navSheet {
+  width: min(420px, 86vw);
+  padding: clamp(1rem, 3vw, 1.75rem);
+  border-radius: 18px;
+  background: transparent;
+  text-align: left;
+}
+
 .navList {
   margin: 0;
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 0.75rem;
+  gap: 1.1rem;
+  justify-items: start;
+  text-align: left;
+  width: 100%;
 }
 
 .navLink {
-  display: block;
-  padding: 0.45rem 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.5rem;
   text-decoration: none;
   border-radius: 10px;
   color: inherit;
+  font-size: 1.05rem;
+}
+
+.navLink::before {
+  content: "→";
+  opacity: 0.7;
 }
 
 .navLink:focus-visible,
@@ -139,10 +175,16 @@
 .desktopLink {
   display: inline-flex;
   align-items: center;
+  gap: 0.5rem;
   padding: 0.35rem 0.2rem;
   text-decoration: none;
   border-radius: 10px;
   color: inherit;
+}
+
+.desktopLink::before {
+  content: "→";
+  opacity: 0.7;
 }
 
 .desktopLink:focus-visible {
