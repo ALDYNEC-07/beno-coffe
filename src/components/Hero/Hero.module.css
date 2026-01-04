@@ -100,10 +100,26 @@
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #1b1b1b rgba(27, 27, 27, 0.2);
 }
 
 .quickLinks .button {
   flex: 0 0 auto;
+}
+
+.quickLinks::-webkit-scrollbar {
+  height: 6px;
+}
+
+.quickLinks::-webkit-scrollbar-track {
+  background: rgba(27, 27, 27, 0.15);
+  border-radius: 999px;
+}
+
+.quickLinks::-webkit-scrollbar-thumb {
+  background: #1b1b1b;
+  border-radius: 999px;
 }
 
 .pill {
