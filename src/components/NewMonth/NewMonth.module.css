@@ -141,23 +141,6 @@
     margin-right: calc(50% - 50vw);
     padding-inline: 10vw;
     padding-bottom: var(--space-2);
-    scrollbar-gutter: stable;
-    scrollbar-width: thin;
-    scrollbar-color: #1b1b1b rgba(27, 27, 27, 0.2);
-  }
-
-  .aside::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .aside::-webkit-scrollbar-track {
-    background: rgba(27, 27, 27, 0.15);
-    border-radius: 999px;
-  }
-
-  .aside::-webkit-scrollbar-thumb {
-    background: #1b1b1b;
-    border-radius: 999px;
   }
 }
 
