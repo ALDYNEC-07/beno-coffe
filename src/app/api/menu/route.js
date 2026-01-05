@@ -1,22 +1,37 @@
+// Этот файл обслуживает запрос /api/menu и отдает меню из Baserow.
+import { fetchBaserowTable, getBaserowEnv } from "@/lib/baserow";
+
+// Этот обработчик проверяет настройки, загружает меню и возвращает JSON.
 export async function GET() {
-  const baseUrl = process.env.BASEROW_API_URL;
-  const tableId = process.env.BASEROW_TABLE_ID;
-  const token = process.env.BASEROW_TOKEN;
+  // Этот блок собирает настройки доступа к Baserow и проверяет их наличие.
+  const { values, missing } = getBaserowEnv([
+    "BASEROW_API_URL",
+    "BASEROW_TABLE_ID",
+    "BASEROW_TOKEN",
+  ]);
 
-  const url = `${baseUrl}/api/database/rows/table/${tableId}/?user_field_names=true`;
-
-  const res = await fetch(url, {
-    headers: { Authorization: `Token ${token}` },
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
+  if (missing.length > 0) {
     return Response.json(
-      { error: "Baserow request failed", status: res.status },
+      { error: "Missing Baserow configuration", missing },
       { status: 500 }
     );
   }
 
-  const data = await res.json();
-  return Response.json(data);
+  // Этот блок запрашивает таблицу меню и получает ответ Baserow.
+  const response = await fetchBaserowTable({
+    baseUrl: values.BASEROW_API_URL,
+    tableId: values.BASEROW_TABLE_ID,
+    token: values.BASEROW_TOKEN,
+  });
+
+  if (!response.ok) {
+    // Если Baserow вернул ошибку, отдаем понятный ответ с кодом 500.
+    return Response.json(
+      { error: "Baserow request failed", status: response.status },
+      { status: 500 }
+    );
+  }
+
+  // Этот блок отдает данные меню как есть, чтобы фронт мог их использовать.
+  return Response.json(response.data);
 }

@@ -1,3 +1,7 @@
+// Этот файл обслуживает запрос /api/menu-with-variants и отдает меню с вариантами.
+import { fetchBaserowTable, getBaserowEnv } from "@/lib/baserow";
+
+// Эта функция приводит поле со ссылками к списку объектов одного вида.
 function normalizeLinks(value) {
   if (Array.isArray(value)) {
     return value.filter(Boolean);
@@ -11,34 +15,39 @@ function normalizeLinks(value) {
   return [{ id: value }];
 }
 
+// Этот обработчик загружает меню и варианты, склеивает их и возвращает JSON.
 export async function GET() {
-  const baseUrl = process.env.BASEROW_API_URL;
-  const menuTableId = process.env.BASEROW_TABLE_ID;
-  const variantsTableId = process.env.BASEROW_VARIANTS_TABLE_ID;
-  const token = process.env.BASEROW_TOKEN;
+  // Этот блок собирает настройки доступа к Baserow и проверяет их наличие.
+  const { values, missing } = getBaserowEnv([
+    "BASEROW_API_URL",
+    "BASEROW_TABLE_ID",
+    "BASEROW_VARIANTS_TABLE_ID",
+    "BASEROW_TOKEN",
+  ]);
 
-  if (!baseUrl || !menuTableId || !variantsTableId || !token) {
+  if (missing.length > 0) {
     return Response.json(
-      { error: "Missing Baserow configuration" },
+      { error: "Missing Baserow configuration", missing },
       { status: 500 }
     );
   }
 
-  const menuUrl = `${baseUrl}/api/database/rows/table/${menuTableId}/?user_field_names=true`;
-  const variantsUrl = `${baseUrl}/api/database/rows/table/${variantsTableId}/?user_field_names=true`;
-
+  // Этот блок делает два запроса параллельно: меню и таблицу вариантов.
   const [menuRes, variantsRes] = await Promise.all([
-    fetch(menuUrl, {
-      headers: { Authorization: `Token ${token}` },
-      cache: "no-store",
+    fetchBaserowTable({
+      baseUrl: values.BASEROW_API_URL,
+      tableId: values.BASEROW_TABLE_ID,
+      token: values.BASEROW_TOKEN,
     }),
-    fetch(variantsUrl, {
-      headers: { Authorization: `Token ${token}` },
-      cache: "no-store",
+    fetchBaserowTable({
+      baseUrl: values.BASEROW_API_URL,
+      tableId: values.BASEROW_VARIANTS_TABLE_ID,
+      token: values.BASEROW_TOKEN,
     }),
   ]);
 
   if (!menuRes.ok || !variantsRes.ok) {
+    // Если хотя бы один запрос не удался, возвращаем 500.
     const status = !menuRes.ok ? menuRes.status : variantsRes.status;
     return Response.json(
       { error: "Baserow request failed", status },
@@ -46,16 +55,15 @@ export async function GET() {
     );
   }
 
-  const [menuData, variantsData] = await Promise.all([
-    menuRes.json(),
-    variantsRes.json(),
-  ]);
-
-  const menuItems = Array.isArray(menuData?.results) ? menuData.results : [];
-  const variants = Array.isArray(variantsData?.results)
-    ? variantsData.results
+  // Этот блок вытаскивает строки из ответов Baserow.
+  const menuItems = Array.isArray(menuRes.data?.results)
+    ? menuRes.data.results
+    : [];
+  const variants = Array.isArray(variantsRes.data?.results)
+    ? variantsRes.data.results
     : [];
 
+  // Этот блок готовит быстрый поиск позиции по ее id.
   const itemsById = new Map();
   const menuWithVariants = menuItems.map((item) => {
     const mappedItem = {
@@ -74,6 +82,7 @@ export async function GET() {
     return mappedItem;
   });
 
+  // Этот блок раскладывает варианты по соответствующим позициям меню.
   variants.forEach((variant) => {
     const itemLinks = normalizeLinks(variant?.item);
     const sizeLink = normalizeLinks(variant?.size)[0];
@@ -94,5 +103,6 @@ export async function GET() {
     });
   });
 
+  // Этот блок возвращает меню вместе с вариантами.
   return Response.json(menuWithVariants);
 }
