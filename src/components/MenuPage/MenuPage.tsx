@@ -63,8 +63,12 @@ export default function MenuPage({ items }: MenuPageProps) {
                   ? item.category.value
                   : menuPageText.categoryFallback;
               const description = item.description?.trim();
-              const priceLabel = Number.isFinite(item.price)
-                ? priceFormatter.format(item.price ?? 0)
+              const rawPrice =
+                typeof item.price === "number"
+                  ? item.price
+                  : Number.parseFloat(String(item.price ?? "").replace(",", "."));
+              const priceLabel = Number.isFinite(rawPrice)
+                ? priceFormatter.format(rawPrice)
                 : menuPageText.priceFallback;
               const nameLabel = item.name?.trim() || menuPageText.nameFallback;
               const isPopular = Boolean(item.popular);
