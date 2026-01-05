@@ -9,6 +9,7 @@ import NewMonth from "@/components/NewMonth/NewMonth";
 import Hits from "@/components/Hits/Hits";
 import About from "@/components/About/About";
 import Navigation from "@/components/Navigation/Navigation";
+import Footer from "@/components/Footer/Footer";
 
 // Этот блок собирает основные части главной страницы.
 export default function Home() {
@@ -29,6 +30,8 @@ export default function Home() {
         {/* Этот блок показывает секцию с краткой историей кофейни. */}
         <About />
       </main>
+      {/* Этот блок показывает подвал с контактами и служебными ссылками. */}
+      <Footer />
     </>
   );
 }
