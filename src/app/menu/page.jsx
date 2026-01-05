@@ -15,13 +15,18 @@ async function fetchMenuItems() {
   const protocol = headerList.get("x-forwarded-proto") ?? "http";
   const baseUrl = host ? `${protocol}://${host}` : "http://localhost:3000";
 
-  const response = await fetch(`${baseUrl}/api/menu`, { cache: "no-store" });
+  const response = await fetch(`${baseUrl}/api/menu-with-variants`, {
+    cache: "no-store",
+  });
 
   if (!response.ok) {
     return [];
   }
 
   const data = await response.json();
+  if (Array.isArray(data)) {
+    return data;
+  }
   return Array.isArray(data?.results) ? data.results : [];
 }
 

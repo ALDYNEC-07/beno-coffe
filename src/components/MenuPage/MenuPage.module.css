@@ -117,6 +117,37 @@
   font-size: var(--text-base);
 }
 
+.variants {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.variantItem {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.variantSize {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.variantMl {
+  opacity: 0.7;
+}
+
+.variantPrice {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 @media (min-width: 720px) {
   .header {
     grid-template-columns: minmax(0, 1fr);
