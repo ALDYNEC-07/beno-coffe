@@ -1,7 +1,7 @@
 /*
  Этот файл определяет страницу полного меню.
- Он показывает карточки с позициями меню, их ценой, описанием и вариантами размеров.
- Человек может посмотреть состав меню и открыть подробную страницу позиции.
+ Он показывает минимальные карточки с названием, категорией и ценой.
+ Человек может быстро просмотреть меню и открыть подробную страницу позиции.
 */
 import Link from "next/link";
 import styles from "./MenuPage.module.css";
@@ -40,7 +40,6 @@ const menuPageText = {
   priceFallback: "Цена по запросу",
   categoryFallback: "Без категории",
   nameFallback: "Без названия",
-  sizeFallback: "Размер не указан",
 };
 
 // Этот помощник приводит цену к числу, даже если она пришла строкой.
@@ -74,7 +73,7 @@ export default function MenuPage({ items }: MenuPageProps) {
           <p className={styles.lead}>{menuPageText.lead}</p>
         </div>
 
-        {/* Этот блок показывает карточки с блюдами или сообщение об отсутствии данных. */}
+        {/* Этот блок показывает горизонтальную ленту карточек или сообщение об отсутствии данных. */}
         {items.length === 0 ? (
           <p className={styles.empty}>{menuPageText.empty}</p>
         ) : (
@@ -85,7 +84,6 @@ export default function MenuPage({ items }: MenuPageProps) {
                 typeof item.category === "object" && item.category?.value
                   ? item.category.value
                   : menuPageText.categoryFallback;
-              const description = item.description?.trim();
               const rawPrice = parsePrice(item.price);
               const variants = Array.isArray(item.variants) ? item.variants : [];
               const variantPrices = variants
@@ -100,7 +98,6 @@ export default function MenuPage({ items }: MenuPageProps) {
                   )}`
                 : menuPageText.priceFallback;
               const isPopular = Boolean(item.popular);
-              const hasVariants = variants.length > 0;
 
               return (
                 // Этот блок делает карточку кликабельной и ведет к странице позиции.
@@ -111,67 +108,21 @@ export default function MenuPage({ items }: MenuPageProps) {
                   aria-label={`Открыть позицию ${nameLabel}`}
                 >
                   <article className={styles.card}>
-                    {/* Этот блок показывает название, цену и пометку популярности. */}
+                    {/* Этот блок показывает минимальную информацию о позиции. */}
                     <div className={styles.cardHeader}>
                       <div className={styles.nameBlock}>
-                        <h2 className={styles.name}>{nameLabel}</h2>
-                        {isPopular ? (
-                          <span className={styles.badge} aria-label="Популярная позиция">
-                            ⭐ {menuPageText.popularLabel}
-                          </span>
-                        ) : null}
+                        <div className={styles.nameRow}>
+                          <h2 className={styles.name}>{nameLabel}</h2>
+                          {isPopular ? (
+                            <span className={styles.badge} aria-label="Популярная позиция">
+                              ⭐ {menuPageText.popularLabel}
+                            </span>
+                          ) : null}
+                        </div>
+                        <p className={styles.category}>{categoryLabel}</p>
                       </div>
                       <p className={styles.price}>{priceLabel}</p>
                     </div>
-
-                    {/* Этот блок показывает категорию позиции. */}
-                    <p className={styles.category}>{categoryLabel}</p>
-
-                    {/* Этот блок показывает описание, если оно есть. */}
-                    {description ? (
-                      <p className={styles.description}>{description}</p>
-                    ) : null}
-
-                    {/* Этот блок показывает варианты размера и цены в порядке объема. */}
-                    {hasVariants ? (
-                      <ul
-                        className={styles.variants}
-                        aria-label="Варианты размера и цены"
-                      >
-                        {variants.map((variant, variantIndex) => {
-                          const sizeLabel =
-                            variant?.sizeName?.toString().trim() ||
-                            menuPageText.sizeFallback;
-                          const variantPrice = parsePrice(variant?.price);
-                          const variantPriceLabel = Number.isFinite(variantPrice)
-                            ? priceFormatter.format(variantPrice)
-                            : menuPageText.priceFallback;
-                          const mlLabel = Number.isFinite(variant?.ml)
-                            ? `${variant.ml} мл`
-                            : null;
-
-                          return (
-                            <li
-                              key={`${nameLabel}-${sizeLabel}-${variantIndex}`}
-                              className={styles.variantItem}
-                            >
-                              <span className={styles.variantSize}>
-                                {sizeLabel}
-                                {mlLabel ? (
-                                  <span className={styles.variantMl}>
-                                    {" "}
-                                    · {mlLabel}
-                                  </span>
-                                ) : null}
-                              </span>
-                              <span className={styles.variantPrice}>
-                                {variantPriceLabel}
-                              </span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    ) : null}
                   </article>
                 </Link>
               );
