@@ -127,7 +127,7 @@ export default function MenuPage({ items }: MenuPageProps) {
                     <p className={styles.description}>{description}</p>
                   ) : null}
 
-                  {/* Этот блок показывает варианты размера и цены, если они есть. */}
+                  {/* Этот блок показывает варианты размера и цены в порядке объема. */}
                   {hasVariants ? (
                     <ul
                       className={styles.variants}
