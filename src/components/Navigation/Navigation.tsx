@@ -106,10 +106,6 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Этот элемент помогает сразу перейти к основному содержимому страницы. */}
-      <a className={styles.skipLink} href="#main">
-        Перейти к содержимому
-      </a>
       {/* Этот блок показывает шапку с названием и меню. */}
       <header className={styles.header}>
         <div className={styles.container}>

@@ -1,20 +1,3 @@
-.skipLink {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #1b1b1b;
-  border-radius: 999px;
-  background: #fff;
-  color: inherit;
-  text-decoration: none;
-}
-
-.skipLink:focus {
-  left: clamp(1rem, 2.6vw, 1.5rem);
-  top: clamp(1rem, 2.6vw, 1.5rem);
-}
-
 :global(body) {
   scrollbar-gutter: stable;
 }
