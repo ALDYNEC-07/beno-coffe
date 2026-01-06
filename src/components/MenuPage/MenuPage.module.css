@@ -1,0 +1,155 @@
+.menuPage {
+  --container: 1120px;
+  --space-1: clamp(0.5rem, 1.2vw, 0.75rem);
+  --space-2: clamp(0.75rem, 1.8vw, 1rem);
+  --space-3: clamp(1rem, 2.6vw, 1.5rem);
+  --space-4: clamp(1.25rem, 3.6vw, 2rem);
+  --space-5: clamp(1.75rem, 5vw, 3rem);
+  --space-6: clamp(2.25rem, 6.5vw, 4rem);
+  --text-sm: clamp(0.875rem, 0.6vw + 0.75rem, 0.95rem);
+  --text-base: clamp(1rem, 0.7vw + 0.9rem, 1.125rem);
+  --text-lg: clamp(1.125rem, 0.9vw + 1rem, 1.375rem);
+  --h1: clamp(2rem, 2.8vw + 1.3rem, 3rem);
+  --h2: clamp(1.25rem, 1.4vw + 1rem, 1.75rem);
+  --radius: 14px;
+  --border: 1px solid #1b1b1b;
+  --measure: 65ch;
+
+  padding-block: var(--space-6);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  letter-spacing: 0.2px;
+  color: #1b1b1b;
+}
+
+.container {
+  width: min(100% - 2 * var(--space-3), var(--container));
+  margin-inline: auto;
+}
+
+.header {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  font-size: var(--h1);
+  line-height: 1.1;
+  margin: 0;
+  font-weight: 700;
+}
+
+.lead {
+  font-size: var(--text-lg);
+  max-width: var(--measure);
+  margin: 0;
+}
+
+.empty {
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  margin: 0;
+  font-size: var(--text-base);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.card {
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  display: grid;
+  gap: var(--space-2);
+  background: #fff;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.nameBlock {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.name {
+  margin: 0;
+  font-size: var(--h2);
+  line-height: 1.2;
+}
+
+.price {
+  margin: 0;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border: var(--border);
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  align-self: start;
+}
+
+.category {
+  margin: 0;
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+.description {
+  margin: 0;
+  font-size: var(--text-base);
+}
+
+.variants {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.variantItem {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.variantSize {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.variantMl {
+  opacity: 0.7;
+}
+
+.variantPrice {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (min-width: 720px) {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
