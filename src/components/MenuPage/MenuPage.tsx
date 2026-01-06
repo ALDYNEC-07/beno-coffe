@@ -1,8 +1,9 @@
 /*
  Этот файл определяет страницу полного меню.
  Он показывает карточки с позициями меню, их ценой, описанием и вариантами размеров.
- Человек может посмотреть состав меню и выбрать интересующие позиции.
+ Человек может посмотреть состав меню и открыть подробную страницу позиции.
 */
+import Link from "next/link";
 import styles from "./MenuPage.module.css";
 
 type MenuCategory = {
@@ -102,72 +103,77 @@ export default function MenuPage({ items }: MenuPageProps) {
               const hasVariants = variants.length > 0;
 
               return (
-                <article
+                // Этот блок делает карточку кликабельной и ведет к странице позиции.
+                <Link
                   key={item.id ?? `${nameLabel}-${index}`}
-                  className={styles.card}
+                  className={styles.cardLink}
+                  href={`/menu/${item.id}`}
+                  aria-label={`Открыть позицию ${nameLabel}`}
                 >
-                  {/* Этот блок показывает название, цену и пометку популярности. */}
-                  <div className={styles.cardHeader}>
-                    <div className={styles.nameBlock}>
-                      <h2 className={styles.name}>{nameLabel}</h2>
-                      {isPopular ? (
-                        <span className={styles.badge} aria-label="Популярная позиция">
-                          ⭐ {menuPageText.popularLabel}
-                        </span>
-                      ) : null}
+                  <article className={styles.card}>
+                    {/* Этот блок показывает название, цену и пометку популярности. */}
+                    <div className={styles.cardHeader}>
+                      <div className={styles.nameBlock}>
+                        <h2 className={styles.name}>{nameLabel}</h2>
+                        {isPopular ? (
+                          <span className={styles.badge} aria-label="Популярная позиция">
+                            ⭐ {menuPageText.popularLabel}
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className={styles.price}>{priceLabel}</p>
                     </div>
-                    <p className={styles.price}>{priceLabel}</p>
-                  </div>
 
-                  {/* Этот блок показывает категорию позиции. */}
-                  <p className={styles.category}>{categoryLabel}</p>
+                    {/* Этот блок показывает категорию позиции. */}
+                    <p className={styles.category}>{categoryLabel}</p>
 
-                  {/* Этот блок показывает описание, если оно есть. */}
-                  {description ? (
-                    <p className={styles.description}>{description}</p>
-                  ) : null}
+                    {/* Этот блок показывает описание, если оно есть. */}
+                    {description ? (
+                      <p className={styles.description}>{description}</p>
+                    ) : null}
 
-                  {/* Этот блок показывает варианты размера и цены в порядке объема. */}
-                  {hasVariants ? (
-                    <ul
-                      className={styles.variants}
-                      aria-label="Варианты размера и цены"
-                    >
-                      {variants.map((variant, variantIndex) => {
-                        const sizeLabel =
-                          variant?.sizeName?.toString().trim() ||
-                          menuPageText.sizeFallback;
-                        const variantPrice = parsePrice(variant?.price);
-                        const variantPriceLabel = Number.isFinite(variantPrice)
-                          ? priceFormatter.format(variantPrice)
-                          : menuPageText.priceFallback;
-                        const mlLabel = Number.isFinite(variant?.ml)
-                          ? `${variant.ml} мл`
-                          : null;
+                    {/* Этот блок показывает варианты размера и цены в порядке объема. */}
+                    {hasVariants ? (
+                      <ul
+                        className={styles.variants}
+                        aria-label="Варианты размера и цены"
+                      >
+                        {variants.map((variant, variantIndex) => {
+                          const sizeLabel =
+                            variant?.sizeName?.toString().trim() ||
+                            menuPageText.sizeFallback;
+                          const variantPrice = parsePrice(variant?.price);
+                          const variantPriceLabel = Number.isFinite(variantPrice)
+                            ? priceFormatter.format(variantPrice)
+                            : menuPageText.priceFallback;
+                          const mlLabel = Number.isFinite(variant?.ml)
+                            ? `${variant.ml} мл`
+                            : null;
 
-                        return (
-                          <li
-                            key={`${nameLabel}-${sizeLabel}-${variantIndex}`}
-                            className={styles.variantItem}
-                          >
-                            <span className={styles.variantSize}>
-                              {sizeLabel}
-                              {mlLabel ? (
-                                <span className={styles.variantMl}>
-                                  {" "}
-                                  · {mlLabel}
-                                </span>
-                              ) : null}
-                            </span>
-                            <span className={styles.variantPrice}>
-                              {variantPriceLabel}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  ) : null}
-                </article>
+                          return (
+                            <li
+                              key={`${nameLabel}-${sizeLabel}-${variantIndex}`}
+                              className={styles.variantItem}
+                            >
+                              <span className={styles.variantSize}>
+                                {sizeLabel}
+                                {mlLabel ? (
+                                  <span className={styles.variantMl}>
+                                    {" "}
+                                    · {mlLabel}
+                                  </span>
+                                ) : null}
+                              </span>
+                              <span className={styles.variantPrice}>
+                                {variantPriceLabel}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    ) : null}
+                  </article>
+                </Link>
               );
             })}
           </div>

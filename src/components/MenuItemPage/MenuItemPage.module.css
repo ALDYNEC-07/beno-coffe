@@ -1,5 +1,5 @@
-.menuPage {
-  --container: 1120px;
+.menuItemPage {
+  --container: 960px;
   --space-1: clamp(0.5rem, 1.2vw, 0.75rem);
   --space-2: clamp(0.75rem, 1.8vw, 1rem);
   --space-3: clamp(1rem, 2.6vw, 1.5rem);
@@ -25,95 +25,50 @@
 .container {
   width: min(100% - 2 * var(--space-3), var(--container));
   margin-inline: auto;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border: var(--border);
+  border-radius: 999px;
+  text-decoration: none;
+  color: inherit;
+  width: fit-content;
+}
+
+.backLink:focus-visible {
+  outline: 2px solid #1b1b1b;
+  outline-offset: 3px;
 }
 
 .header {
   display: grid;
+  gap: var(--space-1);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-2);
-  margin-bottom: var(--space-4);
 }
 
 .title {
+  margin: 0;
   font-size: var(--h1);
   line-height: 1.1;
-  margin: 0;
   font-weight: 700;
 }
 
 .lead {
+  margin: 0;
   font-size: var(--text-lg);
   max-width: var(--measure);
-  margin: 0;
-}
-
-.empty {
-  border: var(--border);
-  border-radius: var(--radius);
-  padding: var(--space-3);
-  margin: 0;
-  font-size: var(--text-base);
-}
-
-.grid {
-  display: grid;
-  gap: var(--space-3);
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-
-.card {
-  border: var(--border);
-  border-radius: var(--radius);
-  padding: var(--space-3);
-  display: grid;
-  gap: var(--space-2);
-  background: #fff;
-}
-
-.cardLink {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-}
-
-.cardLink:focus-visible {
-  outline: 2px solid #1b1b1b;
-  outline-offset: 4px;
-  border-radius: var(--radius);
-}
-
-.cardHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-.nameBlock {
-  display: grid;
-  gap: 0.35rem;
-}
-
-.name {
-  margin: 0;
-  font-size: var(--h2);
-  line-height: 1.2;
-}
-
-.price {
-  margin: 0;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0.65rem;
-  border: var(--border);
-  border-radius: 999px;
-  font-size: var(--text-sm);
-  align-self: start;
 }
 
 .category {
@@ -124,9 +79,52 @@
   opacity: 0.7;
 }
 
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border: var(--border);
+  border-radius: 999px;
+  font-size: var(--text-sm);
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+}
+
+.priceTitle {
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+.priceValue {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.section {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--h2);
+}
+
 .description {
   margin: 0;
-  font-size: var(--text-base);
+  max-width: var(--measure);
 }
 
 .variants {
@@ -142,6 +140,9 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-2);
+  padding: 0.4rem 0.6rem;
+  border: var(--border);
+  border-radius: 10px;
   font-size: var(--text-sm);
 }
 
@@ -158,10 +159,4 @@
 .variantPrice {
   font-weight: 600;
   white-space: nowrap;
-}
-
-@media (min-width: 720px) {
-  .header {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
