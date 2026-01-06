@@ -4,6 +4,7 @@
  Человек может посмотреть детали и вернуться обратно к меню.
 */
 import { headers } from "next/headers";
+import { notFound } from "next/navigation";
 import Navigation from "@/components/Navigation/Navigation";
 import Footer from "@/components/Footer/Footer";
 import MenuItemPage from "@/components/MenuItemPage/MenuItemPage";
@@ -39,6 +40,11 @@ export default async function MenuItem({ params }) {
   // Этот блок безопасно получает параметры маршрута.
   const resolvedParams = await params;
   const item = await fetchMenuItem(resolvedParams?.id);
+
+  // Этот блок возвращает страницу 404, если позиция не найдена.
+  if (!item) {
+    notFound();
+  }
 
   return (
     <>
