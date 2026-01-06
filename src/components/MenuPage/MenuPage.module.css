@@ -55,17 +55,19 @@
 }
 
 .grid {
-  display: grid;
+  display: flex;
   gap: var(--space-3);
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--space-2);
+  -webkit-overflow-scrolling: touch;
 }
 
 .card {
   border: var(--border);
   border-radius: var(--radius);
   padding: var(--space-3);
-  display: grid;
-  gap: var(--space-2);
   background: #fff;
 }
 
@@ -73,6 +75,9 @@
   display: block;
   text-decoration: none;
   color: inherit;
+  flex: 0 0 auto;
+  min-width: min(85vw, 360px);
+  scroll-snap-align: start;
 }
 
 .cardLink:focus-visible {
@@ -83,14 +88,22 @@
 
 .cardHeader {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .nameBlock {
   display: grid;
   gap: 0.35rem;
+  min-width: 0;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .name {
@@ -122,42 +135,6 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   opacity: 0.7;
-}
-
-.description {
-  margin: 0;
-  font-size: var(--text-base);
-}
-
-.variants {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.35rem;
-}
-
-.variantItem {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-2);
-  font-size: var(--text-sm);
-}
-
-.variantSize {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.25rem;
-}
-
-.variantMl {
-  opacity: 0.7;
-}
-
-.variantPrice {
-  font-weight: 600;
-  white-space: nowrap;
 }
 
 @media (min-width: 720px) {
