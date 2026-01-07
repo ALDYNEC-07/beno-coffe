@@ -11,7 +11,8 @@
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   padding-inline: var(--chip-edge);
-  padding-block: var(--space-2, 0.75rem);
+  padding-top: calc(var(--space-2, 0.75rem) + 0.15rem);
+  padding-bottom: calc(var(--space-2, 0.75rem) + 0.85rem);
   scroll-snap-type: x mandatory;
   scroll-padding-inline: var(--chip-edge);
   -webkit-overflow-scrolling: touch;
@@ -24,11 +25,15 @@
 
 .chip {
   flex: 0 0 var(--chip-width);
-  border: var(--border, 1px solid #1b1b1b);
+  border: 1px solid rgba(155, 106, 18, 0.35);
   border-radius: 999px;
   padding: 0.65rem 1rem;
-  background: #fff;
-  color: #1b1b1b;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.75),
+    rgba(255, 255, 255, 0.35)
+  );
+  color: #5f4308;
   font-size: var(--text-sm, 0.9rem);
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -40,6 +45,8 @@
   scroll-snap-align: center;
   transition: transform 180ms ease, box-shadow 180ms ease,
     background-color 180ms ease, color 180ms ease;
+  backdrop-filter: blur(12px) saturate(145%);
+  -webkit-backdrop-filter: blur(12px) saturate(145%);
 }
 
 .chip:focus-visible {
@@ -48,8 +55,12 @@
 }
 
 .chipSelected {
-  background: #1b1b1b;
-  color: #fff;
+  background: linear-gradient(
+    135deg,
+    rgba(233, 217, 197, 0.9),
+    rgba(210, 186, 154, 0.75)
+  );
+  color: #3f2c05;
   transform: scale(1.02);
-  box-shadow: 0 10px 22px rgba(27, 27, 27, 0.18);
+  box-shadow: 0 10px 24px rgba(60, 40, 20, 0.22);
 }

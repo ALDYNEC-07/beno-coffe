@@ -19,7 +19,7 @@
   --card-transition: 220ms ease;
   --edge-padding: max(var(--space-4), calc(50vw - var(--card-width) / 2));
 
-  padding-block: var(--space-6);
+  padding-bottom: var(--space-6);
   font-size: var(--text-base);
   line-height: 1.5;
   letter-spacing: 0.2px;
@@ -33,7 +33,7 @@
 
 .header {
   display: block;
-  margin-bottom: var(--space-4);
+  margin-bottom: 0;
 }
 
 .empty {
