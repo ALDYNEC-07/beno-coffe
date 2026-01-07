@@ -98,16 +98,17 @@ export default function MenuPage({ items }: MenuPageProps) {
                         </video>
                       </div>
                     ) : null}
-                    {/* Этот блок показывает минимальную информацию о позиции. */}
+                    {/* Этот блок показывает пометку популярной позиции в правом верхнем углу карточки. */}
+                    {isPopular ? (
+                      <span className={styles.badge} aria-label="Популярная позиция">
+                        {menuPageText.popularLabel}
+                      </span>
+                    ) : null}
+                    {/* Этот блок показывает минимальную информацию о позиции внизу карточки. */}
                     <div className={styles.cardHeader}>
                       <div className={styles.nameBlock}>
                         <div className={styles.nameRow}>
                           <h2 className={styles.name}>{nameLabel}</h2>
-                          {isPopular ? (
-                            <span className={styles.badge} aria-label="Популярная позиция">
-                              {menuPageText.popularLabel}
-                            </span>
-                          ) : null}
                         </div>
                         <p className={styles.category}>{categoryLabel}</p>
                       </div>
