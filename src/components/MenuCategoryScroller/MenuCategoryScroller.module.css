@@ -6,6 +6,10 @@
   display: flex;
   gap: var(--chip-gap);
   overflow-x: auto;
+  overflow-y: visible;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   padding-inline: var(--chip-edge);
   padding-block: var(--space-2, 0.75rem);
   scroll-snap-type: x mandatory;
