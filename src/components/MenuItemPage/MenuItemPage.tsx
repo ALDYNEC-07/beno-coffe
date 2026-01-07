@@ -11,6 +11,7 @@ import {
   parseMenuPrice,
   type MenuItem,
 } from "@/lib/menuData";
+import { commonMenuText } from "@/lib/menuText";
 
 type MenuItemPageProps = {
   item: MenuItem | null;
@@ -18,18 +19,15 @@ type MenuItemPageProps = {
 
 // Этот набор текста хранит заголовки, подписи и запасные значения.
 const menuItemText = {
+  ...commonMenuText,
   backLabel: "Вернуться к меню",
   notFoundTitle: "Такой позиции пока нет",
   notFoundLead: "Возможно, она появится чуть позже. Проверьте полное меню.",
   priceLabel: "Цена",
   priceFromLabel: "Цена от",
-  priceFallback: "Цена по запросу",
-  categoryFallback: "Без категории",
-  nameFallback: "Без названия",
   sizeFallback: "Размер не указан",
   variantsTitle: "Варианты размера",
   descriptionTitle: "Описание",
-  popularLabel: "Популярно",
 };
 
 // Этот компонент показывает подробную карточку выбранной позиции меню.

@@ -12,6 +12,7 @@ import {
   getMenuPriceInfo,
   type MenuItem,
 } from "@/lib/menuData";
+import { commonMenuText } from "@/lib/menuText";
 
 type MenuPageProps = {
   items: MenuItem[];
@@ -21,11 +22,8 @@ type MenuPageProps = {
 const menuPageText = {
   title: "Полное меню",
   empty: "Пока нет данных о меню. Загляните чуть позже!",
-  popularLabel: "Популярно",
   priceFromPrefix: "от",
-  priceFallback: "Цена по запросу",
-  categoryFallback: "Без категории",
-  nameFallback: "Без названия",
+  ...commonMenuText,
 };
 
 // Этот список связывает название позиции с видеофоном на карточке.
