@@ -24,6 +24,17 @@
   line-height: 1.5;
   letter-spacing: 0.2px;
   color: #1b1b1b;
+  background-color: #fffaf3;
+  background-image: radial-gradient(
+      70% 120% at 50% -10%,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0)
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 248, 236, 0.95),
+      rgba(255, 248, 236, 0.55)
+    );
 }
 
 .container {
