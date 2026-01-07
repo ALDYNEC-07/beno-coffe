@@ -4,7 +4,7 @@
  Человек может выбрать категорию, пролистывать меню, видеть выбранную карточку в центре и открыть подробную страницу позиции.
 */
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./MenuPage.module.css";
 import {
@@ -14,6 +14,7 @@ import {
 } from "@/lib/menuData";
 import { commonMenuText } from "@/lib/menuText";
 import MenuCategoryScroller from "@/components/MenuCategoryScroller/MenuCategoryScroller";
+import MenuCardVideo from "@/components/MenuCardVideo/MenuCardVideo";
 
 type MenuPageProps = {
   items: MenuItem[];
@@ -61,55 +62,52 @@ export default function MenuPage({ items }: MenuPageProps) {
   const gridRef = useRef<HTMLDivElement | null>(null);
   // Это число хранит номер карточки, которая сейчас в центре.
   const [activeIndex, setActiveIndex] = useState(0);
-  // Это поле хранит ключ выбранной категории для фильтрации списка.
+  // Это поле хранит ключ категории, выбранной человеком.
   const [activeCategoryKey, setActiveCategoryKey] = useState(
     menuPageText.allCategoryKey
   );
 
   // Этот блок собирает список категорий для верхнего скролла.
-  const categoryOptions: { key: string; label: string }[] = [];
-  const categoryKeys = new Set<string>();
-  items.forEach((item) => {
-    const label = getCategoryLabel(item, menuPageText.categoryFallback);
-    const key = getCategoryKey(label);
-    if (categoryKeys.has(key)) {
-      return;
-    }
-    categoryKeys.add(key);
-    categoryOptions.push({ key, label });
-  });
-  const categories = [
-    {
-      key: menuPageText.allCategoryKey,
-      label: menuPageText.allCategoryLabel,
-    },
-    ...categoryOptions,
-  ];
+  const categories = useMemo(() => {
+    const categoryOptions: { key: string; label: string }[] = [];
+    const categoryKeys = new Set<string>();
+    items.forEach((item) => {
+      const label = getCategoryLabel(item, menuPageText.categoryFallback);
+      const key = getCategoryKey(label);
+      if (categoryKeys.has(key)) {
+        return;
+      }
+      categoryKeys.add(key);
+      categoryOptions.push({ key, label });
+    });
 
-  // Этот блок проверяет, что выбранная категория есть в обновленном списке.
-  useEffect(() => {
-    if (activeCategoryKey === menuPageText.allCategoryKey) {
-      return;
-    }
-    const hasActiveCategory = categories.some(
-      (category) => category.key === activeCategoryKey
-    );
-    if (!hasActiveCategory) {
-      setActiveCategoryKey(menuPageText.allCategoryKey);
-    }
-  }, [activeCategoryKey, categories]);
+    return [
+      {
+        key: menuPageText.allCategoryKey,
+        label: menuPageText.allCategoryLabel,
+      },
+      ...categoryOptions,
+    ];
+  }, [items]);
+
+  // Этот ключ выбирает доступную категорию, если прежняя больше не существует.
+  const resolvedCategoryKey = categories.some(
+    (category) => category.key === activeCategoryKey
+  )
+    ? activeCategoryKey
+    : menuPageText.allCategoryKey;
 
   // Этот блок оставляет только позиции выбранной категории.
   const visibleItems =
-    activeCategoryKey === menuPageText.allCategoryKey
+    resolvedCategoryKey === menuPageText.allCategoryKey
       ? items
       : items.filter((item) => {
           const label = getCategoryLabel(item, menuPageText.categoryFallback);
-          return getCategoryKey(label) === activeCategoryKey;
+          return getCategoryKey(label) === resolvedCategoryKey;
         });
 
   // Этот ключ хранит название записи для позиции прокрутки ленты.
-  const scrollStorageKey = `${menuPageText.scrollStoragePrefix}-${activeCategoryKey}`;
+  const scrollStorageKey = `${menuPageText.scrollStoragePrefix}-${resolvedCategoryKey}`;
 
   // Эта функция мягко перемещает нужную карточку в центр ленты.
   const scrollCardToCenter = (
@@ -233,12 +231,12 @@ export default function MenuPage({ items }: MenuPageProps) {
         {/* Этот блок показывает верхний скролл категорий, если есть позиции меню. */}
         {items.length > 0 ? (
           <div className={styles.header}>
-            <MenuCategoryScroller
-              categories={categories}
-              activeKey={activeCategoryKey}
-              onSelect={handleCategorySelect}
-              ariaLabel={menuPageText.categoriesLabel}
-            />
+              <MenuCategoryScroller
+                categories={categories}
+                activeKey={resolvedCategoryKey}
+                onSelect={handleCategorySelect}
+                ariaLabel={menuPageText.categoriesLabel}
+              />
           </div>
         ) : null}
 
@@ -289,20 +287,14 @@ export default function MenuPage({ items }: MenuPageProps) {
                       onFocus={() => handleCardFocus(index)}
                     >
                       <article className={cardClassName}>
-                        {/* Этот блок показывает видеофон, если он есть у позиции. */}
+                        {/* Этот блок показывает видеофон только у выбранной карточки. */}
                         {videoSrc ? (
-                          <div className={styles.videoWrap} aria-hidden="true">
-                            <video
-                              className={styles.video}
-                              autoPlay
-                              muted
-                              loop
-                              playsInline
-                              preload="metadata"
-                            >
-                              <source src={videoSrc} type="video/mp4" />
-                            </video>
-                          </div>
+                          <MenuCardVideo
+                            src={videoSrc}
+                            isActive={isSelected}
+                            wrapperClassName={styles.videoWrap}
+                            videoClassName={styles.video}
+                          />
                         ) : null}
                         {/* Этот блок показывает пометку популярной позиции в правом верхнем углу карточки. */}
                         {isPopular ? (
