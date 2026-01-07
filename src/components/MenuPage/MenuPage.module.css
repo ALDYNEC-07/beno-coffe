@@ -15,6 +15,12 @@
   --border: 1px solid #1b1b1b;
   --measure: 65ch;
   --card-min-height: clamp(340px, 72vw, 560px);
+  --card-width: min(67vw, 270px);
+  --card-scale: 1.06;
+  --card-blur: 3px;
+  --card-dim: 0.7;
+  --card-transition: 220ms ease;
+  --edge-padding: max(var(--space-4), calc(50vw - var(--card-width) / 2));
 
   padding-block: var(--space-6);
   font-size: var(--text-base);
@@ -49,18 +55,25 @@
   font-size: var(--text-base);
 }
 
+.gridWrap {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  overflow: visible;
+}
+
 .grid {
   display: flex;
   gap: var(--space-3);
   overflow-x: auto;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding-inline: var(--space-4);
-  padding-bottom: var(--space-2);
+  width: 100%;
+  padding-inline: var(--edge-padding);
+  padding-top: var(--space-5);
+  padding-bottom: calc(var(--space-5) + 1rem);
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--space-4);
+  scroll-padding-inline: var(--edge-padding);
   -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 
 .card {
@@ -72,6 +85,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  transform-origin: center;
+  transition: transform var(--card-transition), filter var(--card-transition),
+    opacity var(--card-transition), box-shadow var(--card-transition);
 }
 
 .cardWithVideo {
@@ -85,14 +101,35 @@
   text-decoration: none;
   color: inherit;
   flex: 0 0 auto;
-  min-width: min(67vw, 270px);
-  scroll-snap-align: start;
+  min-width: var(--card-width);
+  width: var(--card-width);
+  scroll-snap-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 .cardLink:focus-visible {
   outline: 2px solid #1b1b1b;
   outline-offset: 4px;
   border-radius: var(--radius);
+}
+
+.cardLinkSelected {
+  z-index: 3;
+}
+
+.cardLinkBlurred {
+  z-index: 1;
+}
+
+.cardSelected {
+  transform: scale(var(--card-scale));
+  box-shadow: 0 10px 20px rgba(27, 27, 27, 0.14);
+}
+
+.cardBlurred {
+  filter: blur(var(--card-blur)) saturate(0.85);
+  opacity: var(--card-dim);
 }
 
 .cardHeader {
