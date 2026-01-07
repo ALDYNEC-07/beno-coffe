@@ -44,6 +44,8 @@ export default function MenuPage({ items }: MenuPageProps) {
   const gridRef = useRef<HTMLDivElement | null>(null);
   // Это число хранит номер карточки, которая сейчас в центре.
   const [activeIndex, setActiveIndex] = useState(0);
+  // Этот ключ хранит название записи для позиции прокрутки ленты.
+  const scrollStorageKey = "menu-page-scroll-left";
 
   // Эта функция мягко перемещает нужную карточку в центр ленты.
   const scrollCardToCenter = (
@@ -70,7 +72,7 @@ export default function MenuPage({ items }: MenuPageProps) {
     });
   };
 
-  // Этот блок автоматически выбирает карточку, которая ближе всего к центру ленты.
+  // Этот блок восстанавливает позицию ленты при возвращении и выбирает карточку, которая ближе всего к центру.
   useEffect(() => {
     const grid = gridRef.current;
     if (!grid) {
@@ -78,6 +80,19 @@ export default function MenuPage({ items }: MenuPageProps) {
     }
 
     let frameId = 0;
+    // Эта функция возвращает ленту к сохраненной позиции, если она есть.
+    const restoreScrollPosition = () => {
+      const storedValue = window.sessionStorage.getItem(scrollStorageKey);
+      if (!storedValue) {
+        return;
+      }
+      const parsedValue = Number(storedValue);
+      if (!Number.isFinite(parsedValue)) {
+        return;
+      }
+      grid.scrollLeft = parsedValue;
+    };
+
     const updateActiveIndex = () => {
       const cards = Array.from(
         grid.querySelectorAll<HTMLElement>("[data-menu-card='true']")
@@ -114,10 +129,14 @@ export default function MenuPage({ items }: MenuPageProps) {
       frameId = window.requestAnimationFrame(() => {
         frameId = 0;
         updateActiveIndex();
+        window.sessionStorage.setItem(
+          scrollStorageKey,
+          String(grid.scrollLeft)
+        );
       });
     };
 
-    scrollCardToCenter(0, "auto");
+    restoreScrollPosition();
     updateActiveIndex();
     grid.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleScroll);
