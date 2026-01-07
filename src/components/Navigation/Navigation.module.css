@@ -8,9 +8,23 @@
 }
 
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   border-bottom: 1px solid #1b1b1b;
   padding-block: clamp(1rem, 2.6vw, 1.5rem);
-  background: #fff;
+  background: transparent;
+  isolation: isolate;
+}
+
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  z-index: -1;
 }
 
 .container {
@@ -58,7 +72,7 @@
   height: 32px;
   gap: 0.35rem;
   position: relative;
-  z-index: 30;
+  z-index: 70;
 }
 
 .navPanel {
@@ -83,7 +97,7 @@
   backdrop-filter: blur(12px);
   display: grid;
   place-items: center;
-  z-index: 20;
+  z-index: 60;
 }
 
 .menu[data-menu-state="closed"] .navPanel {
