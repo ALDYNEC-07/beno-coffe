@@ -105,7 +105,7 @@ export default function MenuPage({ items }: MenuPageProps) {
                           <h2 className={styles.name}>{nameLabel}</h2>
                           {isPopular ? (
                             <span className={styles.badge} aria-label="Популярная позиция">
-                              ⭐ {menuPageText.popularLabel}
+                              {menuPageText.popularLabel}
                             </span>
                           ) : null}
                         </div>
