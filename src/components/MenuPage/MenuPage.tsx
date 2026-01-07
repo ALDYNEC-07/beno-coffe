@@ -211,7 +211,6 @@ export default function MenuPage({ items }: MenuPageProps) {
                       href={`/menu/${item.id}`}
                       aria-label={`Открыть позицию ${nameLabel}`}
                       data-menu-card="true"
-                      data-menu-index={index}
                       onFocus={() => handleCardFocus(index)}
                     >
                       <article className={cardClassName}>
