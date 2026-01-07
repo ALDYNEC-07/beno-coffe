@@ -41,12 +41,6 @@
   font-weight: 700;
 }
 
-.lead {
-  font-size: var(--text-lg);
-  max-width: var(--measure);
-  margin: 0;
-}
-
 .empty {
   border: var(--border);
   border-radius: var(--radius);
