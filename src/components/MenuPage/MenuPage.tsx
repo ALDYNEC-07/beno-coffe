@@ -1,7 +1,7 @@
 /*
  Этот файл определяет страницу полного меню.
- Он показывает карточки с названием, категорией и ценой, а центральная карточка выделена.
- Человек может пролистывать меню, видеть выбранную карточку в центре и открыть подробную страницу позиции.
+ Он показывает скролл категорий и карточки позиций с названием, категорией и ценой, а центральная карточка выделена.
+ Человек может выбрать категорию, пролистывать меню, видеть выбранную карточку в центре и открыть подробную страницу позиции.
 */
 "use client";
 import { useEffect, useRef, useState } from "react";
@@ -13,21 +13,40 @@ import {
   type MenuItem,
 } from "@/lib/menuData";
 import { commonMenuText } from "@/lib/menuText";
+import MenuCategoryScroller from "@/components/MenuCategoryScroller/MenuCategoryScroller";
 
 type MenuPageProps = {
   items: MenuItem[];
 };
 
-// Этот набор текста хранит заголовок и подсказки для страницы меню.
+// Этот набор текста хранит подписи, запасные тексты и служебные ключи для страницы меню.
 const menuPageText = {
-  title: "Полное меню",
   empty: "Пока нет данных о меню. Загляните чуть позже!",
   priceFromPrefix: "от",
+  allCategoryKey: "all",
+  allCategoryLabel: "Все",
+  categoriesLabel: "Категории меню",
+  scrollStoragePrefix: "menu-page-scroll-left",
   ...commonMenuText,
 };
 
 // Этот список связывает название позиции с видеофоном на карточке.
 const menuVideoByName = [{ key: "эспрессо", src: "/espresso.mp4" }];
+
+// Этот помощник возвращает название категории или запасной вариант.
+function getCategoryLabel(item: MenuItem, fallback: string) {
+  const rawValue =
+    typeof item.category === "object" && item.category?.value != null
+      ? String(item.category.value)
+      : "";
+  const trimmedValue = rawValue.trim();
+  return trimmedValue || fallback;
+}
+
+// Этот помощник превращает название категории в ключ для фильтрации.
+function getCategoryKey(label: string) {
+  return label.trim().toLowerCase().replace(/\s+/g, "-");
+}
 
 // Этот помощник подбирает видеофон по названию позиции меню.
 function getMenuVideoSrc(nameLabel: string) {
@@ -42,8 +61,55 @@ export default function MenuPage({ items }: MenuPageProps) {
   const gridRef = useRef<HTMLDivElement | null>(null);
   // Это число хранит номер карточки, которая сейчас в центре.
   const [activeIndex, setActiveIndex] = useState(0);
+  // Это поле хранит ключ выбранной категории для фильтрации списка.
+  const [activeCategoryKey, setActiveCategoryKey] = useState(
+    menuPageText.allCategoryKey
+  );
+
+  // Этот блок собирает список категорий для верхнего скролла.
+  const categoryOptions: { key: string; label: string }[] = [];
+  const categoryKeys = new Set<string>();
+  items.forEach((item) => {
+    const label = getCategoryLabel(item, menuPageText.categoryFallback);
+    const key = getCategoryKey(label);
+    if (categoryKeys.has(key)) {
+      return;
+    }
+    categoryKeys.add(key);
+    categoryOptions.push({ key, label });
+  });
+  const categories = [
+    {
+      key: menuPageText.allCategoryKey,
+      label: menuPageText.allCategoryLabel,
+    },
+    ...categoryOptions,
+  ];
+
+  // Этот блок проверяет, что выбранная категория есть в обновленном списке.
+  useEffect(() => {
+    if (activeCategoryKey === menuPageText.allCategoryKey) {
+      return;
+    }
+    const hasActiveCategory = categories.some(
+      (category) => category.key === activeCategoryKey
+    );
+    if (!hasActiveCategory) {
+      setActiveCategoryKey(menuPageText.allCategoryKey);
+    }
+  }, [activeCategoryKey, categories]);
+
+  // Этот блок оставляет только позиции выбранной категории.
+  const visibleItems =
+    activeCategoryKey === menuPageText.allCategoryKey
+      ? items
+      : items.filter((item) => {
+          const label = getCategoryLabel(item, menuPageText.categoryFallback);
+          return getCategoryKey(label) === activeCategoryKey;
+        });
+
   // Этот ключ хранит название записи для позиции прокрутки ленты.
-  const scrollStorageKey = "menu-page-scroll-left";
+  const scrollStorageKey = `${menuPageText.scrollStoragePrefix}-${activeCategoryKey}`;
 
   // Эта функция мягко перемещает нужную карточку в центр ленты.
   const scrollCardToCenter = (
@@ -82,6 +148,7 @@ export default function MenuPage({ items }: MenuPageProps) {
     const restoreScrollPosition = () => {
       const storedValue = window.sessionStorage.getItem(scrollStorageKey);
       if (!storedValue) {
+        grid.scrollLeft = 0;
         return;
       }
       const parsedValue = Number(storedValue);
@@ -146,7 +213,7 @@ export default function MenuPage({ items }: MenuPageProps) {
       grid.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
     };
-  }, [items.length]);
+  }, [visibleItems.length, scrollStorageKey]);
 
   // Эта функция выделяет карточку при выборе и сдвигает ее в центр.
   const handleCardFocus = (index: number) => {
@@ -154,31 +221,41 @@ export default function MenuPage({ items }: MenuPageProps) {
     scrollCardToCenter(index);
   };
 
+  // Эта функция меняет выбранную категорию в верхнем скролле.
+  const handleCategorySelect = (categoryKey: string) => {
+    setActiveCategoryKey(categoryKey);
+  };
+
   return (
-    // Этот блок содержит всю страницу меню и ее заголовок.
+    // Этот блок содержит всю страницу меню и верхний выбор категорий.
     <section className={styles.menuPage} aria-label="Полное меню">
       <div className={styles.container}>
-        {/* Этот блок показывает заголовок страницы. */}
-        <div className={styles.header}>
-          <h1 className={styles.title}>{menuPageText.title}</h1>
-        </div>
+        {/* Этот блок показывает верхний скролл категорий, если есть позиции меню. */}
+        {items.length > 0 ? (
+          <div className={styles.header}>
+            <MenuCategoryScroller
+              categories={categories}
+              activeKey={activeCategoryKey}
+              onSelect={handleCategorySelect}
+              ariaLabel={menuPageText.categoriesLabel}
+            />
+          </div>
+        ) : null}
 
         {/* Этот блок показывает горизонтальную ленту карточек с выделением центральной позиции или сообщение об отсутствии данных. */}
-        {items.length === 0 ? (
+        {visibleItems.length === 0 ? (
           <p className={styles.empty}>{menuPageText.empty}</p>
         ) : (
           <>
             {/* Этот блок растягивает ленту на всю ширину и оставляет место для теней. */}
             <div className={styles.gridWrap}>
               <div className={styles.grid} ref={gridRef}>
-                {items.map((item, index) => {
+                {visibleItems.map((item, index) => {
                   // Этот блок готовит текст карточки и цену позиции.
                   const nameLabel =
                     item.name?.trim() || menuPageText.nameFallback;
                   const categoryLabel =
-                    typeof item.category === "object" && item.category?.value
-                      ? item.category.value
-                      : menuPageText.categoryFallback;
+                    getCategoryLabel(item, menuPageText.categoryFallback);
                   const priceInfo = getMenuPriceInfo(item);
                   const priceLabel = Number.isFinite(priceInfo.rawPrice)
                     ? formatMenuPrice(priceInfo.rawPrice)
