@@ -1,7 +1,7 @@
 .scroller {
   --chip-width: clamp(140px, 30vw, 220px);
   --chip-gap: clamp(0.5rem, 2vw, 0.85rem);
-  --chip-edge: max(var(--space-3, 1rem), calc(50% - var(--chip-width) / 2));
+  --chip-edge: var(--space-4, 1.25rem);
 
   display: flex;
   gap: var(--chip-gap);

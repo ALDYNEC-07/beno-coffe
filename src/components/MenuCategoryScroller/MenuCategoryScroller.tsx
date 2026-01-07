@@ -1,6 +1,6 @@
 /*
  Этот файл определяет верхний скролл категорий для меню.
- Он показывает горизонтальный список категорий, центрируя выбранную.
+ Он показывает горизонтальный список категорий и выделяет выбранную.
  Человек может выбрать нужную категорию и отфильтровать список позиций.
 */
 "use client";
@@ -26,13 +26,16 @@ export default function MenuCategoryScroller({
   ariaLabel = "Категории меню",
   onSelect,
 }: MenuCategoryScrollerProps) {
-  // Этот объект хранит доступ к ленте категорий для центрирования.
+  // Этот объект хранит доступ к ленте категорий для прокрутки.
   const scrollerRef = useRef<HTMLDivElement | null>(null);
+  // Этот флаг хранит информацию о том, применялась ли начальная прокрутка.
+  const hasInitialScrollRef = useRef(false);
 
-  // Эта функция мягко переносит выбранную категорию в центр ленты.
-  const scrollCategoryToCenter = (
+  // Эта функция мягко подводит выбранную категорию к нужному месту в ленте.
+  const scrollCategoryIntoView = (
     index: number,
-    behavior: ScrollBehavior = "smooth"
+    behavior: ScrollBehavior = "smooth",
+    inline: ScrollLogicalPosition = "center"
   ) => {
     const scroller = scrollerRef.current;
     if (!scroller) {
@@ -50,13 +53,13 @@ export default function MenuCategoryScroller({
     target.scrollIntoView({
       behavior,
       block: "nearest",
-      inline: "center",
+      inline,
     });
   };
 
-  // Этот блок центрирует активную категорию при загрузке и обновлении списка.
+  // Этот блок выставляет стартовую позицию категорий слева с комфортным отступом.
   useEffect(() => {
-    if (categories.length === 0) {
+    if (hasInitialScrollRef.current || categories.length === 0) {
       return;
     }
     const activeIndex = categories.findIndex(
@@ -65,13 +68,14 @@ export default function MenuCategoryScroller({
     if (activeIndex < 0) {
       return;
     }
-    scrollCategoryToCenter(activeIndex, "auto");
+    scrollCategoryIntoView(activeIndex, "auto", "start");
+    hasInitialScrollRef.current = true;
   }, [categories, activeKey]);
 
   // Эта функция выбирает категорию и сразу делает ее видимой в центре.
   const handleCategoryClick = (categoryKey: string, index: number) => {
     onSelect(categoryKey);
-    scrollCategoryToCenter(index);
+    scrollCategoryIntoView(index);
   };
 
   return (
