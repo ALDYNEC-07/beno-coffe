@@ -18,7 +18,6 @@ type MenuPageProps = {
 // Этот набор текста хранит заголовок и подсказки для страницы меню.
 const menuPageText = {
   title: "Полное меню",
-  lead: "Свежие позиции из меню кофейни: напитки, десерты и сезонные предложения.",
   empty: "Пока нет данных о меню. Загляните чуть позже!",
   popularLabel: "Популярно",
   priceFromPrefix: "от",
@@ -43,10 +42,9 @@ export default function MenuPage({ items }: MenuPageProps) {
     // Этот блок содержит всю страницу меню и ее заголовок.
     <section className={styles.menuPage} aria-label="Полное меню">
       <div className={styles.container}>
-        {/* Этот блок показывает заголовок и описание страницы. */}
+        {/* Этот блок показывает заголовок страницы. */}
         <div className={styles.header}>
           <h1 className={styles.title}>{menuPageText.title}</h1>
-          <p className={styles.lead}>{menuPageText.lead}</p>
         </div>
 
         {/* Этот блок показывает горизонтальную ленту карточек или сообщение об отсутствии данных. */}
