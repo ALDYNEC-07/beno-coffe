@@ -5,26 +5,11 @@
 */
 import Link from "next/link";
 import styles from "./MenuPage.module.css";
-
-type MenuCategory = {
-  value?: string | null;
-} | null;
-
-type MenuVariant = {
-  sizeName?: string | null;
-  ml?: number | null;
-  price?: number | string | null;
-};
-
-type MenuItem = {
-  id?: number | string;
-  name?: string | null;
-  price?: number | null;
-  category?: MenuCategory;
-  description?: string | null;
-  popular?: boolean | null;
-  variants?: MenuVariant[] | null;
-};
+import {
+  formatMenuPrice,
+  getMenuPriceInfo,
+  type MenuItem,
+} from "@/lib/menuData";
 
 type MenuPageProps = {
   items: MenuItem[];
@@ -41,25 +26,6 @@ const menuPageText = {
   categoryFallback: "Без категории",
   nameFallback: "Без названия",
 };
-
-// Этот помощник приводит цену к числу, даже если она пришла строкой.
-const parsePrice = (value: MenuVariant["price"] | MenuItem["price"]) => {
-  if (typeof value === "number") {
-    return value;
-  }
-  const text = String(value ?? "").trim();
-  if (!text) {
-    return Number.NaN;
-  }
-  return Number.parseFloat(text.replace(",", "."));
-};
-
-// Этот форматтер помогает показывать цены в привычном виде.
-const priceFormatter = new Intl.NumberFormat("ru-RU", {
-  style: "currency",
-  currency: "RUB",
-  maximumFractionDigits: 0,
-});
 
 // Этот компонент показывает список позиций меню в виде карточек.
 export default function MenuPage({ items }: MenuPageProps) {
@@ -79,22 +45,18 @@ export default function MenuPage({ items }: MenuPageProps) {
         ) : (
           <div className={styles.grid}>
             {items.map((item, index) => {
+              // Этот блок готовит текст карточки и цену позиции.
               const nameLabel = item.name?.trim() || menuPageText.nameFallback;
               const categoryLabel =
                 typeof item.category === "object" && item.category?.value
                   ? item.category.value
                   : menuPageText.categoryFallback;
-              const rawPrice = parsePrice(item.price);
-              const variants = Array.isArray(item.variants) ? item.variants : [];
-              const variantPrices = variants
-                .map((variant) => parsePrice(variant?.price))
-                .filter((value): value is number => Number.isFinite(value));
-              const hasVariantPrices = variantPrices.length > 0;
-              const priceLabel = Number.isFinite(rawPrice)
-                ? priceFormatter.format(rawPrice)
-                : hasVariantPrices
-                ? `${menuPageText.priceFromPrefix} ${priceFormatter.format(
-                    Math.min(...variantPrices)
+              const priceInfo = getMenuPriceInfo(item);
+              const priceLabel = Number.isFinite(priceInfo.rawPrice)
+                ? formatMenuPrice(priceInfo.rawPrice)
+                : priceInfo.hasVariantPrices
+                ? `${menuPageText.priceFromPrefix} ${formatMenuPrice(
+                    priceInfo.minVariantPrice
                   )}`
                 : menuPageText.priceFallback;
               const isPopular = Boolean(item.popular);

@@ -5,26 +5,12 @@
 */
 import Link from "next/link";
 import styles from "./MenuItemPage.module.css";
-
-type MenuCategory = {
-  value?: string | null;
-} | null;
-
-type MenuVariant = {
-  sizeName?: string | null;
-  ml?: number | null;
-  price?: number | string | null;
-};
-
-type MenuItem = {
-  id?: number | string;
-  name?: string | null;
-  price?: number | null;
-  category?: MenuCategory;
-  description?: string | null;
-  popular?: boolean | null;
-  variants?: MenuVariant[] | null;
-};
+import {
+  formatMenuPrice,
+  getMenuPriceInfo,
+  parseMenuPrice,
+  type MenuItem,
+} from "@/lib/menuData";
 
 type MenuItemPageProps = {
   item: MenuItem | null;
@@ -45,25 +31,6 @@ const menuItemText = {
   descriptionTitle: "Описание",
   popularLabel: "Популярно",
 };
-
-// Этот помощник приводит цену к числу, даже если она пришла строкой.
-const parsePrice = (value: MenuVariant["price"] | MenuItem["price"]) => {
-  if (typeof value === "number") {
-    return value;
-  }
-  const text = String(value ?? "").trim();
-  if (!text) {
-    return Number.NaN;
-  }
-  return Number.parseFloat(text.replace(",", "."));
-};
-
-// Этот форматтер помогает показывать цены в привычном виде.
-const priceFormatter = new Intl.NumberFormat("ru-RU", {
-  style: "currency",
-  currency: "RUB",
-  maximumFractionDigits: 0,
-});
 
 // Этот компонент показывает подробную карточку выбранной позиции меню.
 export default function MenuItemPage({ item }: MenuItemPageProps) {
@@ -87,30 +54,28 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
     );
   }
 
+  // Этот блок готовит основные данные позиции для отображения.
   const nameLabel = item.name?.trim() || menuItemText.nameFallback;
   const categoryLabel =
     typeof item.category === "object" && item.category?.value
       ? item.category.value
       : menuItemText.categoryFallback;
   const description = item.description?.trim();
-  const rawPrice = parsePrice(item.price);
-  const variants = Array.isArray(item.variants) ? item.variants : [];
-  const variantPrices = variants
-    .map((variant) => parsePrice(variant?.price))
-    .filter((value): value is number => Number.isFinite(value));
-  const hasVariantPrices = variantPrices.length > 0;
-  const priceLabel = Number.isFinite(rawPrice)
-    ? priceFormatter.format(rawPrice)
-    : hasVariantPrices
-    ? priceFormatter.format(Math.min(...variantPrices))
+
+  // Этот блок рассчитывает цену и варианты, чтобы показать их на странице.
+  const priceInfo = getMenuPriceInfo(item);
+  const priceLabel = Number.isFinite(priceInfo.rawPrice)
+    ? formatMenuPrice(priceInfo.rawPrice)
+    : priceInfo.hasVariantPrices
+    ? formatMenuPrice(priceInfo.minVariantPrice)
     : menuItemText.priceFallback;
-  const priceTitle = Number.isFinite(rawPrice)
+  const priceTitle = Number.isFinite(priceInfo.rawPrice)
     ? menuItemText.priceLabel
-    : hasVariantPrices
+    : priceInfo.hasVariantPrices
     ? menuItemText.priceFromLabel
     : menuItemText.priceLabel;
   const isPopular = Boolean(item.popular);
-  const hasVariants = variants.length > 0;
+  const hasVariants = priceInfo.variants.length > 0;
 
   return (
     // Этот блок показывает подробную страницу выбранной позиции меню.
@@ -153,13 +118,13 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
           <div className={styles.section}>
             <h2 className={styles.sectionTitle}>{menuItemText.variantsTitle}</h2>
             <ul className={styles.variants} aria-label="Варианты размера и цены">
-              {variants.map((variant, variantIndex) => {
+              {priceInfo.variants.map((variant, variantIndex) => {
                 const sizeLabel =
                   variant?.sizeName?.toString().trim() ||
                   menuItemText.sizeFallback;
-                const variantPrice = parsePrice(variant?.price);
+                const variantPrice = parseMenuPrice(variant?.price);
                 const variantPriceLabel = Number.isFinite(variantPrice)
-                  ? priceFormatter.format(variantPrice)
+                  ? formatMenuPrice(variantPrice)
                   : menuItemText.priceFallback;
                 const mlLabel = Number.isFinite(variant?.ml)
                   ? `${variant.ml} мл`
