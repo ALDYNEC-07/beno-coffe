@@ -19,11 +19,22 @@
   --card-transition: 220ms ease;
   --edge-padding: max(var(--space-4), calc(50vw - var(--card-width) / 2));
 
-  padding-block: var(--space-6);
+  padding-bottom: var(--space-6);
   font-size: var(--text-base);
   line-height: 1.5;
   letter-spacing: 0.2px;
   color: #1b1b1b;
+  background-color: #fffaf3;
+  background-image: radial-gradient(
+      70% 120% at 50% -10%,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0)
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 248, 236, 0.95),
+      rgba(255, 248, 236, 0.55)
+    );
 }
 
 .container {
@@ -32,16 +43,8 @@
 }
 
 .header {
-  display: grid;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
-}
-
-.title {
-  font-size: var(--h1);
-  line-height: 1.1;
-  margin: 0;
-  font-weight: 700;
+  display: block;
+  margin-bottom: 0;
 }
 
 .empty {

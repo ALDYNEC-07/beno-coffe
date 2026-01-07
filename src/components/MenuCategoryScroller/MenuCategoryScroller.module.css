@@ -1,0 +1,66 @@
+.scroller {
+  --chip-width: clamp(140px, 30vw, 220px);
+  --chip-gap: clamp(0.5rem, 2vw, 0.85rem);
+  --chip-edge: var(--space-4, 1.25rem);
+
+  display: flex;
+  gap: var(--chip-gap);
+  overflow-x: auto;
+  overflow-y: visible;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding-inline: var(--chip-edge);
+  padding-top: calc(var(--space-2, 0.75rem) + 0.15rem);
+  padding-bottom: calc(var(--space-2, 0.75rem) + 0.85rem);
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--chip-edge);
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+.scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex: 0 0 var(--chip-width);
+  border: 1px solid rgba(155, 106, 18, 0.35);
+  border-radius: 999px;
+  padding: 0.65rem 1rem;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.75),
+    rgba(255, 255, 255, 0.35)
+  );
+  color: #5f4308;
+  font-size: var(--text-sm, 0.9rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  scroll-snap-align: center;
+  transition: transform 180ms ease, box-shadow 180ms ease,
+    background-color 180ms ease, color 180ms ease;
+  backdrop-filter: blur(12px) saturate(145%);
+  -webkit-backdrop-filter: blur(12px) saturate(145%);
+}
+
+.chip:focus-visible {
+  outline: 2px solid #1b1b1b;
+  outline-offset: 4px;
+}
+
+.chipSelected {
+  background: linear-gradient(
+    135deg,
+    rgba(233, 217, 197, 0.9),
+    rgba(210, 186, 154, 0.75)
+  );
+  color: #3f2c05;
+  transform: scale(1.02);
+  box-shadow: 0 6px 18px rgba(60, 40, 20, 0.18);
+}
