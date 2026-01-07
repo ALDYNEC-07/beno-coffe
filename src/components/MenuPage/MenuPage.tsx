@@ -31,7 +31,7 @@ const menuPageText = {
 };
 
 // Этот список связывает название позиции с видеофоном на карточке.
-const menuVideoByName = [{ key: "эспрессо", src: "/espresso.mp4" }];
+const menuVideoByName = [{ key: "эспрессо", src: "/espresso.mp4" }, { key: "капучино", src: "/cappuchino.mp4" }];
 
 // Этот помощник возвращает название категории или запасной вариант.
 function getCategoryLabel(item: MenuItem, fallback: string) {
