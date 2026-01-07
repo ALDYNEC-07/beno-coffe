@@ -27,6 +27,16 @@ const menuPageText = {
   nameFallback: "Без названия",
 };
 
+// Этот список связывает название позиции с видеофоном на карточке.
+const menuVideoByName = [{ key: "эспрессо", src: "/espresso.mp4" }];
+
+// Этот помощник подбирает видеофон по названию позиции меню.
+function getMenuVideoSrc(nameLabel: string) {
+  const lowerName = nameLabel.trim().toLowerCase();
+  const match = menuVideoByName.find((item) => lowerName.includes(item.key));
+  return match?.src ?? null;
+}
+
 // Этот компонент показывает список позиций меню в виде карточек.
 export default function MenuPage({ items }: MenuPageProps) {
   return (
@@ -60,6 +70,11 @@ export default function MenuPage({ items }: MenuPageProps) {
                   )}`
                 : menuPageText.priceFallback;
               const isPopular = Boolean(item.popular);
+              // Этот блок определяет, нужен ли фон-видео для карточки позиции.
+              const videoSrc = getMenuVideoSrc(nameLabel);
+              const cardClassName = videoSrc
+                ? `${styles.card} ${styles.cardWithVideo}`
+                : styles.card;
 
               return (
                 // Этот блок делает карточку кликабельной и ведет к странице позиции.
@@ -69,7 +84,22 @@ export default function MenuPage({ items }: MenuPageProps) {
                   href={`/menu/${item.id}`}
                   aria-label={`Открыть позицию ${nameLabel}`}
                 >
-                  <article className={styles.card}>
+                  <article className={cardClassName}>
+                    {/* Этот блок показывает видеофон, если он есть у позиции. */}
+                    {videoSrc ? (
+                      <div className={styles.videoWrap} aria-hidden="true">
+                        <video
+                          className={styles.video}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                        >
+                          <source src={videoSrc} type="video/mp4" />
+                        </video>
+                      </div>
+                    ) : null}
                     {/* Этот блок показывает минимальную информацию о позиции. */}
                     <div className={styles.cardHeader}>
                       <div className={styles.nameBlock}>

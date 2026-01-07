@@ -14,6 +14,7 @@
   --radius: 14px;
   --border: 1px solid #1b1b1b;
   --measure: 65ch;
+  --card-min-height: clamp(220px, 52vw, 360px);
 
   padding-block: var(--space-6);
   font-size: var(--text-base);
@@ -69,6 +70,13 @@
   border-radius: var(--radius);
   padding: var(--space-3);
   background: #fff;
+  min-height: var(--card-min-height);
+}
+
+.cardWithVideo {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
 }
 
 .cardLink {
@@ -76,7 +84,7 @@
   text-decoration: none;
   color: inherit;
   flex: 0 0 auto;
-  min-width: min(85vw, 360px);
+  min-width: min(78vw, 320px);
   scroll-snap-align: start;
 }
 
@@ -91,6 +99,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+  position: relative;
+  z-index: 1;
 }
 
 .nameBlock {
@@ -135,6 +145,27 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   opacity: 0.7;
+}
+
+.videoWrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .videoWrap {
+    display: none;
+  }
 }
 
 @media (min-width: 720px) {
