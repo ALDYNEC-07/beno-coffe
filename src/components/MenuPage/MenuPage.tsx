@@ -4,16 +4,20 @@
  Человек может выбрать категорию, пролистывать меню, видеть выбранную карточку в центре и открыть подробную страницу позиции.
 */
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./MenuPage.module.css";
-import {
-  formatMenuPrice,
-  getMenuPriceInfo,
-  type MenuItem,
-} from "@/lib/menuData";
+import type { MenuItem } from "@/lib/menuData";
 import { commonMenuText } from "@/lib/menuText";
+import {
+  getMenuCategoryKey,
+  getMenuCategoryLabel,
+  getMenuListPriceLabel,
+  getMenuNameLabel,
+  getMenuVideoSrc,
+} from "@/lib/menuView";
 import MenuCategoryScroller from "@/components/MenuCategoryScroller/MenuCategoryScroller";
+import MenuCardVideo from "@/components/MenuCardVideo/MenuCardVideo";
 
 type MenuPageProps = {
   items: MenuItem[];
@@ -30,86 +34,58 @@ const menuPageText = {
   ...commonMenuText,
 };
 
-// Этот список связывает название позиции с видеофоном на карточке.
-const menuVideoByName = [{ key: "эспрессо", src: "/espresso.mp4" }];
-
-// Этот помощник возвращает название категории или запасной вариант.
-function getCategoryLabel(item: MenuItem, fallback: string) {
-  const rawValue =
-    typeof item.category === "object" && item.category?.value != null
-      ? String(item.category.value)
-      : "";
-  const trimmedValue = rawValue.trim();
-  return trimmedValue || fallback;
-}
-
-// Этот помощник превращает название категории в ключ для фильтрации.
-function getCategoryKey(label: string) {
-  return label.trim().toLowerCase().replace(/\s+/g, "-");
-}
-
-// Этот помощник подбирает видеофон по названию позиции меню.
-function getMenuVideoSrc(nameLabel: string) {
-  const lowerName = nameLabel.trim().toLowerCase();
-  const match = menuVideoByName.find((item) => lowerName.includes(item.key));
-  return match?.src ?? null;
-}
-
 // Этот компонент показывает список позиций меню в виде карточек.
 export default function MenuPage({ items }: MenuPageProps) {
   // Этот объект держит доступ к ленте карточек для вычисления центра.
   const gridRef = useRef<HTMLDivElement | null>(null);
   // Это число хранит номер карточки, которая сейчас в центре.
   const [activeIndex, setActiveIndex] = useState(0);
-  // Это поле хранит ключ выбранной категории для фильтрации списка.
+  // Это поле хранит ключ категории, выбранной человеком.
   const [activeCategoryKey, setActiveCategoryKey] = useState(
     menuPageText.allCategoryKey
   );
 
   // Этот блок собирает список категорий для верхнего скролла.
-  const categoryOptions: { key: string; label: string }[] = [];
-  const categoryKeys = new Set<string>();
-  items.forEach((item) => {
-    const label = getCategoryLabel(item, menuPageText.categoryFallback);
-    const key = getCategoryKey(label);
-    if (categoryKeys.has(key)) {
-      return;
-    }
-    categoryKeys.add(key);
-    categoryOptions.push({ key, label });
-  });
-  const categories = [
-    {
-      key: menuPageText.allCategoryKey,
-      label: menuPageText.allCategoryLabel,
-    },
-    ...categoryOptions,
-  ];
+  const categories = useMemo(() => {
+    const categoryOptions: { key: string; label: string }[] = [];
+    const categoryKeys = new Set<string>();
+    items.forEach((item) => {
+      const label = getMenuCategoryLabel(item, menuPageText.categoryFallback);
+      const key = getMenuCategoryKey(label);
+      if (categoryKeys.has(key)) {
+        return;
+      }
+      categoryKeys.add(key);
+      categoryOptions.push({ key, label });
+    });
 
-  // Этот блок проверяет, что выбранная категория есть в обновленном списке.
-  useEffect(() => {
-    if (activeCategoryKey === menuPageText.allCategoryKey) {
-      return;
-    }
-    const hasActiveCategory = categories.some(
-      (category) => category.key === activeCategoryKey
-    );
-    if (!hasActiveCategory) {
-      setActiveCategoryKey(menuPageText.allCategoryKey);
-    }
-  }, [activeCategoryKey, categories]);
+    return [
+      {
+        key: menuPageText.allCategoryKey,
+        label: menuPageText.allCategoryLabel,
+      },
+      ...categoryOptions,
+    ];
+  }, [items]);
+
+  // Этот ключ выбирает доступную категорию, если прежняя больше не существует.
+  const resolvedCategoryKey = categories.some(
+    (category) => category.key === activeCategoryKey
+  )
+    ? activeCategoryKey
+    : menuPageText.allCategoryKey;
 
   // Этот блок оставляет только позиции выбранной категории.
   const visibleItems =
-    activeCategoryKey === menuPageText.allCategoryKey
+    resolvedCategoryKey === menuPageText.allCategoryKey
       ? items
       : items.filter((item) => {
-          const label = getCategoryLabel(item, menuPageText.categoryFallback);
-          return getCategoryKey(label) === activeCategoryKey;
+          const label = getMenuCategoryLabel(item, menuPageText.categoryFallback);
+          return getMenuCategoryKey(label) === resolvedCategoryKey;
         });
 
   // Этот ключ хранит название записи для позиции прокрутки ленты.
-  const scrollStorageKey = `${menuPageText.scrollStoragePrefix}-${activeCategoryKey}`;
+  const scrollStorageKey = `${menuPageText.scrollStoragePrefix}-${resolvedCategoryKey}`;
 
   // Эта функция мягко перемещает нужную карточку в центр ленты.
   const scrollCardToCenter = (
@@ -229,16 +205,16 @@ export default function MenuPage({ items }: MenuPageProps) {
   return (
     // Этот блок содержит всю страницу меню и верхний выбор категорий.
     <section className={styles.menuPage} aria-label="Полное меню">
-      <div className={styles.container}>
+      <div className="container">
         {/* Этот блок показывает верхний скролл категорий, если есть позиции меню. */}
         {items.length > 0 ? (
           <div className={styles.header}>
-            <MenuCategoryScroller
-              categories={categories}
-              activeKey={activeCategoryKey}
-              onSelect={handleCategorySelect}
-              ariaLabel={menuPageText.categoriesLabel}
-            />
+              <MenuCategoryScroller
+                categories={categories}
+                activeKey={resolvedCategoryKey}
+                onSelect={handleCategorySelect}
+                ariaLabel={menuPageText.categoriesLabel}
+              />
           </div>
         ) : null}
 
@@ -252,18 +228,15 @@ export default function MenuPage({ items }: MenuPageProps) {
               <div className={styles.grid} ref={gridRef}>
                 {visibleItems.map((item, index) => {
                   // Этот блок готовит текст карточки и цену позиции.
-                  const nameLabel =
-                    item.name?.trim() || menuPageText.nameFallback;
-                  const categoryLabel =
-                    getCategoryLabel(item, menuPageText.categoryFallback);
-                  const priceInfo = getMenuPriceInfo(item);
-                  const priceLabel = Number.isFinite(priceInfo.rawPrice)
-                    ? formatMenuPrice(priceInfo.rawPrice)
-                    : priceInfo.hasVariantPrices
-                    ? `${menuPageText.priceFromPrefix} ${formatMenuPrice(
-                        priceInfo.minVariantPrice
-                      )}`
-                    : menuPageText.priceFallback;
+                  const nameLabel = getMenuNameLabel(
+                    item,
+                    menuPageText.nameFallback
+                  );
+                  const categoryLabel = getMenuCategoryLabel(
+                    item,
+                    menuPageText.categoryFallback
+                  );
+                  const priceLabel = getMenuListPriceLabel(item, menuPageText);
                   const isPopular = Boolean(item.popular);
                   // Этот блок определяет, нужен ли фон-видео для карточки позиции.
                   const videoSrc = getMenuVideoSrc(nameLabel);
@@ -289,20 +262,14 @@ export default function MenuPage({ items }: MenuPageProps) {
                       onFocus={() => handleCardFocus(index)}
                     >
                       <article className={cardClassName}>
-                        {/* Этот блок показывает видеофон, если он есть у позиции. */}
+                        {/* Этот блок показывает видеофон только у выбранной карточки. */}
                         {videoSrc ? (
-                          <div className={styles.videoWrap} aria-hidden="true">
-                            <video
-                              className={styles.video}
-                              autoPlay
-                              muted
-                              loop
-                              playsInline
-                              preload="metadata"
-                            >
-                              <source src={videoSrc} type="video/mp4" />
-                            </video>
-                          </div>
+                          <MenuCardVideo
+                            src={videoSrc}
+                            isActive={isSelected}
+                            wrapperClassName={styles.videoWrap}
+                            videoClassName={styles.video}
+                          />
                         ) : null}
                         {/* Этот блок показывает пометку популярной позиции в правом верхнем углу карточки. */}
                         {isPopular ? (

@@ -53,7 +53,7 @@ export default function Footer() {
   return (
     // Этот блок показывает подвал с контактами и служебной информацией.
     <footer id="footer" className={styles.footer} aria-label="Контакты и служебная информация">
-      <div className={styles.container}>
+      <div className="container">
         {/* Этот блок делит подвал на три основные колонки. */}
         <div className={styles.grid}>
           {/* Этот блок показывает краткое описание кофейни. */}
@@ -101,7 +101,7 @@ export default function Footer() {
                   {socialLinks.map((link) => (
                     <Link
                       key={link.href}
-                      className={styles.button}
+                      className="button"
                       href={link.href}
                       aria-label={link.ariaLabel}
                     >
@@ -115,7 +115,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className={`${styles.container} ${styles.bottom}`}>
+      <div className={`container ${styles.bottom}`}>
         {/* Этот блок показывает копирайт и служебные ссылки. */}
         <div className={styles.bottomRow}>
           <span className={styles.muted}>© {currentYear} BENO coffee</span>

@@ -22,11 +22,11 @@ export default function About() {
   return (
     // Этот блок показывает секцию "О нас" с якорем для навигации.
     <section id="about" className={styles.about} aria-label="Коротко о BENO">
-      <div className={styles.container}>
+      <div className="container">
         {/* Этот блок делит секцию на текстовую часть и медиа. */}
         <div className={styles.layout}>
           {/* Этот блок содержит заголовок и описание. */}
-          <div className={styles.stack}>
+          <div className="stack">
             <h2 className={styles.title}>{aboutContent.title}</h2>
             <p className={styles.lead}>{aboutContent.description}</p>
           </div>
