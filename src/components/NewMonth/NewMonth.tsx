@@ -34,18 +34,18 @@ export default function NewMonth() {
   return (
     // Этот блок показывает секцию новинки месяца с якорем для навигации.
     <section id="new" className={styles.newMonth} aria-label="Новинка месяца">
-      <div className={styles.container}>
+      <div className="container">
         {/* Этот блок делит секцию на основную часть и дополнительные анонсы. */}
         <div className={styles.layout}>
           {/* Этот блок показывает основную информацию о сезонной новинке. */}
-          <div className={styles.stack}>
+          <div className="stack">
             <h2 className={styles.title}>Новинка месяца</h2>
             <p className={styles.lead}>{monthlySpecial.summary}</p>
 
             {/* Этот блок показывает карточку с напитком месяца. */}
             <article className={styles.card}>
               {/* Этот блок содержит фото-плейсхолдер, описание и кнопки. */}
-              <div className={styles.stack}>
+              <div className="stack">
                 {/* Этот блок показывает место для фото напитка. */}
                 <div className={styles.media} role="img" aria-label={monthlySpecial.mediaLabel}>
                   <p className={styles.mediaText}>{monthlySpecial.mediaNote}</p>
@@ -54,7 +54,7 @@ export default function NewMonth() {
                 <p className={styles.note}>{monthlySpecial.description}</p>
                 {/* Этот блок показывает кнопку для перехода к меню. */}
                 <div className={styles.metaRow}>
-                  <Link className={styles.button} href={monthlySpecial.menuLink}>
+                  <Link className="button" href={monthlySpecial.menuLink}>
                     {monthlySpecial.menuLabel}
                   </Link>
                 </div>

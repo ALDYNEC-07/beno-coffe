@@ -1,16 +1,5 @@
 .menuPage {
-  --container: 1120px;
-  --space-2: clamp(0.75rem, 1.8vw, 1rem);
-  --space-3: clamp(1rem, 2.6vw, 1.5rem);
-  --space-4: clamp(1.25rem, 3.6vw, 2rem);
-  --space-5: clamp(1.75rem, 5vw, 3rem);
-  --space-6: clamp(2.25rem, 6.5vw, 4rem);
-  --text-sm: clamp(0.875rem, 0.6vw + 0.75rem, 0.95rem);
-  --text-base: clamp(1rem, 0.7vw + 0.9rem, 1.125rem);
-  --h1: clamp(2rem, 2.8vw + 1.3rem, 3rem);
   --h2: clamp(1.25rem, 1.4vw + 1rem, 1.75rem);
-  --radius: 14px;
-  --border: 1px solid #1b1b1b;
   --card-min-height: clamp(340px, 72vw, 560px);
   --card-width: min(67vw, 270px);
   --card-scale: 1.06;
@@ -35,11 +24,6 @@
       rgba(255, 248, 236, 0.95),
       rgba(255, 248, 236, 0.55)
     );
-}
-
-.container {
-  width: min(100% - 2 * var(--space-3), var(--container));
-  margin-inline: auto;
 }
 
 .header {

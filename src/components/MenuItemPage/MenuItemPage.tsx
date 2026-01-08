@@ -34,9 +34,9 @@ const menuItemText = {
 export default function MenuItemPage({ item }: MenuItemPageProps) {
   if (!item) {
     return (
-      // Этот блок показывает сообщение, когда позиция не найдена.
-      <section className={styles.menuItemPage} aria-label="Позиция меню">
-        <div className={styles.container}>
+    // Этот блок показывает сообщение, когда позиция не найдена.
+    <section className={styles.menuItemPage} aria-label="Позиция меню">
+      <div className={`container ${styles.content}`}>
           {/* Этот блок показывает заголовок и подсказку, что делать дальше. */}
           <div className={styles.header}>
             <h1 className={styles.title}>{menuItemText.notFoundTitle}</h1>
@@ -78,7 +78,7 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
   return (
     // Этот блок показывает подробную страницу выбранной позиции меню.
     <section className={styles.menuItemPage} aria-label={nameLabel}>
-      <div className={styles.container}>
+      <div className={`container ${styles.content}`}>
         {/* Этот блок ведет пользователя обратно к полному меню. */}
         <Link className={styles.backLink} href="/menu">
           ← {menuItemText.backLabel}

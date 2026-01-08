@@ -108,7 +108,7 @@ export default function Navigation() {
     <>
       {/* Этот блок показывает шапку с названием и меню. */}
       <header className={styles.header}>
-        <div className={styles.container}>
+        <div className={`container ${styles.content}`}>
           {/* Этот блок ведет на главную страницу и показывает название кофейни. */}
           <Link className={styles.brand} href="/" aria-label="BENO coffee — на главную">
             <span className={styles.brandName}>BENO кофейня</span>

@@ -32,9 +32,9 @@ export default function Features() {
       className={styles.features}
       aria-label="Ключевые преимущества BENO coffee"
     >
-      <div className={styles.container}>
+      <div className="container">
         {/* Этот блок показывает заголовок секции и короткое пояснение. */}
-        <div className={styles.stack}>
+        <div className="stack">
           <h2 className={styles.title}>Почему BENO</h2>
           <p className={styles.lead}>
             Коротко и по делу — чтобы за 10 секунд стало понятно, что вас ждёт внутри.

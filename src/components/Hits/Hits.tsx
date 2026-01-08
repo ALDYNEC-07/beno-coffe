@@ -40,9 +40,9 @@ export default function Hits() {
   return (
     // Этот блок показывает секцию хитов с якорем для навигации.
     <section id="hits" className={styles.hits} aria-label="Хиты кофейни">
-      <div className={styles.container}>
+      <div className="container">
         {/* Этот блок показывает заголовок секции и короткое пояснение. */}
-        <div className={styles.stack}>
+        <div className="stack">
           <h2 className={styles.title}>Хиты кофейни</h2>
           <p className={styles.lead}>
             Самые популярные позиции, которые чаще всего выбирают гости.
@@ -65,7 +65,7 @@ export default function Hits() {
 
         {/* Этот блок показывает кнопку перехода в меню. */}
         <div className={styles.metaRow}>
-          <Link className={styles.button} href={hitsAction.link}>
+          <Link className="button" href={hitsAction.link}>
             {hitsAction.label}
           </Link>
         </div>

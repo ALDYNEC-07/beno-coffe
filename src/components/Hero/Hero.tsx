@@ -51,7 +51,7 @@ export default function Hero() {
   return (
     // Этот блок показывает главный экран приветствия кофейни.
     <section className={styles.hero}>
-      <div className={styles.container}>
+      <div className="container">
         {/* Этот блок делит секцию на медиа и текстовую часть. */}
         <div className={styles.layout}>
           {/* Этот блок показывает видео кофейни и включает его только когда оно в поле зрения. */}
@@ -81,7 +81,7 @@ export default function Hero() {
           {/* Этот блок показывает текст, факты и быстрые ссылки. */}
           <div className={styles.copy}>
             {/* Этот блок содержит заголовок и вводный текст. */}
-            <div className={styles.stack}>
+            <div className="stack">
               <h1 className={styles.title}>BENO — больше, чем кофе</h1>
               <p className={styles.lead}>Заходите смелее — кофе уже заждался!</p>
             </div>
@@ -89,15 +89,15 @@ export default function Hero() {
             {/* Этот блок собирает ключевую информацию одним взглядом. */}
             <div className={styles.heroMeta} aria-label="Ключевая информация одним взглядом">
               {/* Этот блок показывает адрес и быстрый переход к карте. */}
-              <div className={styles.metaBlock} aria-label="Адрес и ориентир">
-                <p className={styles.metaTitle}>Адрес</p>
-                <p className={styles.metaValue}>Улица, дом — ориентир рядом</p>
-                <div className={`${styles.metaRow} ${styles.metaRowCompact}`}>
-                  <Link
-                    className={`${styles.button} ${styles.metaButton}`}
-                    href="/map"
-                    aria-label="Открыть карту и построить маршрут"
-                  >
+                <div className={styles.metaBlock} aria-label="Адрес и ориентир">
+                  <p className={styles.metaTitle}>Адрес</p>
+                  <p className={styles.metaValue}>Улица, дом — ориентир рядом</p>
+                  <div className={`${styles.metaRow} ${styles.metaRowCompact}`}>
+                    <Link
+                      className={`button ${styles.metaButton}`}
+                      href="/map"
+                      aria-label="Открыть карту и построить маршрут"
+                    >
                     <span aria-hidden="true">🗺</span>
                     Как добраться
                   </Link>
@@ -111,19 +111,19 @@ export default function Hero() {
                 aria-label="Быстрые переходы"
               >
                 <a
-                  className={`${styles.button} ${styles.metaButton}`}
+                  className={`button ${styles.metaButton}`}
                   href="#footer"
                   aria-label="Перейти к контактам и адресу"
                 >
                   Контакты
                 </a>
-                <Link className={`${styles.button} ${styles.metaButton}`} href="/menu">
+                <Link className={`button ${styles.metaButton}`} href="/menu">
                   Смотреть меню
                 </Link>
-                <a className={`${styles.button} ${styles.metaButton}`} href="#new">
+                <a className={`button ${styles.metaButton}`} href="#new">
                   Новинка месяца
                 </a>
-                <a className={`${styles.button} ${styles.metaButton}`} href="#about">
+                <a className={`button ${styles.metaButton}`} href="#about">
                   История BENO
                 </a>
               </div>

@@ -227,7 +227,7 @@ export default function MenuPage({ items }: MenuPageProps) {
   return (
     // Этот блок содержит всю страницу меню и верхний выбор категорий.
     <section className={styles.menuPage} aria-label="Полное меню">
-      <div className={styles.container}>
+      <div className="container">
         {/* Этот блок показывает верхний скролл категорий, если есть позиции меню. */}
         {items.length > 0 ? (
           <div className={styles.header}>
