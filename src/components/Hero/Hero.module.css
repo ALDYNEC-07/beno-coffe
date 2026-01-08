@@ -37,7 +37,7 @@
   border: var(--border);
   border-radius: var(--radius);
   overflow: hidden;
-  min-height: clamp(240px, 35vw, 420px);
+  min-height: clamp(200px, 30vw, 340px);
   display: grid;
   place-items: center;
   background: #fff;
@@ -45,8 +45,16 @@
 }
 
 @media (max-width: 719px) {
+  .hero {
+    padding-top: 0;
+  }
+
   .media {
-    min-height: clamp(320px, 70vw, 520px);
+    min-height: clamp(280px, 58vw, 420px);
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    border-radius: 0;
   }
 }
 
