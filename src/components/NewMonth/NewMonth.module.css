@@ -1,6 +1,7 @@
 .newMonth {
   --h3: clamp(1.2rem, 1.2vw + 1rem, 1.55rem);
-  padding-block: var(--space-6);
+  padding-top: var(--space-6);
+  padding-bottom: 0;
   font-size: var(--text-base);
   line-height: 1.5;
   letter-spacing: 0.2px;
