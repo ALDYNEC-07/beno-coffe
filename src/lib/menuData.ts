@@ -1,6 +1,8 @@
 // Этот файл хранит общие типы меню и помощники для работы с ценами.
 // Он помогает не дублировать разбор цены и формат вывода.
 
+import { parseNumericValue } from "@/lib/number";
+
 export type MenuCategory = {
   value?: string | null;
 } | null;
@@ -23,14 +25,7 @@ export type MenuItem = {
 
 // Этот помощник приводит цену к числу, даже если она пришла строкой.
 export function parseMenuPrice(value: MenuVariant["price"] | MenuItem["price"]) {
-  if (typeof value === "number") {
-    return value;
-  }
-  const text = String(value ?? "").trim();
-  if (!text) {
-    return Number.NaN;
-  }
-  return Number.parseFloat(text.replace(",", "."));
+  return parseNumericValue(value);
 }
 
 // Этот форматтер помогает показывать цены в привычном виде.

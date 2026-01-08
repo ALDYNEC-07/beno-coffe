@@ -3,14 +3,16 @@
  Он показывает контакты, адрес, часы работы и служебные ссылки.
  Человек может узнать расписание, связаться и перейти в соцсети или документы.
 */
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import styles from "./Footer.module.css";
 
-// Этот объект хранит заголовок и описание для первого блока подвала.
+// Этот объект хранит заголовок и слоган для первого блока подвала.
 const footerIntro = {
-  title: "BENO coffee",
-  description:
-    "Адрес, часы, связь, соцсети — всё, что нужно в один клик. И да, часы тут “заметные”, как и положено ☕",
+  title: "BENO COFFEE",
+  slogan: "BENO — место, куда возвращаются.",
 };
 
 // Этот объект хранит данные о кратком расписании и адресе.
@@ -40,77 +42,147 @@ const socialLinks = [
   { label: "Facebook", href: "/facebook", ariaLabel: "Facebook BENO" },
 ];
 
-// Этот список хранит ссылки на служебные документы.
-const legalLinks = [
-  { label: "Политика", href: "/privacy" },
-  { label: "Условия", href: "/terms" },
-];
-
-// Этот год нужен для строки копирайта внизу подвала.
-const currentYear = new Date().getFullYear();
+// Этот диапазон лет нужен для строки копирайта внизу подвала.
+const copyrightYears = "2019 - 2026";
 
 export default function Footer() {
+  // Этот объект хранит, какие блоки подвала сейчас раскрыты.
+  const [openBlocks, setOpenBlocks] = useState({
+    intro: false,
+    hours: false,
+    contact: false,
+  });
+
+  // Эта функция переключает раскрытие блока при нажатии на его заголовок.
+  const handleToggle = (blockKey: "intro" | "hours" | "contact") => {
+    setOpenBlocks((prev) => ({ ...prev, [blockKey]: !prev[blockKey] }));
+  };
+
   return (
     // Этот блок показывает подвал с контактами и служебной информацией.
     <footer id="footer" className={styles.footer} aria-label="Контакты и служебная информация">
       <div className="container">
         {/* Этот блок делит подвал на три основные колонки. */}
         <div className={styles.grid}>
-          {/* Этот блок показывает краткое описание кофейни. */}
+          {/* Этот блок показывает слоган кофейни и раскрывает его по нажатию. */}
           <div className={styles.block}>
-            <h3 className={styles.blockTitle}>{footerIntro.title}</h3>
-            <p className={`${styles.muted} ${styles.introText}`}>{footerIntro.description}</p>
+            <h3 className={styles.blockTitle}>
+              {/* Эта кнопка раскрывает и скрывает описание кофейни. */}
+              <button
+                type="button"
+                className={`${styles.blockToggle} ${
+                  openBlocks.intro ? styles.blockToggleOpen : ""
+                }`}
+                aria-expanded={openBlocks.intro}
+                aria-controls="footer-intro"
+                onClick={() => handleToggle("intro")}
+              >
+                <span>{footerIntro.title}</span>
+                <span className={styles.chevron} aria-hidden="true" />
+              </button>
+            </h3>
+            {/* Этот блок показывает слоган кофейни, когда он раскрыт. */}
+            <div
+              id="footer-intro"
+              className={`${styles.blockContent} ${
+                openBlocks.intro ? styles.blockContentOpen : ""
+              }`}
+            >
+              <p className={`${styles.muted} ${styles.introText}`}>{footerIntro.slogan}</p>
+            </div>
           </div>
 
-          {/* Этот блок показывает часы работы и адрес. */}
+          {/* Этот блок показывает часы работы и адрес и раскрывает детали по нажатию. */}
           <div className={styles.block}>
-            <h3 className={styles.blockTitle}>{hoursInfo.title}</h3>
-            {/* Этот список показывает часы работы одной строкой и адрес. */}
-            <ul className={styles.list}>
-              <li className={styles.hoursBig}>{hoursInfo.todayLabel}</li>
-              <li>
-                <strong>{hoursInfo.addressLabel}</strong>{" "}
-                <Link className={styles.inlineLink} href={hoursInfo.addressLink}>
-                  {hoursInfo.addressText}
-                </Link>
-              </li>
-            </ul>
+            <h3 className={styles.blockTitle}>
+              {/* Эта кнопка раскрывает и скрывает блок с часами и адресом. */}
+              <button
+                type="button"
+                className={`${styles.blockToggle} ${
+                  openBlocks.hours ? styles.blockToggleOpen : ""
+                }`}
+                aria-expanded={openBlocks.hours}
+                aria-controls="footer-hours"
+                onClick={() => handleToggle("hours")}
+              >
+                <span>{hoursInfo.title}</span>
+                <span className={styles.chevron} aria-hidden="true" />
+              </button>
+            </h3>
+            {/* Этот список показывает часы работы одной строкой и адрес, когда блок раскрыт. */}
+            <div
+              id="footer-hours"
+              className={`${styles.blockContent} ${
+                openBlocks.hours ? styles.blockContentOpen : ""
+              }`}
+            >
+              <ul className={styles.list}>
+                <li className={styles.hoursBig}>{hoursInfo.todayLabel}</li>
+                <li>
+                  <strong>{hoursInfo.addressLabel}</strong>{" "}
+                  <Link className={styles.inlineLink} href={hoursInfo.addressLink}>
+                    {hoursInfo.addressText}
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          {/* Этот блок показывает телефон, почту и ссылки на соцсети. */}
+          {/* Этот блок показывает телефон, почту и ссылки на соцсети и раскрывает детали по нажатию. */}
           <div className={styles.block}>
-            <h3 className={styles.blockTitle}>{contactInfo.title}</h3>
-            {/* Этот список показывает способы связи и соцсети. */}
-            <ul className={styles.list}>
-              <li>
-                <strong>{contactInfo.phoneLabel}</strong>{" "}
-                <a className={styles.inlineLink} href={contactInfo.phoneLink}>
-                  {contactInfo.phoneText}
-                </a>
-              </li>
-              <li>
-                <strong>{contactInfo.emailLabel}</strong>{" "}
-                <a className={styles.inlineLink} href={contactInfo.emailLink}>
-                  {contactInfo.emailText}
-                </a>
-              </li>
-              <li>
-                <strong>{contactInfo.socialLabel}</strong>
-                {/* Этот блок показывает кнопки для перехода в соцсети. */}
-                <span className={`${styles.metaRow} ${styles.metaRowSpaced}`}>
-                  {socialLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      className="button"
-                      href={link.href}
-                      aria-label={link.ariaLabel}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </span>
-              </li>
-            </ul>
+            <h3 className={styles.blockTitle}>
+              {/* Эта кнопка раскрывает и скрывает блок со связью и соцсетями. */}
+              <button
+                type="button"
+                className={`${styles.blockToggle} ${
+                  openBlocks.contact ? styles.blockToggleOpen : ""
+                }`}
+                aria-expanded={openBlocks.contact}
+                aria-controls="footer-contact"
+                onClick={() => handleToggle("contact")}
+              >
+                <span>{contactInfo.title}</span>
+                <span className={styles.chevron} aria-hidden="true" />
+              </button>
+            </h3>
+            {/* Этот список показывает способы связи и соцсети, когда блок раскрыт. */}
+            <div
+              id="footer-contact"
+              className={`${styles.blockContent} ${
+                openBlocks.contact ? styles.blockContentOpen : ""
+              }`}
+            >
+              <ul className={styles.list}>
+                <li>
+                  <strong>{contactInfo.phoneLabel}</strong>{" "}
+                  <a className={styles.inlineLink} href={contactInfo.phoneLink}>
+                    {contactInfo.phoneText}
+                  </a>
+                </li>
+                <li>
+                  <strong>{contactInfo.emailLabel}</strong>{" "}
+                  <a className={styles.inlineLink} href={contactInfo.emailLink}>
+                    {contactInfo.emailText}
+                  </a>
+                </li>
+                <li>
+                  <strong>{contactInfo.socialLabel}</strong>
+                  {/* Этот блок показывает кнопки для перехода в соцсети. */}
+                  <span className={`${styles.metaRow} ${styles.metaRowSpaced}`}>
+                    {socialLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        className="button"
+                        href={link.href}
+                        aria-label={link.ariaLabel}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -118,17 +190,9 @@ export default function Footer() {
       <div className={`container ${styles.bottom}`}>
         {/* Этот блок показывает копирайт и служебные ссылки. */}
         <div className={styles.bottomRow}>
-          <span className={styles.muted}>© {currentYear} BENO coffee</span>
-          {/* Этот блок показывает ссылки на служебные документы. */}
-          <span className={`${styles.muted} ${styles.legalLinks}`}>
-            {legalLinks.map((link) => (
-              <span key={link.href} className={styles.legalItem}>
-                <Link className={styles.inlineLink} href={link.href}>
-                  {link.label}
-                </Link>
-              </span>
-            ))}
-          </span>
+          <span className={styles.muted}>© {copyrightYears} BENO COFFEE</span>
+          {/* Этот текст сообщает, что все права защищены. */}
+          <span className={`${styles.muted} ${styles.legalLinks}`}>Все права защищены</span>
         </div>
       </div>
     </footer>

@@ -37,7 +37,7 @@ export default function Features() {
         <div className="stack">
           <h2 className={styles.title}>Почему BENO</h2>
           <p className={styles.lead}>
-            Коротко и по делу — чтобы за 10 секунд стало понятно, что вас ждёт внутри.
+            Сюда заходят за кофе, остаются — за ощущением.
           </p>
         </div>
 
