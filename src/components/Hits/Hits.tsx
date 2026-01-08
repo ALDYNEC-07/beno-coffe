@@ -21,8 +21,8 @@ const hitsText = {
 
 // Этот объект хранит данные для кнопки под сеткой.
 const hitsAction = {
-  label: "Смотреть все хиты в меню",
-  link: "/menu#hits",
+  label: "Смотреть все позиции в меню",
+  link: "/menu",
 };
 
 export default async function Hits() {
