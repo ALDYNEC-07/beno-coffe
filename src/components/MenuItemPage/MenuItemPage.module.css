@@ -9,6 +9,43 @@
   color: #1b1b1b;
 }
 
+.menuItemPageWithVideo {
+  position: relative;
+  overflow: hidden;
+  background-color: #fffaf3;
+}
+
+.contentOnVideo {
+  position: relative;
+  z-index: 2;
+}
+
+.videoWrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.videoScrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 250, 243, 0.82),
+    rgba(255, 250, 243, 0.68) 45%,
+    rgba(255, 250, 243, 0.88)
+  );
+}
+
 .content {
   display: grid;
   gap: var(--space-4);
@@ -144,4 +181,11 @@
 .variantPrice {
   font-weight: 600;
   white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .videoWrap,
+  .videoScrim {
+    display: none;
+  }
 }

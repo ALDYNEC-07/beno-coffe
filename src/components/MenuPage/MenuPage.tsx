@@ -14,6 +14,7 @@ import {
   getMenuCategoryLabel,
   getMenuListPriceLabel,
   getMenuNameLabel,
+  getMenuVideoSrc,
 } from "@/lib/menuView";
 import MenuCategoryScroller from "@/components/MenuCategoryScroller/MenuCategoryScroller";
 import MenuCardVideo from "@/components/MenuCardVideo/MenuCardVideo";
@@ -32,16 +33,6 @@ const menuPageText = {
   scrollStoragePrefix: "menu-page-scroll-left",
   ...commonMenuText,
 };
-
-// Этот список связывает название позиции с видеофоном на карточке.
-const menuVideoByName = [{ key: "эспрессо", src: "/espresso.mp4" }, { key: "капучино", src: "/cappuchino.mp4" }, { key: "латте", src: "/latte.mp4" }];
-
-// Этот помощник подбирает видеофон по названию позиции меню.
-function getMenuVideoSrc(nameLabel: string) {
-  const lowerName = nameLabel.trim().toLowerCase();
-  const match = menuVideoByName.find((item) => lowerName.includes(item.key));
-  return match?.src ?? null;
-}
 
 // Этот компонент показывает список позиций меню в виде карточек.
 export default function MenuPage({ items }: MenuPageProps) {

@@ -11,6 +11,13 @@ type MenuDetailPriceText = {
   priceFallback: string;
 };
 
+// Этот список связывает название позиции меню с видеофоном.
+const menuVideoByName = [
+  { key: "эспрессо", src: "/espresso.mp4" },
+  { key: "капучино", src: "/cappuchino.mp4" },
+  { key: "латте", src: "/latte.mp4" },
+];
+
 export function getMenuNameLabel(item: MenuItem, fallback: string) {
   const trimmedName = item.name?.trim();
   return trimmedName || fallback;
@@ -56,4 +63,11 @@ export function getMenuDetailPriceInfo(item: MenuItem, text: MenuDetailPriceText
     : text.priceLabel;
 
   return { priceInfo, priceLabel, priceTitle };
+}
+
+// Этот помощник подбирает видеофон по названию позиции меню.
+export function getMenuVideoSrc(nameLabel: string) {
+  const lowerName = nameLabel.trim().toLowerCase();
+  const match = menuVideoByName.find((item) => lowerName.includes(item.key));
+  return match?.src ?? null;
 }

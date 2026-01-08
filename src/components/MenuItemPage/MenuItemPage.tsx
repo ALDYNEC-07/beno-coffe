@@ -1,6 +1,6 @@
 /*
  Этот файл определяет страницу отдельной позиции меню.
- Он показывает подробное описание, цены и варианты размера выбранной позиции.
+ Он показывает подробное описание, цены и варианты размера выбранной позиции, а для некоторых позиций добавляет видеофон.
  Человек может посмотреть детали и вернуться обратно к полному меню.
 */
 import Link from "next/link";
@@ -15,6 +15,7 @@ import {
   getMenuCategoryLabel,
   getMenuDetailPriceInfo,
   getMenuNameLabel,
+  getMenuVideoSrc,
 } from "@/lib/menuView";
 
 type MenuItemPageProps = {
@@ -34,13 +35,13 @@ const menuItemText = {
   descriptionTitle: "Описание",
 };
 
-// Этот компонент показывает подробную карточку выбранной позиции меню.
+// Этот компонент показывает подробную карточку выбранной позиции меню с возможным видеофоном.
 export default function MenuItemPage({ item }: MenuItemPageProps) {
   if (!item) {
     return (
-    // Этот блок показывает сообщение, когда позиция не найдена.
-    <section className={styles.menuItemPage} aria-label="Позиция меню">
-      <div className={`container ${styles.content}`}>
+      // Этот блок показывает сообщение, когда позиция не найдена.
+      <section className={styles.menuItemPage} aria-label="Позиция меню">
+        <div className={`container ${styles.content}`}>
           {/* Этот блок показывает заголовок и подсказку, что делать дальше. */}
           <div className={styles.header}>
             <h1 className={styles.title}>{menuItemText.notFoundTitle}</h1>
@@ -63,6 +64,14 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
     menuItemText.categoryFallback
   );
   const description = item.description?.trim();
+  // Этот блок определяет, нужен ли видеофон для всей страницы позиции.
+  const videoSrc = getMenuVideoSrc(nameLabel);
+  const pageClassName = videoSrc
+    ? `${styles.menuItemPage} ${styles.menuItemPageWithVideo}`
+    : styles.menuItemPage;
+  const contentClassName = videoSrc
+    ? `${styles.content} ${styles.contentOnVideo}`
+    : styles.content;
 
   // Этот блок рассчитывает цену и варианты, чтобы показать их на странице.
   const { priceInfo, priceLabel, priceTitle } = getMenuDetailPriceInfo(
@@ -74,8 +83,27 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
 
   return (
     // Этот блок показывает подробную страницу выбранной позиции меню.
-    <section className={styles.menuItemPage} aria-label={nameLabel}>
-      <div className={`container ${styles.content}`}>
+    <section className={pageClassName} aria-label={nameLabel}>
+      {/* Этот блок показывает видеофон для всей страницы позиции. */}
+      {videoSrc ? (
+        <>
+          <div className={styles.videoWrap} aria-hidden="true">
+            <video
+              className={styles.video}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+            >
+              <source src={videoSrc} type="video/mp4" />
+            </video>
+          </div>
+          {/* Этот блок смягчает видео, чтобы текст читался поверх него. */}
+          <div className={styles.videoScrim} aria-hidden="true" />
+        </>
+      ) : null}
+      <div className={`container ${contentClassName}`}>
         {/* Этот блок ведет пользователя обратно к полному меню. */}
         <Link className={styles.backLink} href="/menu">
           ← {menuItemText.backLabel}
