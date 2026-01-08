@@ -7,12 +7,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./MenuPage.module.css";
-import {
-  formatMenuPrice,
-  getMenuPriceInfo,
-  type MenuItem,
-} from "@/lib/menuData";
+import type { MenuItem } from "@/lib/menuData";
 import { commonMenuText } from "@/lib/menuText";
+import {
+  getMenuCategoryKey,
+  getMenuCategoryLabel,
+  getMenuListPriceLabel,
+  getMenuNameLabel,
+} from "@/lib/menuView";
 import MenuCategoryScroller from "@/components/MenuCategoryScroller/MenuCategoryScroller";
 import MenuCardVideo from "@/components/MenuCardVideo/MenuCardVideo";
 
@@ -33,21 +35,6 @@ const menuPageText = {
 
 // Этот список связывает название позиции с видеофоном на карточке.
 const menuVideoByName = [{ key: "эспрессо", src: "/espresso.mp4" }, { key: "капучино", src: "/cappuchino.mp4" }, { key: "латте", src: "/latte.mp4" }];
-
-// Этот помощник возвращает название категории или запасной вариант.
-function getCategoryLabel(item: MenuItem, fallback: string) {
-  const rawValue =
-    typeof item.category === "object" && item.category?.value != null
-      ? String(item.category.value)
-      : "";
-  const trimmedValue = rawValue.trim();
-  return trimmedValue || fallback;
-}
-
-// Этот помощник превращает название категории в ключ для фильтрации.
-function getCategoryKey(label: string) {
-  return label.trim().toLowerCase().replace(/\s+/g, "-");
-}
 
 // Этот помощник подбирает видеофон по названию позиции меню.
 function getMenuVideoSrc(nameLabel: string) {
@@ -72,8 +59,8 @@ export default function MenuPage({ items }: MenuPageProps) {
     const categoryOptions: { key: string; label: string }[] = [];
     const categoryKeys = new Set<string>();
     items.forEach((item) => {
-      const label = getCategoryLabel(item, menuPageText.categoryFallback);
-      const key = getCategoryKey(label);
+      const label = getMenuCategoryLabel(item, menuPageText.categoryFallback);
+      const key = getMenuCategoryKey(label);
       if (categoryKeys.has(key)) {
         return;
       }
@@ -102,8 +89,8 @@ export default function MenuPage({ items }: MenuPageProps) {
     resolvedCategoryKey === menuPageText.allCategoryKey
       ? items
       : items.filter((item) => {
-          const label = getCategoryLabel(item, menuPageText.categoryFallback);
-          return getCategoryKey(label) === resolvedCategoryKey;
+          const label = getMenuCategoryLabel(item, menuPageText.categoryFallback);
+          return getMenuCategoryKey(label) === resolvedCategoryKey;
         });
 
   // Этот ключ хранит название записи для позиции прокрутки ленты.
@@ -250,18 +237,15 @@ export default function MenuPage({ items }: MenuPageProps) {
               <div className={styles.grid} ref={gridRef}>
                 {visibleItems.map((item, index) => {
                   // Этот блок готовит текст карточки и цену позиции.
-                  const nameLabel =
-                    item.name?.trim() || menuPageText.nameFallback;
-                  const categoryLabel =
-                    getCategoryLabel(item, menuPageText.categoryFallback);
-                  const priceInfo = getMenuPriceInfo(item);
-                  const priceLabel = Number.isFinite(priceInfo.rawPrice)
-                    ? formatMenuPrice(priceInfo.rawPrice)
-                    : priceInfo.hasVariantPrices
-                    ? `${menuPageText.priceFromPrefix} ${formatMenuPrice(
-                        priceInfo.minVariantPrice
-                      )}`
-                    : menuPageText.priceFallback;
+                  const nameLabel = getMenuNameLabel(
+                    item,
+                    menuPageText.nameFallback
+                  );
+                  const categoryLabel = getMenuCategoryLabel(
+                    item,
+                    menuPageText.categoryFallback
+                  );
+                  const priceLabel = getMenuListPriceLabel(item, menuPageText);
                   const isPopular = Boolean(item.popular);
                   // Этот блок определяет, нужен ли фон-видео для карточки позиции.
                   const videoSrc = getMenuVideoSrc(nameLabel);
