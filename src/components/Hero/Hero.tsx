@@ -93,7 +93,11 @@ export default function Hero() {
                 <p className={styles.metaTitle}>Адрес</p>
                 <p className={styles.metaValue}>Улица, дом — ориентир рядом</p>
                 <div className={`${styles.metaRow} ${styles.metaRowCompact}`}>
-                  <Link className={styles.button} href="/map" aria-label="Открыть карту и построить маршрут">
+                  <Link
+                    className={`${styles.button} ${styles.metaButton}`}
+                    href="/map"
+                    aria-label="Открыть карту и построить маршрут"
+                  >
                     <span aria-hidden="true">🗺</span>
                     Как добраться
                   </Link>
@@ -106,16 +110,20 @@ export default function Hero() {
                 className={`${styles.metaRow} ${styles.metaRowSpaced} ${styles.quickLinks}`}
                 aria-label="Быстрые переходы"
               >
-                <a className={styles.button} href="#footer" aria-label="Перейти к контактам и адресу">
+                <a
+                  className={`${styles.button} ${styles.metaButton}`}
+                  href="#footer"
+                  aria-label="Перейти к контактам и адресу"
+                >
                   Контакты
                 </a>
-                <Link className={styles.button} href="/menu">
+                <Link className={`${styles.button} ${styles.metaButton}`} href="/menu">
                   Смотреть меню
                 </Link>
-                <a className={styles.button} href="#new">
+                <a className={`${styles.button} ${styles.metaButton}`} href="#new">
                   Новинка месяца
                 </a>
-                <a className={styles.button} href="#about">
+                <a className={`${styles.button} ${styles.metaButton}`} href="#about">
                   История BENO
                 </a>
               </div>

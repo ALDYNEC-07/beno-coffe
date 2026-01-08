@@ -15,11 +15,23 @@
   --border: 1px solid #1b1b1b;
   --measure: 65ch;
 
-  padding-block: var(--space-5);
+  padding-top: var(--space-5);
+  padding-bottom: 0;
   font-size: var(--text-base);
   line-height: 1.5;
   letter-spacing: 0.2px;
   color: #1b1b1b;
+  background-color: #fffaf3;
+  background-image: radial-gradient(
+      70% 120% at 50% -10%,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0)
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 248, 236, 0.95),
+      rgba(255, 248, 236, 0.55)
+    );
 }
 
 .container {
@@ -174,10 +186,13 @@
   flex-wrap: nowrap;
   overflow-x: auto;
   padding-bottom: var(--space-2);
+  padding-inline: var(--space-3);
   -webkit-overflow-scrolling: touch;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
+  scroll-padding-inline: var(--space-3);
+  box-sizing: border-box;
 }
 
 .quickLinks .button {
@@ -210,6 +225,21 @@
   font-size: var(--text-base);
 }
 
+.metaButton {
+  border: 1px solid rgba(155, 106, 18, 0.35);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.75),
+    rgba(255, 255, 255, 0.35)
+  );
+  color: #5f4308;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 3px 10px rgba(60, 40, 20, 0.12);
+  backdrop-filter: blur(12px) saturate(145%);
+  -webkit-backdrop-filter: blur(12px) saturate(145%);
+}
+
 .button:focus-visible {
   outline: 2px solid #1b1b1b;
   outline-offset: 3px;
@@ -217,12 +247,19 @@
 }
 
 .metaBlock {
-  border: var(--border);
+  border: 1px solid rgba(155, 106, 18, 0.35);
   border-radius: var(--radius);
   padding: var(--space-2);
   display: grid;
   gap: 0.25rem;
   min-width: min(280px, 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.75),
+    rgba(255, 255, 255, 0.35)
+  );
+  -webkit-backdrop-filter: blur(12px) saturate(145%);
+  backdrop-filter: blur(12px) saturate(145%);
 }
 
 .metaTitle {
@@ -248,6 +285,8 @@
     margin-left: 0;
     margin-right: 0;
     padding-bottom: 0;
+    padding-inline: 0;
+    scroll-padding-inline: 0;
   }
 
   .metaBlock {
