@@ -67,6 +67,15 @@ export default function Hero() {
               aria-label="Короткое видео интерьера кофейни BENO"
               ref={videoRef}
             />
+            {/* Этот блок показывает статус работы поверх видео внизу. */}
+            <div className={styles.mediaBadge} aria-label="Время работы">
+              {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
+              <span className={`${styles.pill} ${styles.mediaPill}`} aria-live="polite">
+                <span>Открыто сейчас</span>
+                <span aria-hidden="true">•</span>
+                <span>с 7:00 до 01:00</span>
+              </span>
+            </div>
           </div>
 
           {/* Этот блок показывает текст, факты и быстрые ссылки. */}
@@ -79,16 +88,6 @@ export default function Hero() {
 
             {/* Этот блок собирает ключевую информацию одним взглядом. */}
             <div className={styles.heroMeta} aria-label="Ключевая информация одним взглядом">
-              {/* Этот блок показывает статус и часы работы в одной строке. */}
-              <div className={styles.metaRow}>
-                {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
-                <span className={styles.pill} aria-live="polite">
-                  <span>Открыто сейчас</span>
-                  <span aria-hidden="true">•</span>
-                  <span>с 7:00 до 01:00</span>
-                </span>
-              </div>
-
               {/* Этот блок показывает адрес и быстрый переход к карте. */}
               <div className={styles.metaBlock} aria-label="Адрес и ориентир">
                 <p className={styles.metaTitle}>Адрес</p>
