@@ -1,5 +1,6 @@
 // Этот файл обслуживает запрос /api/menu-with-variants и отдает меню с вариантами.
 import { fetchBaserowTable, getBaserowEnv } from "@/lib/baserow";
+import { parseNumericValue } from "@/lib/number";
 
 // Эта функция приводит поле со ссылками к списку объектов одного вида.
 function normalizeLinks(value) {
@@ -13,19 +14,6 @@ function normalizeLinks(value) {
     return [];
   }
   return [{ id: value }];
-}
-
-// Эта функция превращает значение в число, чтобы сравнивать объемы.
-function parseNumber(value) {
-  if (typeof value === "number") {
-    return Number.isFinite(value) ? value : Number.NaN;
-  }
-  const text = String(value ?? "").trim();
-  if (!text) {
-    return Number.NaN;
-  }
-  const parsed = Number.parseFloat(text.replace(",", "."));
-  return Number.isFinite(parsed) ? parsed : Number.NaN;
 }
 
 // Этот обработчик загружает меню и варианты, склеивает их и возвращает JSON.
@@ -92,7 +80,7 @@ export async function GET() {
   // Этот блок собирает быстрый поиск объема по идентификатору размера.
   const sizeMlById = new Map(
     sizes.map((size) => {
-      const mlValue = parseNumber(size?.ml);
+      const mlValue = parseNumericValue(size?.ml);
       return [String(size?.id), Number.isFinite(mlValue) ? mlValue : null];
     })
   );
@@ -145,8 +133,8 @@ export async function GET() {
   // Этот блок сортирует варианты по объему, чтобы размеры шли по возрастанию.
   menuWithVariants.forEach((item) => {
     item.variants.sort((a, b) => {
-      const aMl = parseNumber(a?.ml);
-      const bMl = parseNumber(b?.ml);
+      const aMl = parseNumericValue(a?.ml);
+      const bMl = parseNumericValue(b?.ml);
       const aValid = Number.isFinite(aMl);
       const bValid = Number.isFinite(bMl);
       if (aValid && bValid) {
