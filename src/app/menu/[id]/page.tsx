@@ -9,12 +9,15 @@ import Footer from "@/components/Footer/Footer";
 import MenuItemPage from "@/components/MenuItemPage/MenuItemPage";
 import { fetchMenuItemById } from "@/lib/menuApi";
 
+// Этот тип описывает ожидаемые параметры маршрута для страницы позиции.
+type MenuItemRouteProps = {
+  params: { id?: string | null };
+};
+
 // Этот блок собирает страницу одной позиции из общих компонентов.
-export default async function MenuItem({ params }) {
-  // Этот блок безопасно получает параметры маршрута.
-  const resolvedParams = await params;
+export default async function MenuItem({ params }: MenuItemRouteProps) {
   // Этот блок загружает данные позиции по ее идентификатору.
-  const item = await fetchMenuItemById(resolvedParams?.id);
+  const item = await fetchMenuItemById(params?.id ?? null);
 
   // Этот блок возвращает страницу 404, если позиция не найдена.
   if (!item) {
