@@ -15,7 +15,7 @@ const monthlySpecial = {
   mediaLabel: "Фото напитка месяца",
   mediaNote: "Плейсхолдер: фото чашки / сезонного напитка",
   menuLabel: "Посмотреть в меню",
-  menuLink: "/menu#seasonal",
+  menuLink: "/menu",
 };
 
 // Этот список хранит короткие анонсы, которые дополняют новинку месяца.
