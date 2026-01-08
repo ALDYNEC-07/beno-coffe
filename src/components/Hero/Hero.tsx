@@ -1,30 +1,71 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает крупный заголовок, подзаголовок, фото и быстрые факты.
+ Он показывает крупный заголовок, подзаголовок, видео и быстрые факты.
  Человек может перейти к контактам, меню и ключевым разделам.
 */
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
-import heroImage from "@/assets/BenoArt.png";
+import { useEffect, useRef } from "react";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
+  // Этот элемент хранит доступ к видео, чтобы управлять воспроизведением.
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Этот блок запускается при загрузке и включает видео только когда его видно.
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement) {
+      return;
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      videoElement.play().catch(() => {});
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!videoElement) {
+          return;
+        }
+
+        if (entry.isIntersecting) {
+          videoElement.play().catch(() => {});
+          return;
+        }
+
+        videoElement.pause();
+      },
+      { threshold: 0.35 }
+    );
+
+    observer.observe(videoElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     // Этот блок показывает главный экран приветствия кофейни.
     <section className={styles.hero}>
       <div className={styles.container}>
         {/* Этот блок делит секцию на медиа и текстовую часть. */}
         <div className={styles.layout}>
-          {/* Этот блок показывает фото кофейни из папки assets. */}
+          {/* Этот блок показывает видео кофейни и включает его только когда оно в поле зрения. */}
           <div className={styles.media}>
-            {/* Этот элемент выводит изображение, чтобы задать настроение первой секции. */}
-            <Image
-              className={styles.mediaImage}
-              src={heroImage}
-              alt="Интерьер кофейни BENO с тёплым светом и чашкой кофе"
-              fill
-              priority
-              sizes="(min-width: 1024px) 50vw, (min-width: 720px) 55vw, 100vw"
+            {/* Это видео задает атмосферу первой секции и проигрывается без звука. */}
+            <video
+              className={styles.mediaVideo}
+              src="/benocoffee.mp4"
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-label="Короткое видео интерьера кофейни BENO"
+              ref={videoRef}
             />
           </div>
 
