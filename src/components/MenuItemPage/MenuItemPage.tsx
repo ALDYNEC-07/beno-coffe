@@ -70,7 +70,7 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
   );
   const description = item.description?.trim();
   // Этот блок определяет, нужна ли фоновая фотография для всей страницы позиции.
-  const imageSrc = getMenuImageSrc(nameLabel);
+  const imageSrc = getMenuImageSrc(nameLabel, categoryLabel);
   const pageClassName = imageSrc
     ? `${styles.menuItemPage} ${styles.menuItemPageWithImage}`
     : styles.menuItemPage;

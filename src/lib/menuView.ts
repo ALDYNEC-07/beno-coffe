@@ -13,38 +13,39 @@ type MenuDetailPriceText = {
 
 // Этот список хранит файлы с фотографиями позиций меню из public/assets.
 const menuImageFiles = [
-  "aci-latte.jpg",
-  "americano.jpg",
-  "ayva-s-persicom.jpg",
-  "cappuchino.jpg",
-  "desert-cruassan.jpg",
-  "dikay-vishny.jpg",
-  "espresso.jpg",
-  "frappe.jpg",
-  "fresh-apelsin.jpg",
-  "fresh-granat+apelsin.jpg",
-  "fresh-yabloco+apelsin.jpg",
-  "fresh-yabloko.jpg",
-  "graf-orlov.jpg",
-  "hot-chocolate.jpg",
-  "ice-s-urbech.jpg",
-  "imbirniy.jpg",
-  "latte.jpg",
-  "lemonade-ananas.jpg",
-  "lemonade-golubay-laguna.jpg",
-  "lemonade-mango-marakuy.jpg",
-  "lemonade-mohito-classic.jpg",
-  "lemonade-mohito-klubnika.jpg",
-  "lemonade-mohito-mango.jpg",
-  "lemonade-mohito-yagodny.jpg",
+  "chocolate-hot-chocolate.jpg",
+  "coffee-americano.jpg",
+  "coffee-cappuccino.jpg",
+  "coffee-espresso.jpg",
+  "coffee-frappe.jpg",
+  "coffee-iced-latte.jpg",
+  "coffee-iced-with-urbech.jpg",
+  "coffee-latte.jpg",
+  "coffee-raf.jpg",
+  "dessert-croissant.jpg",
+  "fresh-apple-orange.jpg",
+  "fresh-apple.jpg",
+  "fresh-orange.jpg",
+  "fresh-pomegranate-orange.jpg",
+  "lemonade-apple.jpg",
+  "lemonade-blue-lagoon.jpg",
+  "lemonade-mango-passion-fruit.jpg",
+  "lemonade-mojito-berry.jpg",
+  "lemonade-mojito-classic.jpg",
+  "lemonade-mojito-mango.jpg",
+  "lemonade-mojito-strawberry.jpg",
+  "lemonade-pineapple.jpg",
   "lemonade-tonic.jpg",
-  "lemonade-yablochny.jpg",
-  "lev.jpg",
-  "milkshake-banan.jpg",
+  "milkshake-banana.jpg",
   "milkshake-chocolate.jpg",
-  "milkshake-klubnika.jpg",
-  "milkshake-molochny.jpg",
-  "raf.jpg",
+  "milkshake-classic.jpg",
+  "milkshake-strawberry.jpg",
+  "Toska-indeyca.jpg",
+  "tea-count-orlov.jpg",
+  "tea-ginger.jpg",
+  "tea-lion.jpg",
+  "tea-quince-with-peach.jpg",
+  "tea-wild-cherry.jpg",
 ];
 
 // Этот набор букв нужен, чтобы переводить русские названия в латиницу.
@@ -84,20 +85,124 @@ const transliterationMap: Record<string, string> = {
   я: "ya",
 };
 
-// Этот список заменяет частые варианты написания на имена файлов.
-const aliasReplacements: Array<[RegExp, string]> = [
-  [/limonad/g, "lemonade"],
-  [/klassik/g, "classic"],
-  [/tonik/g, "tonic"],
-  [/kruassan/g, "cruassan"],
-  [/kappuchino/g, "cappuchino"],
-  [/kapuchino/g, "cappuchino"],
-  [/cappuccino/g, "cappuchino"],
-  [/persik/g, "persic"],
-  [/molochniy-kokteyl/g, "milkshake"],
-  [/goryachiy-shokolad/g, "hot-chocolate"],
-  [/shokolad/g, "chocolate"],
-  [/ays/g, "ice"],
+// Этот список переводит русские слова из названий в английские ключи файлов.
+const tokenMap: Record<string, string> = {
+  amerikano: "americano",
+  kapuchino: "cappuccino",
+  kappuchino: "cappuccino",
+  cappuchino: "cappuccino",
+  cappuccino: "cappuccino",
+  espresso: "espresso",
+  espreso: "espresso",
+  latte: "latte",
+  frappe: "frappe",
+  frape: "frappe",
+  raf: "raf",
+  ays: "iced",
+  ais: "iced",
+  ice: "iced",
+  iced: "iced",
+  s: "with",
+  urbech: "urbech",
+  kruassan: "croissant",
+  kruasan: "croissant",
+  krossan: "croissant",
+  croissant: "croissant",
+  yabloko: "apple",
+  yabloco: "apple",
+  apelsin: "orange",
+  granat: "pomegranate",
+  ananas: "pineapple",
+  mango: "mango",
+  marakuya: "passion-fruit",
+  marakuy: "passion-fruit",
+  marakuia: "passion-fruit",
+  marakuyya: "passion-fruit",
+  mohito: "mojito",
+  mojito: "mojito",
+  klubnika: "strawberry",
+  klubnichn: "strawberry",
+  klubnichny: "strawberry",
+  klubnichnyi: "strawberry",
+  yagodny: "berry",
+  yagodnyi: "berry",
+  yagodn: "berry",
+  yagoda: "berry",
+  klassicheskiy: "classic",
+  klassicheskii: "classic",
+  klassik: "classic",
+  shokolad: "chocolate",
+  shokoladny: "chocolate",
+  shokoladnyi: "chocolate",
+  banan: "banana",
+  imbir: "ginger",
+  imbirny: "ginger",
+  imbirniy: "ginger",
+  molochniy: "classic",
+  molochnyy: "classic",
+  molochny: "classic",
+  yablochn: "apple",
+  yablochniy: "apple",
+  yablochnyy: "apple",
+  yablochny: "apple",
+  tonik: "tonic",
+  milksheyk: "milkshake",
+  milksheik: "milkshake",
+  lev: "lion",
+  ayva: "quince",
+  persik: "peach",
+  dikaya: "wild",
+  dikiy: "wild",
+  vishnya: "cherry",
+  goryachiy: "hot",
+  gorjachiy: "hot",
+  graf: "count",
+  orlov: "orlov",
+  golubaya: "blue",
+  goluboy: "blue",
+  laguna: "lagoon",
+  kofe: "",
+  coffee: "",
+  chai: "",
+  chay: "",
+  tea: "",
+  limonad: "",
+  lemonade: "",
+  fresh: "",
+  fresch: "",
+  fres: "",
+  molochn: "",
+  kokteyl: "",
+  kokteil: "",
+  milkshake: "",
+  desert: "",
+  dessert: "",
+};
+
+const tokenMapKeys = Object.keys(tokenMap).sort(
+  (left, right) => right.length - left.length
+);
+
+// Этот список подбирает английскую категорию по русскому названию.
+const categoryRules = [
+  { key: "coffee", tokens: ["kofe", "coffee"] },
+  { key: "tea", tokens: ["chai", "chay", "tea"] },
+  { key: "lemonade", tokens: ["limonad", "lemonade"] },
+  { key: "fresh", tokens: ["fresh", "fres", "fresch"] },
+  {
+    key: "milkshake",
+    tokens: [
+      "molochn",
+      "kokteyl",
+      "kokteil",
+      "milkshake",
+      "milkshey",
+      "milksheyk",
+      "milksheik",
+    ],
+  },
+  { key: "dessert", tokens: ["dessert", "desert"] },
+  { key: "chocolate", tokens: ["shokolad", "chocolate"] },
 ];
 
 // Эта функция переводит русские буквы в латиницу.
@@ -130,115 +235,140 @@ function escapeRegex(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// Эта функция проверяет, встречается ли ключ как отдельное слово внутри названия.
-function matchesKeySegment(nameKey: string, imageKey: string) {
-  if (!nameKey || !imageKey) {
+// Эта функция разбивает ключ на отдельные части.
+function splitKeySegments(value: string) {
+  return value.split(/[-+]+/).filter(Boolean);
+}
+
+// Эта функция проверяет, встречается ли фрагмент как отдельное слово внутри ключа.
+function matchesKeySegment(valueKey: string, segmentKey: string) {
+  if (!valueKey || !segmentKey) {
     return false;
   }
-  if (nameKey === imageKey) {
+  if (valueKey === segmentKey) {
     return true;
   }
-  const escapedKey = escapeRegex(imageKey);
+  const escapedKey = escapeRegex(segmentKey);
   const segmentRegex = new RegExp(`(^|[-+])${escapedKey}($|[-+])`);
-  return segmentRegex.test(nameKey);
+  return segmentRegex.test(valueKey);
 }
 
 // Эта функция находит самый подходящий файл по частичному совпадению.
-function findBestImageMatch(normalizedName: string) {
-  let bestMatch: { src: string; length: number } | null = null;
+function findBestImageMatch(candidateKey: string) {
+  let bestMatch: { src: string; length: number; score: number } | null = null;
 
   menuImageEntries.forEach((entry) => {
-    if (!matchesKeySegment(normalizedName, entry.key)) {
+    if (!matchesKeySegment(entry.key, candidateKey)) {
       return;
     }
-    if (!bestMatch || entry.key.length > bestMatch.length) {
-      bestMatch = { src: entry.src, length: entry.key.length };
+    const score = entry.key.endsWith(candidateKey) ? 2 : 1;
+    if (
+      !bestMatch ||
+      score > bestMatch.score ||
+      (score === bestMatch.score && entry.key.length < bestMatch.length)
+    ) {
+      bestMatch = { src: entry.src, length: entry.key.length, score };
     }
   });
 
   return bestMatch?.src ?? null;
 }
 
-// Эта функция готовит название позиции для сравнения с именами файлов.
-function normalizeMenuName(value: string) {
+// Эта функция приводит название к набору слов для поиска файла.
+function splitLabelToTokens(value: string) {
   const trimmed = value.trim().toLowerCase();
-  const plusNormalized = trimmed.replace(/\s*\+\s*/g, "+");
-  const transliterated = transliterateToLatin(plusNormalized);
-  return normalizeKey(transliterated);
+  const transliterated = transliterateToLatin(trimmed);
+  const normalized = normalizeKey(transliterated);
+  return normalized.split(/[-+]+/).filter(Boolean);
 }
 
-// Эта функция заменяет распространенные варианты написания.
-function applyAliasReplacements(value: string) {
-  let result = value;
-  aliasReplacements.forEach(([pattern, replacement]) => {
-    result = result.replace(pattern, replacement);
-  });
-  return normalizeKey(result);
-}
-
-// Эта функция упрощает окончания, чтобы меньше промахов.
-function normalizeWordEndings(value: string) {
-  return normalizeKey(
-    value
-      .replace(/aya(?=$|-)/g, "ay")
-      .replace(/iya(?=$|-)/g, "iy")
-      .replace(/ya(?=$|-)/g, "y")
-      .replace(/yy(?=$|-)/g, "y")
-  );
-}
-
-// Эта функция исправляет частые опечатки в именах.
-function applySpellingFixes(value: string) {
-  return normalizeKey(
-    value
-      .replace(/\bmolochniy\b/g, "molochny")
-      .replace(/\byablochniy\b/g, "yablochny")
-  );
-}
-
-// Эта функция делает несколько вариантов ключей, чтобы найти подходящее фото.
-function buildMenuImageCandidates(nameLabel: string) {
-  const base = normalizeMenuName(nameLabel);
-  if (!base) {
-    return [];
+// Эта функция переводит одно слово в ключ файла.
+function mapToken(token: string) {
+  if (Object.prototype.hasOwnProperty.call(tokenMap, token)) {
+    return tokenMap[token];
   }
-
-  const candidates = new Set<string>();
-  const addCandidate = (value: string) => {
-    const normalized = normalizeKey(value);
-    if (normalized) {
-      candidates.add(normalized);
-    }
-  };
-
-  addCandidate(base);
-
-  const withAliases = applyAliasReplacements(base);
-  addCandidate(withAliases);
-
-  const withEndings = normalizeWordEndings(withAliases);
-  addCandidate(withEndings);
-
-  const withFixes = applySpellingFixes(withEndings);
-  addCandidate(withFixes);
-
-  addCandidate(withFixes.replace(/\byabloko\b/g, "yabloco"));
-  addCandidate(withFixes.replace(/\bice\b/g, "aci"));
-
-  return Array.from(candidates);
+  const matchedKey = tokenMapKeys.find((key) => token.startsWith(key));
+  if (matchedKey) {
+    return tokenMap[matchedKey];
+  }
+  return token;
 }
 
-// Эта функция ищет файл изображения по одному кандидату.
-function getImageFromCandidate(candidate: string) {
-  const normalizedCandidate = normalizeKey(candidate);
-  if (!normalizedCandidate) {
+// Эта функция проверяет, есть ли слово с нужным началом в ключе.
+function hasTokenPrefix(valueKey: string, token: string) {
+  return splitKeySegments(valueKey).some((segment) => segment.startsWith(token));
+}
+
+// Эта функция переводит список слов в ключ файла.
+function buildEnglishKey(value: string) {
+  if (!value) {
+    return "";
+  }
+  const tokens = splitLabelToTokens(value);
+  const mappedTokens = tokens.flatMap((token) => {
+    const mapped = mapToken(token);
+    if (!mapped) {
+      return [];
+    }
+    return mapped.split("-").filter(Boolean);
+  });
+  return normalizeKey(mappedTokens.join("-"));
+}
+
+// Эта функция подбирает английскую категорию по названию.
+function getCategoryKey(label: string | null | undefined) {
+  if (!label) {
     return null;
   }
-  const directMatch = menuImageByKey.get(normalizedCandidate);
-  if (directMatch) {
-    return directMatch;
+  const rawKey = normalizeKey(transliterateToLatin(label.toLowerCase()));
+  const mappedKey = buildEnglishKey(label);
+  const probes = [rawKey, mappedKey].filter(Boolean);
+
+  for (const rule of categoryRules) {
+    const found = probes.some((probe) =>
+      rule.tokens.some(
+        (token) =>
+          matchesKeySegment(probe, token) || hasTokenPrefix(probe, token)
+      )
+    );
+    if (found) {
+      return rule.key;
+    }
   }
-  return findBestImageMatch(normalizedCandidate);
+
+  return null;
+}
+
+// Эта функция убирает категорию из названия, если она там уже есть.
+function stripCategoryPrefix(nameKey: string, categoryKey: string | null) {
+  if (!categoryKey) {
+    return nameKey;
+  }
+  if (nameKey === categoryKey) {
+    return "";
+  }
+  const prefix = `${categoryKey}-`;
+  if (nameKey.startsWith(prefix)) {
+    return nameKey.slice(prefix.length);
+  }
+  return nameKey;
+}
+
+// Эта функция собирает возможные ключи для поиска картинки.
+function buildImageCandidates(nameLabel: string, categoryLabel?: string) {
+  const nameKey = buildEnglishKey(nameLabel);
+  const categoryKey = getCategoryKey(categoryLabel);
+  const trimmedNameKey = stripCategoryPrefix(nameKey, categoryKey);
+  const candidates: string[] = [];
+
+  if (categoryKey && trimmedNameKey) {
+    candidates.push(`${categoryKey}-${trimmedNameKey}`);
+  }
+  if (trimmedNameKey) {
+    candidates.push(trimmedNameKey);
+  }
+
+  return candidates;
 }
 
 export function getMenuNameLabel(item: MenuItem, fallback: string) {
@@ -288,11 +418,18 @@ export function getMenuDetailPriceInfo(item: MenuItem, text: MenuDetailPriceText
   return { priceInfo, priceLabel, priceTitle };
 }
 
-// Этот помощник подбирает фотофон по названию позиции меню.
-export function getMenuImageSrc(nameLabel: string) {
-  const candidates = buildMenuImageCandidates(nameLabel);
-  const match = candidates
-    .map((candidate) => getImageFromCandidate(candidate))
-    .find((src) => Boolean(src));
-  return match ?? null;
+// Этот помощник подбирает фотофон по названию и категории позиции меню.
+export function getMenuImageSrc(nameLabel: string, categoryLabel?: string) {
+  const candidates = buildImageCandidates(nameLabel, categoryLabel);
+  for (const candidate of candidates) {
+    const directMatch = menuImageByKey.get(candidate);
+    if (directMatch) {
+      return directMatch;
+    }
+    const partialMatch = findBestImageMatch(candidate);
+    if (partialMatch) {
+      return partialMatch;
+    }
+  }
+  return null;
 }

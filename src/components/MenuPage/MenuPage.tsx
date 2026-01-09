@@ -252,7 +252,7 @@ export default function MenuPage({ items }: MenuPageProps) {
                 const priceLabel = getMenuListPriceLabel(item, menuPageText);
                 const isPopular = Boolean(item.popular);
                 // Этот блок определяет, нужна ли фоновая фотография для карточки позиции.
-                const imageSrc = getMenuImageSrc(nameLabel);
+                const imageSrc = getMenuImageSrc(nameLabel, categoryLabel);
                 const isSelected = index === activeIndex;
                 const cardBaseClassName = imageSrc
                   ? `${styles.card} ${styles.cardWithImage}`
