@@ -25,7 +25,6 @@
 }
 
 .media {
-  border: var(--border);
   border-radius: var(--radius);
   overflow: hidden;
   min-height: clamp(200px, 30vw, 340px);

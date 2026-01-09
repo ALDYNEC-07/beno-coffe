@@ -1,9 +1,8 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает крупный заголовок, подзаголовок, фотографию и быстрые факты.
+ Он показывает крупный заголовок, подзаголовок, видео и быстрые факты.
  Человек может перейти к контактам, меню и ключевым разделам.
 */
-import Image from "next/image";
 import Link from "next/link";
 import styles from "./Hero.module.css";
 
@@ -14,17 +13,20 @@ export default function Hero() {
       <div className="container">
         {/* Этот блок делит секцию на медиа и текстовую часть. */}
         <div className={styles.layout}>
-          {/* Этот блок показывает фото кофейни. */}
+          {/* Этот блок показывает видео кофейни. */}
           <div className={styles.media}>
-            {/* Эта фотография задает атмосферу первой секции. */}
-            <Image
+            {/* Это видео задает атмосферу первой секции. */}
+            <video
               className={styles.mediaImage}
-              src="/benocoffee.jpg"
-              alt="Интерьер кофейни BENO"
-              fill
-              priority
-              sizes="(max-width: 719px) 100vw, 60vw"
-            />
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-label="Видео интерьера кофейни BENO"
+            >
+              <source src="/benocoffee.mp4" type="video/mp4" />
+              Ваш браузер не поддерживает видео.
+            </video>
             {/* Этот блок показывает статус работы поверх фото внизу. */}
             <div className={styles.mediaBadge} aria-label="Время работы">
               {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
