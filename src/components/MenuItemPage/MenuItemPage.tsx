@@ -1,8 +1,9 @@
 /*
  Этот файл определяет страницу отдельной позиции меню.
- Он показывает подробное описание, цены и варианты размера выбранной позиции, а для некоторых позиций добавляет видеофон.
+ Он показывает подробное описание, цены и варианты размера выбранной позиции, а для некоторых позиций добавляет фотофон.
  Человек может посмотреть детали и вернуться обратно к полному меню.
 */
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./MenuItemPage.module.css";
 import {
@@ -15,7 +16,7 @@ import {
   getMenuCategoryLabel,
   getMenuDetailPriceInfo,
   getMenuNameLabel,
-  getMenuVideoSrc,
+  getMenuImageSrc,
 } from "@/lib/menuView";
 
 type MenuItemPageProps = {
@@ -35,7 +36,7 @@ const menuItemText = {
   descriptionTitle: "Описание",
 };
 
-// Этот компонент показывает подробную карточку выбранной позиции меню с возможным видеофоном.
+// Этот компонент показывает подробную карточку выбранной позиции меню с возможным фотофоном.
 export default function MenuItemPage({ item }: MenuItemPageProps) {
   // Этот блок держит ссылку для возврата в меню, чтобы не дублировать разметку.
   const backLink = (
@@ -69,13 +70,13 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
     menuItemText.categoryFallback
   );
   const description = item.description?.trim();
-  // Этот блок определяет, нужен ли видеофон для всей страницы позиции.
-  const videoSrc = getMenuVideoSrc(nameLabel);
-  const pageClassName = videoSrc
-    ? `${styles.menuItemPage} ${styles.menuItemPageWithVideo}`
+  // Этот блок определяет, нужна ли фоновая фотография для всей страницы позиции.
+  const imageSrc = getMenuImageSrc(nameLabel, categoryLabel);
+  const pageClassName = imageSrc
+    ? `${styles.menuItemPage} ${styles.menuItemPageWithImage}`
     : styles.menuItemPage;
-  const contentClassName = videoSrc
-    ? `${styles.content} ${styles.contentOnVideo}`
+  const contentClassName = imageSrc
+    ? `${styles.content} ${styles.contentOnImage}`
     : styles.content;
 
   // Этот блок рассчитывает цену и варианты, чтобы показать их на странице.
@@ -89,23 +90,21 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
   return (
     // Этот блок показывает подробную страницу выбранной позиции меню.
     <section className={pageClassName} aria-label={nameLabel}>
-      {/* Этот блок показывает видеофон для всей страницы позиции. */}
-      {videoSrc ? (
+      {/* Этот блок показывает фоновую фотографию для всей страницы позиции. */}
+      {imageSrc ? (
         <>
-          <div className={styles.videoWrap} aria-hidden="true">
-            <video
-              className={styles.video}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-            >
-              <source src={videoSrc} type="video/mp4" />
-            </video>
+          <div className={styles.imageWrap} aria-hidden="true">
+            <Image
+              className={styles.image}
+              src={imageSrc}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+            />
           </div>
-          {/* Этот блок смягчает видео, чтобы текст читался поверх него. */}
-          <div className={styles.videoScrim} aria-hidden="true" />
+          {/* Этот блок смягчает фотофон, чтобы текст читался поверх него. */}
+          <div className={styles.imageScrim} aria-hidden="true" />
         </>
       ) : null}
       <div className={`container ${contentClassName}`}>

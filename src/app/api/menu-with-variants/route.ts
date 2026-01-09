@@ -1,4 +1,5 @@
 import { fetchBaserowTable, getBaserowEnv } from "@/lib/baserow";
+import type { MenuCategory, MenuItem, MenuVariant } from "@/lib/menuData";
 import { parseNumericValue } from "@/lib/number";
 
 const BASEROW_ENV_KEYS = [
@@ -12,19 +13,7 @@ const BASEROW_ENV_KEYS = [
 type BaserowEnvKey = (typeof BASEROW_ENV_KEYS)[number];
 type BaserowEnvValues = Record<BaserowEnvKey, string>;
 type BaserowRecord = Record<string, unknown>;
-type MenuVariant = {
-  sizeName: unknown | null;
-  ml: number | null;
-  price: unknown | null;
-};
-type MenuItem = {
-  id: unknown;
-  name: unknown;
-  category: unknown;
-  description: unknown;
-  popular: unknown;
-  variants: MenuVariant[];
-};
+type MenuItemWithVariants = MenuItem & { variants: MenuVariant[] };
 
 // Эта функция приводит поле ссылок к списку объектов одного вида.
 function normalizeLinks(value: unknown) {
@@ -38,6 +27,48 @@ function normalizeLinks(value: unknown) {
     return [];
   }
   return [{ id: value }];
+}
+
+function normalizeTextValue(value: unknown) {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed ? trimmed : null;
+  }
+  if (typeof value === "number") {
+    return String(value);
+  }
+  return null;
+}
+
+function normalizeCategoryValue(value: unknown): MenuCategory | null {
+  if (!value) {
+    return null;
+  }
+  if (typeof value === "object") {
+    const record = value as BaserowRecord;
+    const label =
+      normalizeTextValue(record.value) ??
+      normalizeTextValue(record.name) ??
+      normalizeTextValue(record.label) ??
+      normalizeTextValue(record.id);
+    return label ? { value: label } : null;
+  }
+  const label = normalizeTextValue(value);
+  return label ? { value: label } : null;
+}
+
+function normalizeVariantPrice(value: unknown): MenuVariant["price"] | null {
+  if (typeof value === "number" || typeof value === "string") {
+    return value;
+  }
+  return null;
+}
+
+function normalizeItemId(value: unknown): MenuItem["id"] {
+  if (typeof value === "number" || typeof value === "string") {
+    return value;
+  }
+  return undefined;
 }
 
 // Этот обработчик возвращает данные меню вместе с вариантами.
@@ -99,19 +130,20 @@ export async function GET() {
     })
   );
 
-  const itemsById = new Map<string, MenuItem>();
+  const itemsById = new Map<string, MenuItemWithVariants>();
   const menuWithVariants = menuItems.map((item) => {
-    const mappedItem: MenuItem = {
-      id: item?.id ?? null,
-      name: item?.name ?? null,
-      category: item?.category ?? null,
-      description: item?.description ?? null,
-      popular: item?.popular ?? null,
+    const normalizedId = normalizeItemId(item?.id);
+    const mappedItem: MenuItemWithVariants = {
+      id: normalizedId,
+      name: normalizeTextValue(item?.name),
+      category: normalizeCategoryValue(item?.category),
+      description: normalizeTextValue(item?.description),
+      popular: Boolean(item?.popular),
       variants: [],
     };
 
-    if (item?.id !== null && item?.id !== undefined) {
-      itemsById.set(String(item.id), mappedItem);
+    if (normalizedId !== undefined) {
+      itemsById.set(String(normalizedId), mappedItem);
     }
 
     return mappedItem;
@@ -121,13 +153,10 @@ export async function GET() {
     const itemLinks = normalizeLinks(variant?.item);
     const sizeLink = normalizeLinks(variant?.size)[0];
     const sizeId = sizeLink?.id ?? null;
-    const sizeName =
-      sizeLink?.value ??
-      sizeLink?.name ??
-      sizeLink?.label ??
-      sizeLink?.id ??
-      null;
-    const price = variant?.price ?? null;
+    const sizeName = normalizeTextValue(
+      sizeLink?.value ?? sizeLink?.name ?? sizeLink?.label ?? sizeLink?.id
+    );
+    const price = normalizeVariantPrice(variant?.price);
     const ml =
       sizeId !== null && sizeId !== undefined
         ? sizeMlById.get(String(sizeId)) ?? null
