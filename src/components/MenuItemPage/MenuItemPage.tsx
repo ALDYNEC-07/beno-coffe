@@ -37,6 +37,13 @@ const menuItemText = {
 
 // Этот компонент показывает подробную карточку выбранной позиции меню с возможным видеофоном.
 export default function MenuItemPage({ item }: MenuItemPageProps) {
+  // Этот блок держит ссылку для возврата в меню, чтобы не дублировать разметку.
+  const backLink = (
+    <Link className={styles.backLink} href="/menu">
+      ← {menuItemText.backLabel}
+    </Link>
+  );
+
   if (!item) {
     return (
       // Этот блок показывает сообщение, если позиция не найдена.
@@ -49,9 +56,7 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
           </div>
 
           {/* Этот блок ведет пользователя обратно к полному меню. */}
-          <Link className={styles.backLink} href="/menu">
-            ← {menuItemText.backLabel}
-          </Link>
+          {backLink}
         </div>
       </section>
     );
@@ -105,9 +110,7 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
       ) : null}
       <div className={`container ${contentClassName}`}>
         {/* Этот блок ведет пользователя обратно к полному меню. */}
-        <Link className={styles.backLink} href="/menu">
-          ← {menuItemText.backLabel}
-        </Link>
+        {backLink}
 
         {/* Этот блок показывает название, категорию и статус популярности. */}
         <div className={styles.header}>
