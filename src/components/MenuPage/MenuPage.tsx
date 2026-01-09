@@ -23,6 +23,12 @@ type MenuPageProps = {
   items: MenuItem[];
 };
 
+type MenuItemWithCategory = {
+  item: MenuItem;
+  categoryLabel: string;
+  categoryKey: string;
+};
+
 // Этот набор текста хранит подписи, запасные тексты и служебные ключи для страницы меню.
 const menuPageText = {
   empty: "Пока нет данных о меню. Загляните чуть позже!",
@@ -45,13 +51,26 @@ export default function MenuPage({ items }: MenuPageProps) {
     menuPageText.allCategoryKey
   );
 
+  // Этот блок готовит список позиций вместе с их категориями.
+  const itemsWithCategory = useMemo<MenuItemWithCategory[]>(
+    () =>
+      items.map((item) => {
+        const categoryLabel = getMenuCategoryLabel(
+          item,
+          menuPageText.categoryFallback
+        );
+        const categoryKey = getMenuCategoryKey(categoryLabel);
+        return { item, categoryLabel, categoryKey };
+      }),
+    [items]
+  );
+
   // Этот блок собирает список категорий для верхнего скролла.
   const categories = useMemo(() => {
     const categoryOptions: { key: string; label: string }[] = [];
     const categoryKeys = new Set<string>();
-    items.forEach((item) => {
-      const label = getMenuCategoryLabel(item, menuPageText.categoryFallback);
-      const key = getMenuCategoryKey(label);
+    itemsWithCategory.forEach((entry) => {
+      const { categoryKey: key, categoryLabel: label } = entry;
       if (categoryKeys.has(key)) {
         return;
       }
@@ -66,7 +85,7 @@ export default function MenuPage({ items }: MenuPageProps) {
       },
       ...categoryOptions,
     ];
-  }, [items]);
+  }, [itemsWithCategory]);
 
   // Этот ключ выбирает доступную категорию, если прежняя больше не существует.
   const resolvedCategoryKey = categories.some(
@@ -78,11 +97,10 @@ export default function MenuPage({ items }: MenuPageProps) {
   // Этот блок оставляет только позиции выбранной категории.
   const visibleItems =
     resolvedCategoryKey === menuPageText.allCategoryKey
-      ? items
-      : items.filter((item) => {
-          const label = getMenuCategoryLabel(item, menuPageText.categoryFallback);
-          return getMenuCategoryKey(label) === resolvedCategoryKey;
-        });
+      ? itemsWithCategory
+      : itemsWithCategory.filter(
+          (entry) => entry.categoryKey === resolvedCategoryKey
+        );
 
   // Этот ключ хранит название записи для позиции прокрутки ленты.
   const scrollStorageKey = `${menuPageText.scrollStoragePrefix}-${resolvedCategoryKey}`;
@@ -209,12 +227,12 @@ export default function MenuPage({ items }: MenuPageProps) {
         {/* Этот блок показывает верхний скролл категорий, если есть позиции меню. */}
         {items.length > 0 ? (
           <div className={styles.header}>
-              <MenuCategoryScroller
-                categories={categories}
-                activeKey={resolvedCategoryKey}
-                onSelect={handleCategorySelect}
-                ariaLabel={menuPageText.categoriesLabel}
-              />
+            <MenuCategoryScroller
+              categories={categories}
+              activeKey={resolvedCategoryKey}
+              onSelect={handleCategorySelect}
+              ariaLabel={menuPageText.categoriesLabel}
+            />
           </div>
         ) : null}
 
@@ -222,81 +240,76 @@ export default function MenuPage({ items }: MenuPageProps) {
         {visibleItems.length === 0 ? (
           <p className={styles.empty}>{menuPageText.empty}</p>
         ) : (
-          <>
-            {/* Этот блок растягивает ленту на всю ширину и оставляет место для теней. */}
-            <div className={styles.gridWrap}>
-              <div className={styles.grid} ref={gridRef}>
-                {visibleItems.map((item, index) => {
+          // Этот блок растягивает ленту на всю ширину и оставляет место для теней.
+          <div className={styles.gridWrap}>
+            <div className={styles.grid} ref={gridRef}>
+                {visibleItems.map((entry, index) => {
+                  const { item, categoryLabel } = entry;
                   // Этот блок готовит текст карточки и цену позиции.
                   const nameLabel = getMenuNameLabel(
                     item,
                     menuPageText.nameFallback
                   );
-                  const categoryLabel = getMenuCategoryLabel(
-                    item,
-                    menuPageText.categoryFallback
-                  );
                   const priceLabel = getMenuListPriceLabel(item, menuPageText);
-                  const isPopular = Boolean(item.popular);
-                  // Этот блок определяет, нужен ли фон-видео для карточки позиции.
-                  const videoSrc = getMenuVideoSrc(nameLabel);
-                  const isSelected = index === activeIndex;
-                  const cardBaseClassName = videoSrc
-                    ? `${styles.card} ${styles.cardWithVideo}`
-                    : styles.card;
-                  const cardClassName = isSelected
-                    ? `${cardBaseClassName} ${styles.cardSelected}`
-                    : `${cardBaseClassName} ${styles.cardBlurred}`;
-                  const cardLinkClassName = isSelected
-                    ? `${styles.cardLink} ${styles.cardLinkSelected}`
-                    : `${styles.cardLink} ${styles.cardLinkBlurred}`;
+                const isPopular = Boolean(item.popular);
+                // Этот блок определяет, нужен ли фон-видео для карточки позиции.
+                const videoSrc = getMenuVideoSrc(nameLabel);
+                const isSelected = index === activeIndex;
+                const cardBaseClassName = videoSrc
+                  ? `${styles.card} ${styles.cardWithVideo}`
+                  : styles.card;
+                const cardClassName = isSelected
+                  ? `${cardBaseClassName} ${styles.cardSelected}`
+                  : `${cardBaseClassName} ${styles.cardBlurred}`;
+                const cardLinkClassName = isSelected
+                  ? `${styles.cardLink} ${styles.cardLinkSelected}`
+                  : `${styles.cardLink} ${styles.cardLinkBlurred}`;
 
-                  return (
-                    // Этот блок делает карточку кликабельной и ведет к странице позиции.
-                    <Link
-                      key={item.id ?? `${nameLabel}-${index}`}
-                      className={cardLinkClassName}
-                      href={`/menu/${item.id}`}
-                      aria-label={`Открыть позицию ${nameLabel}`}
-                      data-menu-card="true"
-                      onFocus={() => handleCardFocus(index)}
-                    >
-                      <article className={cardClassName}>
-                        {/* Этот блок показывает видеофон только у выбранной карточки. */}
-                        {videoSrc ? (
-                          <MenuCardVideo
-                            src={videoSrc}
-                            isActive={isSelected}
-                            wrapperClassName={styles.videoWrap}
-                            videoClassName={styles.video}
-                          />
-                        ) : null}
-                        {/* Этот блок показывает пометку популярной позиции в правом верхнем углу карточки. */}
-                        {isPopular ? (
-                          <span
-                            className={styles.badge}
-                            aria-label="Популярная позиция"
-                          >
-                            {menuPageText.popularLabel}
-                          </span>
-                        ) : null}
-                        {/* Этот блок показывает минимальную информацию о позиции внизу карточки. */}
-                        <div className={styles.cardHeader}>
-                          <div className={styles.nameBlock}>
-                            <div className={styles.nameRow}>
-                              <h2 className={styles.name}>{nameLabel}</h2>
-                            </div>
-                            <p className={styles.category}>{categoryLabel}</p>
+                return (
+                  // Этот блок делает карточку кликабельной и ведет к странице позиции.
+                  <Link
+                    key={item.id ?? `${nameLabel}-${index}`}
+                    className={cardLinkClassName}
+                    href={`/menu/${item.id}`}
+                    aria-label={`Открыть позицию ${nameLabel}`}
+                    data-menu-card="true"
+                    onFocus={() => handleCardFocus(index)}
+                  >
+                    <article className={cardClassName}>
+                      {/* Этот блок показывает видеофон только у выбранной карточки. */}
+                      {videoSrc ? (
+                        <MenuCardVideo
+                          src={videoSrc}
+                          isActive={isSelected}
+                          wrapperClassName={styles.videoWrap}
+                          videoClassName={styles.video}
+                        />
+                      ) : null}
+                      {/* Этот блок показывает пометку популярной позиции в правом верхнем углу карточки. */}
+                      {isPopular ? (
+                        <span
+                          className={styles.badge}
+                          aria-label="Популярная позиция"
+                        >
+                          {menuPageText.popularLabel}
+                        </span>
+                      ) : null}
+                      {/* Этот блок показывает минимальную информацию о позиции внизу карточки. */}
+                      <div className={styles.cardHeader}>
+                        <div className={styles.nameBlock}>
+                          <div className={styles.nameRow}>
+                            <h2 className={styles.name}>{nameLabel}</h2>
                           </div>
-                          <p className={styles.price}>{priceLabel}</p>
+                          <p className={styles.category}>{categoryLabel}</p>
                         </div>
-                      </article>
-                    </Link>
-                  );
-                })}
-              </div>
+                        <p className={styles.price}>{priceLabel}</p>
+                      </div>
+                    </article>
+                  </Link>
+                );
+              })}
             </div>
-          </>
+          </div>
         )}
       </div>
     </section>

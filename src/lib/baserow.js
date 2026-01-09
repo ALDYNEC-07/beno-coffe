@@ -35,17 +35,32 @@ export function buildBaserowTableUrl(baseUrl, tableId) {
 }
 
 // Эта функция делает запрос к таблице Baserow и возвращает данные или код ошибки.
-export async function fetchBaserowTable({ baseUrl, tableId, token }) {
+export async function fetchBaserowTable({
+  baseUrl,
+  tableId,
+  token,
+  timeoutMs = 20000,
+}) {
   const url = buildBaserowTableUrl(baseUrl, tableId);
-  const res = await fetch(url, {
-    headers: { Authorization: `Token ${token}` },
-    cache: "no-store",
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-  if (!res.ok) {
-    return { ok: false, status: res.status };
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: `Token ${token}` },
+      cache: "no-store",
+      signal: controller.signal,
+    });
+
+    if (!res.ok) {
+      return { ok: false, status: res.status };
+    }
+
+    const data = await res.json();
+    return { ok: true, data };
+  } catch {
+    return { ok: false, status: 504 };
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  const data = await res.json();
-  return { ok: true, data };
 }
