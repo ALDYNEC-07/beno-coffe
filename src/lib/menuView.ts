@@ -11,11 +11,11 @@ type MenuDetailPriceText = {
   priceFallback: string;
 };
 
-// Этот список связывает название позиции меню с видеофоном.
-const menuVideoByName = [
-  { key: "эспрессо", src: "/espresso.mp4" },
-  { key: "капучино", src: "/cappuchino.mp4" },
-  { key: "латте", src: "/latte.mp4" },
+// Этот список связывает название позиции меню с фоновой фотографией.
+const menuImageByName = [
+  { key: "эспрессо", src: "/espresso.jpg" },
+  { key: "капучино", src: "/cappuccino.jpg" },
+  { key: "латте", src: "/latte.jpg" },
 ];
 
 export function getMenuNameLabel(item: MenuItem, fallback: string) {
@@ -65,9 +65,9 @@ export function getMenuDetailPriceInfo(item: MenuItem, text: MenuDetailPriceText
   return { priceInfo, priceLabel, priceTitle };
 }
 
-// Этот помощник подбирает видеофон по названию позиции меню.
-export function getMenuVideoSrc(nameLabel: string) {
+// Этот помощник подбирает фотофон по названию позиции меню.
+export function getMenuImageSrc(nameLabel: string) {
   const lowerName = nameLabel.trim().toLowerCase();
-  const match = menuVideoByName.find((item) => lowerName.includes(item.key));
+  const match = menuImageByName.find((item) => lowerName.includes(item.key));
   return match?.src ?? null;
 }

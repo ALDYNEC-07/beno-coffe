@@ -14,10 +14,9 @@ import {
   getMenuCategoryLabel,
   getMenuListPriceLabel,
   getMenuNameLabel,
-  getMenuVideoSrc,
+  getMenuImageSrc,
 } from "@/lib/menuView";
 import MenuCategoryScroller from "@/components/MenuCategoryScroller/MenuCategoryScroller";
-import MenuCardVideo from "@/components/MenuCardVideo/MenuCardVideo";
 
 type MenuPageProps = {
   items: MenuItem[];
@@ -243,20 +242,20 @@ export default function MenuPage({ items }: MenuPageProps) {
           // Этот блок растягивает ленту на всю ширину и оставляет место для теней.
           <div className={styles.gridWrap}>
             <div className={styles.grid} ref={gridRef}>
-                {visibleItems.map((entry, index) => {
-                  const { item, categoryLabel } = entry;
-                  // Этот блок готовит текст карточки и цену позиции.
-                  const nameLabel = getMenuNameLabel(
-                    item,
-                    menuPageText.nameFallback
-                  );
-                  const priceLabel = getMenuListPriceLabel(item, menuPageText);
+              {visibleItems.map((entry, index) => {
+                const { item, categoryLabel } = entry;
+                // Этот блок готовит текст карточки и цену позиции.
+                const nameLabel = getMenuNameLabel(
+                  item,
+                  menuPageText.nameFallback
+                );
+                const priceLabel = getMenuListPriceLabel(item, menuPageText);
                 const isPopular = Boolean(item.popular);
-                // Этот блок определяет, нужен ли фон-видео для карточки позиции.
-                const videoSrc = getMenuVideoSrc(nameLabel);
+                // Этот блок определяет, нужна ли фоновая фотография для карточки позиции.
+                const imageSrc = getMenuImageSrc(nameLabel);
                 const isSelected = index === activeIndex;
-                const cardBaseClassName = videoSrc
-                  ? `${styles.card} ${styles.cardWithVideo}`
+                const cardBaseClassName = imageSrc
+                  ? `${styles.card} ${styles.cardWithImage}`
                   : styles.card;
                 const cardClassName = isSelected
                   ? `${cardBaseClassName} ${styles.cardSelected}`
@@ -276,14 +275,16 @@ export default function MenuPage({ items }: MenuPageProps) {
                     onFocus={() => handleCardFocus(index)}
                   >
                     <article className={cardClassName}>
-                      {/* Этот блок показывает видеофон только у выбранной карточки. */}
-                      {videoSrc ? (
-                        <MenuCardVideo
-                          src={videoSrc}
-                          isActive={isSelected}
-                          wrapperClassName={styles.videoWrap}
-                          videoClassName={styles.video}
-                        />
+                      {/* Этот блок показывает фоновую фотографию для карточки позиции. */}
+                      {imageSrc ? (
+                        <div className={styles.imageWrap} aria-hidden="true">
+                          <img
+                            className={styles.image}
+                            src={imageSrc}
+                            alt=""
+                            loading={isSelected ? "eager" : "lazy"}
+                          />
+                        </div>
                       ) : null}
                       {/* Этот блок показывает пометку популярной позиции в правом верхнем углу карточки. */}
                       {isPopular ? (
