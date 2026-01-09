@@ -7,9 +7,24 @@ const BASEROW_ENV_KEYS = [
   "BASEROW_VARIANTS_TABLE_ID",
   "BASEROW_SIZES_TABLE_ID",
   "BASEROW_TOKEN",
-];
+] as const;
 
+type BaserowEnvKey = (typeof BASEROW_ENV_KEYS)[number];
+type BaserowEnvValues = Record<BaserowEnvKey, string>;
 type BaserowRecord = Record<string, unknown>;
+type MenuVariant = {
+  sizeName: unknown | null;
+  ml: number | null;
+  price: unknown | null;
+};
+type MenuItem = {
+  id: unknown;
+  name: unknown;
+  category: unknown;
+  description: unknown;
+  popular: unknown;
+  variants: MenuVariant[];
+};
 
 // Эта функция приводит поле ссылок к списку объектов одного вида.
 function normalizeLinks(value: unknown) {
@@ -35,21 +50,23 @@ export async function GET() {
     );
   }
 
+  const baserowValues = values as BaserowEnvValues;
+
   const [menuRes, variantsRes, sizesRes] = await Promise.all([
     fetchBaserowTable({
-      baseUrl: values.BASEROW_API_URL,
-      tableId: values.BASEROW_TABLE_ID,
-      token: values.BASEROW_TOKEN,
+      baseUrl: baserowValues.BASEROW_API_URL,
+      tableId: baserowValues.BASEROW_TABLE_ID,
+      token: baserowValues.BASEROW_TOKEN,
     }),
     fetchBaserowTable({
-      baseUrl: values.BASEROW_API_URL,
-      tableId: values.BASEROW_VARIANTS_TABLE_ID,
-      token: values.BASEROW_TOKEN,
+      baseUrl: baserowValues.BASEROW_API_URL,
+      tableId: baserowValues.BASEROW_VARIANTS_TABLE_ID,
+      token: baserowValues.BASEROW_TOKEN,
     }),
     fetchBaserowTable({
-      baseUrl: values.BASEROW_API_URL,
-      tableId: values.BASEROW_SIZES_TABLE_ID,
-      token: values.BASEROW_TOKEN,
+      baseUrl: baserowValues.BASEROW_API_URL,
+      tableId: baserowValues.BASEROW_SIZES_TABLE_ID,
+      token: baserowValues.BASEROW_TOKEN,
     }),
   ]);
 
@@ -82,9 +99,9 @@ export async function GET() {
     })
   );
 
-  const itemsById = new Map<string, BaserowRecord>();
+  const itemsById = new Map<string, MenuItem>();
   const menuWithVariants = menuItems.map((item) => {
-    const mappedItem = {
+    const mappedItem: MenuItem = {
       id: item?.id ?? null,
       name: item?.name ?? null,
       category: item?.category ?? null,
@@ -126,9 +143,9 @@ export async function GET() {
   });
 
   menuWithVariants.forEach((item) => {
-    item.variants.sort((a: BaserowRecord, b: BaserowRecord) => {
-      const aMl = parseNumericValue(a?.ml);
-      const bMl = parseNumericValue(b?.ml);
+    item.variants.sort((a, b) => {
+      const aMl = parseNumericValue(a.ml);
+      const bMl = parseNumericValue(b.ml);
       const aValid = Number.isFinite(aMl);
       const bValid = Number.isFinite(bMl);
       if (aValid && bValid) {
