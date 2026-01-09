@@ -13,6 +13,7 @@ type MenuDetailPriceText = {
 
 // Этот список хранит файлы с фотографиями позиций меню из public/assets.
 const menuImageFiles = [
+  "bambl-coffee.jpg",
   "chocolate-hot-chocolate.jpg",
   "coffee-americano.jpg",
   "coffee-cappuccino.jpg",
@@ -362,7 +363,9 @@ function buildImageCandidates(nameLabel: string, categoryLabel?: string) {
   const candidates: string[] = [];
 
   if (categoryKey && trimmedNameKey) {
+    // Сначала пробуем стандартный порядок, а потом обратный для нестандартных названий.
     candidates.push(`${categoryKey}-${trimmedNameKey}`);
+    candidates.push(`${trimmedNameKey}-${categoryKey}`);
   }
   if (trimmedNameKey) {
     candidates.push(trimmedNameKey);
