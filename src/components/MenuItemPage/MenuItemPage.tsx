@@ -39,7 +39,7 @@ const menuItemText = {
 export default function MenuItemPage({ item }: MenuItemPageProps) {
   if (!item) {
     return (
-      // Этот блок показывает сообщение, когда позиция не найдена.
+      // Этот блок показывает сообщение, если позиция не найдена.
       <section className={styles.menuItemPage} aria-label="Позиция меню">
         <div className={`container ${styles.content}`}>
           {/* Этот блок показывает заголовок и подсказку, что делать дальше. */}

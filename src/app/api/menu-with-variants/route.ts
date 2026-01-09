@@ -1,14 +1,23 @@
-// Этот файл обслуживает запрос /api/menu-with-variants и отдает меню с вариантами.
 import { fetchBaserowTable, getBaserowEnv } from "@/lib/baserow";
 import { parseNumericValue } from "@/lib/number";
 
-// Эта функция приводит поле со ссылками к списку объектов одного вида.
-function normalizeLinks(value) {
+const BASEROW_ENV_KEYS = [
+  "BASEROW_API_URL",
+  "BASEROW_TABLE_ID",
+  "BASEROW_VARIANTS_TABLE_ID",
+  "BASEROW_SIZES_TABLE_ID",
+  "BASEROW_TOKEN",
+];
+
+type BaserowRecord = Record<string, unknown>;
+
+// Эта функция приводит поле ссылок к списку объектов одного вида.
+function normalizeLinks(value: unknown) {
   if (Array.isArray(value)) {
-    return value.filter(Boolean);
+    return value.filter(Boolean) as BaserowRecord[];
   }
   if (value && typeof value === "object") {
-    return [value];
+    return [value as BaserowRecord];
   }
   if (value === null || value === undefined) {
     return [];
@@ -16,17 +25,9 @@ function normalizeLinks(value) {
   return [{ id: value }];
 }
 
-// Этот обработчик загружает меню и варианты, склеивает их и возвращает JSON.
+// Этот обработчик возвращает данные меню вместе с вариантами.
 export async function GET() {
-  // Этот блок собирает настройки доступа к Baserow и проверяет их наличие.
-  const { values, missing } = getBaserowEnv([
-    "BASEROW_API_URL",
-    "BASEROW_TABLE_ID",
-    "BASEROW_SIZES_TABLE_ID",
-    "BASEROW_VARIANTS_TABLE_ID",
-    "BASEROW_TOKEN",
-  ]);
-
+  const { values, missing } = getBaserowEnv(BASEROW_ENV_KEYS);
   if (missing.length > 0) {
     return Response.json(
       { error: "Missing Baserow configuration", missing },
@@ -34,7 +35,6 @@ export async function GET() {
     );
   }
 
-  // Этот блок делает запросы параллельно: меню, таблицу вариантов и размеры.
   const [menuRes, variantsRes, sizesRes] = await Promise.all([
     fetchBaserowTable({
       baseUrl: values.BASEROW_API_URL,
@@ -54,7 +54,6 @@ export async function GET() {
   ]);
 
   if (!menuRes.ok || !variantsRes.ok || !sizesRes.ok) {
-    // Если хотя бы один запрос не удался, возвращаем 500.
     const status = !menuRes.ok
       ? menuRes.status
       : !variantsRes.ok
@@ -66,18 +65,16 @@ export async function GET() {
     );
   }
 
-  // Этот блок вытаскивает строки из ответов Baserow.
   const menuItems = Array.isArray(menuRes.data?.results)
-    ? menuRes.data.results
+    ? (menuRes.data.results as BaserowRecord[])
     : [];
   const variants = Array.isArray(variantsRes.data?.results)
-    ? variantsRes.data.results
+    ? (variantsRes.data.results as BaserowRecord[])
     : [];
   const sizes = Array.isArray(sizesRes.data?.results)
-    ? sizesRes.data.results
+    ? (sizesRes.data.results as BaserowRecord[])
     : [];
 
-  // Этот блок собирает быстрый поиск объема по идентификатору размера.
   const sizeMlById = new Map(
     sizes.map((size) => {
       const mlValue = parseNumericValue(size?.ml);
@@ -85,8 +82,7 @@ export async function GET() {
     })
   );
 
-  // Этот блок готовит быстрый поиск позиции по ее id.
-  const itemsById = new Map();
+  const itemsById = new Map<string, BaserowRecord>();
   const menuWithVariants = menuItems.map((item) => {
     const mappedItem = {
       id: item?.id ?? null,
@@ -104,7 +100,6 @@ export async function GET() {
     return mappedItem;
   });
 
-  // Этот блок раскладывает варианты по соответствующим позициям меню.
   variants.forEach((variant) => {
     const itemLinks = normalizeLinks(variant?.item);
     const sizeLink = normalizeLinks(variant?.size)[0];
@@ -130,9 +125,8 @@ export async function GET() {
     });
   });
 
-  // Этот блок сортирует варианты по объему, чтобы размеры шли по возрастанию.
   menuWithVariants.forEach((item) => {
-    item.variants.sort((a, b) => {
+    item.variants.sort((a: BaserowRecord, b: BaserowRecord) => {
       const aMl = parseNumericValue(a?.ml);
       const bMl = parseNumericValue(b?.ml);
       const aValid = Number.isFinite(aMl);
@@ -150,6 +144,5 @@ export async function GET() {
     });
   });
 
-  // Этот блок возвращает меню вместе с вариантами.
   return Response.json(menuWithVariants);
 }
