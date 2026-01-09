@@ -11,6 +11,11 @@ type MenuDetailPriceText = {
   priceFallback: string;
 };
 
+type MenuImageEntry = {
+  key: string;
+  src: string;
+};
+
 // Этот список хранит файлы с фотографиями позиций меню из public/assets.
 const menuImageFiles = [
   "bambl-coffee.jpg",
@@ -222,7 +227,7 @@ function normalizeKey(value: string) {
 }
 
 // Эта таблица хранит быстрый доступ к файлам по ключу.
-const menuImageEntries = menuImageFiles.map((fileName) => ({
+const menuImageEntries: MenuImageEntry[] = menuImageFiles.map((fileName) => ({
   key: normalizeKey(fileName),
   src: `/assets/${fileName}`,
 }));
@@ -256,23 +261,28 @@ function matchesKeySegment(valueKey: string, segmentKey: string) {
 
 // Эта функция находит самый подходящий файл по частичному совпадению.
 function findBestImageMatch(candidateKey: string) {
-  let bestMatch: { src: string; length: number; score: number } | null = null;
+  let bestSrc: string | null = null;
+  let bestLength = 0;
+  let bestScore = 0;
 
-  menuImageEntries.forEach((entry) => {
+  for (const entry of menuImageEntries) {
     if (!matchesKeySegment(entry.key, candidateKey)) {
-      return;
+      continue;
     }
     const score = entry.key.endsWith(candidateKey) ? 2 : 1;
-    if (
-      !bestMatch ||
-      score > bestMatch.score ||
-      (score === bestMatch.score && entry.key.length < bestMatch.length)
-    ) {
-      bestMatch = { src: entry.src, length: entry.key.length, score };
-    }
-  });
+    const isBetterMatch =
+      bestSrc === null ||
+      score > bestScore ||
+      (score === bestScore && entry.key.length < bestLength);
 
-  return bestMatch?.src ?? null;
+    if (isBetterMatch) {
+      bestSrc = entry.src;
+      bestLength = entry.key.length;
+      bestScore = score;
+    }
+  }
+
+  return bestSrc;
 }
 
 // Эта функция приводит название к набору слов для поиска файла.

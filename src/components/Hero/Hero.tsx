@@ -3,6 +3,7 @@
  Он показывает крупный заголовок, подзаголовок, фотографию и быстрые факты.
  Человек может перейти к контактам, меню и ключевым разделам.
 */
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./Hero.module.css";
 
@@ -16,11 +17,13 @@ export default function Hero() {
           {/* Этот блок показывает фото кофейни. */}
           <div className={styles.media}>
             {/* Эта фотография задает атмосферу первой секции. */}
-            <img
+            <Image
               className={styles.mediaImage}
               src="/benocoffee.jpg"
               alt="Интерьер кофейни BENO"
-              loading="eager"
+              fill
+              priority
+              sizes="(max-width: 719px) 100vw, 60vw"
             />
             {/* Этот блок показывает статус работы поверх фото внизу. */}
             <div className={styles.mediaBadge} aria-label="Время работы">

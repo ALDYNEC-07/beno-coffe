@@ -3,6 +3,7 @@
  Он показывает подробное описание, цены и варианты размера выбранной позиции, а для некоторых позиций добавляет фотофон.
  Человек может посмотреть детали и вернуться обратно к полному меню.
 */
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./MenuItemPage.module.css";
 import {
@@ -93,7 +94,14 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
       {imageSrc ? (
         <>
           <div className={styles.imageWrap} aria-hidden="true">
-            <img className={styles.image} src={imageSrc} alt="" />
+            <Image
+              className={styles.image}
+              src={imageSrc}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+            />
           </div>
           {/* Этот блок смягчает фотофон, чтобы текст читался поверх него. */}
           <div className={styles.imageScrim} aria-hidden="true" />

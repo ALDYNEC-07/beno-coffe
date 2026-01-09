@@ -5,6 +5,7 @@
 */
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./MenuPage.module.css";
 import type { MenuItem } from "@/lib/menuData";
@@ -278,11 +279,13 @@ export default function MenuPage({ items }: MenuPageProps) {
                       {/* Этот блок показывает фоновую фотографию для карточки позиции. */}
                       {imageSrc ? (
                         <div className={styles.imageWrap} aria-hidden="true">
-                          <img
+                          <Image
                             className={styles.image}
                             src={imageSrc}
                             alt=""
+                            fill
                             loading={isSelected ? "eager" : "lazy"}
+                            sizes="(max-width: 719px) 67vw, 270px"
                           />
                         </div>
                       ) : null}
