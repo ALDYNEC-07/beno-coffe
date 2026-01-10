@@ -5,7 +5,7 @@
 */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./Footer.module.css";
 
@@ -53,10 +53,29 @@ export default function Footer() {
     contact: false,
   });
 
+  // Эта функция раскрывает блок связи, когда в адресе выбран подвал.
+  const openContactFromHash = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    if (window.location.hash === "#footer") {
+      setOpenBlocks((prev) => ({ ...prev, contact: true }));
+    }
+  };
+
   // Эта функция переключает раскрытие блока при нажатии на его заголовок.
   const handleToggle = (blockKey: "intro" | "hours" | "contact") => {
     setOpenBlocks((prev) => ({ ...prev, [blockKey]: !prev[blockKey] }));
   };
+
+  // Этот блок при загрузке и смене адреса раскрывает секцию связи в подвале.
+  useEffect(() => {
+    openContactFromHash();
+    window.addEventListener("hashchange", openContactFromHash);
+    return () => {
+      window.removeEventListener("hashchange", openContactFromHash);
+    };
+  }, []);
 
   return (
     // Этот блок показывает подвал с контактами и служебной информацией.
