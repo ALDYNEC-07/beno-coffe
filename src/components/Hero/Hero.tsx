@@ -3,10 +3,62 @@
  Он показывает крупный заголовок, подзаголовок, видео и быстрые факты.
  Человек может перейти к контактам, меню и ключевым разделам.
 */
+"use client";
+
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
+  // Эта ссылка хранит доступ к видео, чтобы включать и останавливать его.
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Этот код запускается сразу после появления секции, чтобы видео играло только в поле зрения.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) {
+      return;
+    }
+
+    // Эта функция пытается запустить видео, когда его видно.
+    const startVideo = async () => {
+      try {
+        await video.play();
+      } catch {
+        // Если браузер блокирует запуск, просто оставляем видео на паузе.
+      }
+    };
+
+    // Эта функция останавливает видео, когда его не видно.
+    const stopVideo = () => {
+      video.pause();
+    };
+
+    if (!("IntersectionObserver" in window)) {
+      startVideo();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            startVideo();
+          } else {
+            stopVideo();
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+
+    observer.observe(video);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     // Этот блок показывает главный экран приветствия кофейни.
     <section className={styles.hero}>
@@ -15,9 +67,10 @@ export default function Hero() {
         <div className={styles.layout}>
           {/* Этот блок показывает видео кофейни. */}
           <div className={styles.media}>
-            {/* Это видео задает атмосферу первой секции. */}
+            {/* Это видео само запускается, когда пользователь видит первый экран. */}
             <video
               className={styles.mediaImage}
+              ref={videoRef}
               autoPlay
               muted
               loop

@@ -1,56 +1,63 @@
 /*
- Этот файл определяет секцию "Новинка месяца".
+ Этот файл определяет секцию "Авторское".
  Он показывает описание сезонного предложения, карточку напитка и краткие анонсы.
- Человек может узнать о новинке и перейти в меню.
+ Человек может узнать об авторском напитке и перейти в меню.
 */
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./NewMonth.module.css";
 
-// Этот объект хранит данные о напитке месяца и кнопке для перехода.
+// Этот объект хранит данные об авторском напитке и кнопке для перехода.
 const monthlySpecial = {
-  title: "Пряный тыквенный латте",
-  description: "«Специально к осени — пряный тыквенный латте».",
-  summary:
-    "Сезонное предложение или особый напиток — то, ради чего приятно “заглянуть ещё раз”.",
-  mediaLabel: "Фото напитка месяца",
-  mediaNote: "Плейсхолдер: фото чашки / сезонного напитка",
+  title: "Тоска индейца",
+  description:
+    "Яркий тропический вкус: сладкий, сочный и бодряще-кислый.",
+  mediaLabel: "Фото авторского напитка",
+  mediaSrc: "/assets/Toska-indeyca.jpg",
+  mediaAlt: "Авторский напиток: тоска-индейца",
   menuLabel: "Посмотреть в меню",
   menuLink: "/menu",
 };
 
-// Этот список хранит короткие анонсы, которые дополняют новинку месяца.
+// Этот список хранит короткие анонсы, которые дополняют авторский раздел.
 const sideNotes = [
   {
-    title: "Короткий анонс",
-    text: "Плейсхолдер под мини-новость: дегустация, скидка на альтернативу, событие в кофейне.",
+    title: "Как придумали название?",
+    text: "Рецепт «Тоска индейца» придумали мы, а имя — подписчик из Instagram.",
   },
   {
-    title: "Ещё одна заметка",
-    text: "Плейсхолдер под “сегодня”: новые булочки, обновили фильтр, появился новый сироп.",
+    title: "Есть идея нового напитка?",
+    text: "Придумайте напиток мечты и пришлите нам. Если возьмём в работу — вы же дадите ему имя.",
   },
 ];
 
 export default function NewMonth() {
   return (
-    // Этот блок показывает секцию новинки месяца с якорем для навигации.
-    <section id="new" className={styles.newMonth} aria-label="Новинка месяца">
+    // Этот блок показывает секцию авторского предложения с якорем для навигации.
+    <section id="new" className={styles.newMonth} aria-label="Авторское">
       <div className="container">
         {/* Этот блок делит секцию на основную часть и дополнительные анонсы. */}
         <div className={styles.layout}>
-          {/* Этот блок показывает основную информацию о сезонной новинке. */}
+          {/* Этот блок показывает основную информацию об авторском напитке. */}
           <div className="stack">
-            <h2 className={styles.title}>Новинка месяца</h2>
-            <p className={styles.lead}>{monthlySpecial.summary}</p>
+            <h2 className={styles.title}>Авторское</h2>
 
-            {/* Этот блок показывает карточку с напитком месяца. */}
+            {/* Этот блок показывает карточку с авторским напитком. */}
             <article className={styles.card}>
-              {/* Этот блок содержит фото-плейсхолдер, описание и кнопки. */}
+              {/* Этот блок содержит фото с названием, описание и кнопку. */}
               <div className="stack">
-                {/* Этот блок показывает место для фото напитка. */}
+                {/* Этот блок показывает фото авторского напитка. */}
                 <div className={styles.media} role="img" aria-label={monthlySpecial.mediaLabel}>
-                  <p className={styles.mediaText}>{monthlySpecial.mediaNote}</p>
+                  <Image
+                    src={monthlySpecial.mediaSrc}
+                    alt={monthlySpecial.mediaAlt}
+                    fill
+                    sizes="(max-width: 719px) 90vw, (max-width: 900px) 70vw, 540px"
+                    className={styles.mediaImage}
+                  />
+                  {/* Этот блок показывает название напитка прямо на фото. */}
+                  <h3 className={styles.mediaTitle}>{monthlySpecial.title}</h3>
                 </div>
-                <h3 className={styles.subtitle}>{monthlySpecial.title}</h3>
                 <p className={styles.note}>{monthlySpecial.description}</p>
                 {/* Этот блок показывает кнопку для перехода к меню. */}
                 <div className={styles.metaRow}>
