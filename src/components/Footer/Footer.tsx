@@ -30,9 +30,6 @@ const contactInfo = {
   phoneLabel: "Телефон:",
   phoneText: "+7 926 704-04-04",
   phoneLink: "tel:+79267040404",
-  emailLabel: "E-mail:",
-  emailText: "hello@beno.coffee",
-  emailLink: "mailto:hello@beno.coffee",
   socialLabel: "Соцсети:",
 };
 
@@ -176,12 +173,6 @@ export default function Footer() {
                   <strong>{contactInfo.phoneLabel}</strong>{" "}
                   <a className={styles.inlineLink} href={contactInfo.phoneLink}>
                     {contactInfo.phoneText}
-                  </a>
-                </li>
-                <li>
-                  <strong>{contactInfo.emailLabel}</strong>{" "}
-                  <a className={styles.inlineLink} href={contactInfo.emailLink}>
-                    {contactInfo.emailText}
                   </a>
                 </li>
                 <li>
