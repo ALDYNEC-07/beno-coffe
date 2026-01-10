@@ -37,7 +37,6 @@
 }
 
 .media {
-  border: 1px solid rgba(155, 106, 18, 0.35);
   border-radius: var(--radius);
   background: linear-gradient(
       135deg,
@@ -46,17 +45,14 @@
     ),
     #f7f4ef;
   min-height: clamp(200px, 28vw, 360px);
-  display: grid;
-  place-items: center;
-  text-align: center;
+  position: relative;
+  overflow: hidden;
   box-shadow: 0 10px 26px rgba(60, 40, 20, 0.14);
 }
 
-.mediaText {
-  margin: 0;
-  padding: var(--space-3);
-  font-size: var(--text-sm);
-  color: rgba(27, 27, 27, 0.75);
+.mediaImage {
+  object-fit: cover;
+  object-position: center;
 }
 
 @media (min-width: 900px) {

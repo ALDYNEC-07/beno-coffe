@@ -1,8 +1,9 @@
 /*
  Этот файл определяет секцию "О нас".
- Он показывает краткую историю кофейни и место для фото команды.
+ Он показывает краткую историю кофейни и фото команды.
  Человек может познакомиться с историей и атмосферой кофейни.
 */
+import Image from "next/image";
 import styles from "./About.module.css";
 
 // Этот объект хранит заголовок и основной текст секции "О нас".
@@ -12,10 +13,10 @@ const aboutContent = {
     "Мы начали с мечты о месте, где кофе — это искусство, а каждый гость — друг. За 7 лет BENO вырос из маленького старта в любимую кофейню района.",
 };
 
-// Этот объект хранит подпись для блока с фото команды или владельца.
+// Этот объект хранит путь и описание фото команды.
 const aboutMedia = {
-  label: "Фото команды или владельца",
-  note: "Плейсхолдер: фото команды / владельца (эмоциональная связь)",
+  src: "/assets/benoteam.jpg",
+  alt: "Команда кофейни BENO",
 };
 
 export default function About() {
@@ -31,9 +32,16 @@ export default function About() {
             <p className={styles.lead}>{aboutContent.description}</p>
           </div>
 
-          {/* Этот блок показывает место для фото команды или владельца. */}
-          <div className={styles.media} role="img" aria-label={aboutMedia.label}>
-            <p className={styles.mediaText}>{aboutMedia.note}</p>
+          {/* Этот блок показывает фото команды. */}
+          <div className={styles.media}>
+            {/* Это фото помогает показать атмосферу и команду кофейни. */}
+            <Image
+              src={aboutMedia.src}
+              alt={aboutMedia.alt}
+              fill
+              sizes="(max-width: 719px) 90vw, (max-width: 900px) 50vw, 480px"
+              className={styles.mediaImage}
+            />
           </div>
         </div>
       </div>
