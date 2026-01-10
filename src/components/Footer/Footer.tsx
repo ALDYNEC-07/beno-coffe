@@ -24,12 +24,12 @@ const hoursInfo = {
   addressLink: "/map",
 };
 
-// Этот объект хранит данные для блока связи.
+// Этот объект хранит данные для блока контактов.
 const contactInfo = {
-  title: "Связь",
+  title: "Контакты",
   phoneLabel: "Телефон:",
-  phoneText: "+0 (000) 000-00-00",
-  phoneLink: "tel:+00000000000",
+  phoneText: "+7 926 704-04-04",
+  phoneLink: "tel:+79267040404",
   emailLabel: "E-mail:",
   emailText: "hello@beno.coffee",
   emailLink: "mailto:hello@beno.coffee",
