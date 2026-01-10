@@ -76,9 +76,12 @@ export default function Footer() {
 
   // Этот блок при загрузке и смене адреса раскрывает секцию связи в подвале.
   useEffect(() => {
-    openContactFromHash();
+    const frameId = window.requestAnimationFrame(() => {
+      openContactFromHash();
+    });
     window.addEventListener("hashchange", openContactFromHash);
     return () => {
+      window.cancelAnimationFrame(frameId);
       window.removeEventListener("hashchange", openContactFromHash);
     };
   }, []);

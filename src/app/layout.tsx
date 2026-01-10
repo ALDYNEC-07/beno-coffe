@@ -4,19 +4,11 @@
  Здесь позже можно разместить общие элементы.
 */
 import type { Metadata } from "next";
-import { Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
-
-// Этот блок подключает шрифт для всех заголовков на сайте.
-const cormorantGaramond = Cormorant_Garamond({
-  subsets: ["latin", "cyrillic"],
-  weight: ["700"],
-  variable: "--font-heading",
-});
 
 // Здесь хранится заголовок страницы и короткое описание для браузера.
 export const metadata: Metadata = {
-  title: "New Site",
+  title: "BENO COFFEE",
   description: "Clean starting point",
 };
 
@@ -28,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cormorantGaramond.variable}>
+      <body>
         {/* Здесь показывается каждая страница внутри общего каркаса. */}
         {children}
       </body>
