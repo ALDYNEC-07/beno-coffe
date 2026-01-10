@@ -3,24 +3,41 @@
  Он показывает заголовок, короткое пояснение и карточки с причинами прийти.
  Человек может прочитать преимущества и попасть сюда по якорю #features.
 */
+import type { CSSProperties } from "react";
+import Image from "next/image";
+
 import styles from "./Features.module.css";
 
-// Этот список хранит тексты карточек с ключевыми преимуществами.
+// Эти пути нужны, чтобы показывать правильные логотипы в карточках.
+const logoElRomaSrc = "/assets/logo-el-roma.png?v=2";
+const logoAtmosferaSrc = "/assets/logo-atmosfera.png";
+const logoDesertsSrc = "/assets/logo-deserts.png";
+
+// Этот список хранит тексты карточек с ключевыми преимуществами, их логотипы и визуальный масштаб.
 const features = [
   {
-    title: "Отличный кофе",
-    subtitle: "100% арабика specialty / своя обжарка или проверенный локальный обжарщик.",
-    note: "«Спешиалти зерна и авторские рецепты».",
+    title: "El Roma",
+    subtitle:
+      "Средняя обжарка. Арабика Cerrado + отборная робуста. Плотно, гладко: цитрус → шоколад → тост.",
+    note: "«Сбалансированный эспрессо-бленд с характером».",
+    iconSrc: logoElRomaSrc,
+    iconAlt: "Логотип El Roma",
+    iconScale: 2.2,
   },
   {
     title: "Уютная атмосфера",
     subtitle: "Пространство, в которое хочется возвращаться.",
     note: "«Творческое пространство и доброжелательные бариста — как дома».",
+    iconSrc: logoAtmosferaSrc,
+    iconAlt: "Логотип Atmosfera",
   },
   {
     title: "Свежая выпечка",
-    subtitle: "Если есть выпечка/десерты — это must-see.",
-    note: "«Каждое утро печём свежие круассаны».",
+    subtitle:
+      "Выпечка и десерты — свежие. Всегда найдётся и что-то воздушное, и что-то плотное, и что-то “на сегодня”.",
+    note: "«Витрина меняется каждый день».",
+    iconSrc: logoDesertsSrc,
+    iconAlt: "Логотип Deserts",
   },
 ];
 
@@ -45,10 +62,26 @@ export default function Features() {
         <div className={styles.featuresGrid}>
           {features.map((feature) => (
             <article key={feature.title} className={styles.featureCard}>
-              {/* Этот блок показывает иконку и основные тексты преимущества. */}
+              {/* Этот блок показывает логотип или текст-заглушку и основные тексты преимущества. */}
               <div className={styles.featureTop}>
-                <div className={styles.iconBox} aria-hidden="true">
-                  иконка
+                <div className={styles.iconBox}>
+                  {feature.iconSrc ? (
+                    <Image
+                      src={feature.iconSrc}
+                      alt={feature.iconAlt ?? ""}
+                      fill
+                      sizes="52px"
+                      className={styles.logo}
+                      style={
+                        {
+                          "--logo-scale": feature.iconScale,
+                        } as CSSProperties
+                      }
+                      unoptimized
+                    />
+                  ) : (
+                    <span>{feature.iconText}</span>
+                  )}
                 </div>
                 <div className={styles.featureText}>
                   <h3 className={styles.subtitle}>{feature.title}</h3>
