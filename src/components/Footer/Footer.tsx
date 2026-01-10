@@ -36,7 +36,11 @@ const contactInfo = {
 // Этот список хранит ссылки на соцсети кофейни.
 const socialLinks = [
   { label: "Instagram", href: "/instagram", ariaLabel: "Instagram BENO" },
-  { label: "Facebook", href: "/facebook", ariaLabel: "Facebook BENO" },
+  {
+    label: "WhatsApp",
+    href: "https://wa.me/79267040404",
+    ariaLabel: "WhatsApp BENO",
+  },
 ];
 
 // Этот диапазон лет нужен для строки копирайта внизу подвала.
