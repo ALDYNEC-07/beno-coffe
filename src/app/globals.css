@@ -24,6 +24,11 @@ body {
   padding: 0;
 }
 
+section[id],
+footer[id] {
+  scroll-margin-top: var(--space-4);
+}
+
 .container {
   width: min(100% - 2 * var(--space-3), var(--container));
   margin-inline: auto;

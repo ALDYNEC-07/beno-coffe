@@ -11,7 +11,7 @@
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   padding-inline: var(--chip-edge);
-  padding-top: calc(var(--space-2, 0.75rem) + 0.15rem);
+  padding-top: calc(var(--space-2, 0.75rem) + 0.35rem);
   padding-bottom: calc(var(--space-2, 0.75rem) + 0.85rem);
   scroll-snap-type: x mandatory;
   scroll-padding-inline: var(--chip-edge);

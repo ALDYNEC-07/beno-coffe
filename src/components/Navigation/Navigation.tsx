@@ -37,7 +37,13 @@ function NavigationLinksList({
     <ul className={listClassName}>
       {navLinks.map((link) => (
         <li key={link.href}>
-          <a className={linkClassName} href={link.href} onClick={onLinkClick}>
+          {/* Этот элемент показывает ссылку и подсказывает направление перехода. */}
+          <a
+            className={linkClassName}
+            href={link.href}
+            onClick={onLinkClick}
+            data-link-direction={link.href.startsWith("#") ? "down" : "page"}
+          >
             {link.label}
           </a>
         </li>
@@ -111,7 +117,7 @@ export default function Navigation() {
         <div className={`container ${styles.content}`}>
           {/* Этот блок ведет на главную страницу и показывает название кофейни. */}
           <Link className={styles.brand} href="/" aria-label="BENO coffee — на главную">
-            <span className={styles.brandName}>BENO кофейня</span>
+            <span className={styles.brandName}>BENO COFFEE</span>
           </Link>
           {/* Этот блок открывает основную навигацию по разделам. */}
           <nav className={styles.nav} aria-label="Основная навигация">
