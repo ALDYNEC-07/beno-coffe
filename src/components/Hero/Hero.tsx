@@ -140,7 +140,7 @@ export default function Hero() {
                   Смотреть меню
                 </Link>
                 <a className={`button ${styles.metaButton}`} href="#new">
-                  Новинка месяца
+                  Авторское
                 </a>
                 <a className={`button ${styles.metaButton}`} href="#about">
                   История BENO
