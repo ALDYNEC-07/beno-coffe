@@ -4,7 +4,7 @@
  Человек может выбрать категорию, пролистывать меню, видеть выбранную карточку в центре и открыть подробную страницу позиции.
 */
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -30,6 +30,12 @@ type MenuItemWithCategory = {
   categoryKey: string;
 };
 
+type InitialSelection = {
+  categoryKey: string;
+  index: number;
+  scrollIndex: number | null;
+};
+
 // Этот набор текста хранит подписи, запасные тексты и служебные ключи для страницы меню.
 const menuPageText = {
   empty: "Пока нет данных о меню. Загляните чуть позже!",
@@ -42,23 +48,63 @@ const menuPageText = {
   ...commonMenuText,
 };
 
+// Эта функция выбирает начальную категорию и карточку, если они указаны в адресе страницы.
+const getInitialSelection = (
+  entries: MenuItemWithCategory[],
+  requestedItemName: string
+): InitialSelection => {
+  if (!requestedItemName) {
+    return {
+      categoryKey: menuPageText.allCategoryKey,
+      index: 0,
+      scrollIndex: null,
+    };
+  }
+
+  const requestedKey = requestedItemName.toLocaleLowerCase();
+  const matchesRequested = (entry: MenuItemWithCategory) =>
+    getMenuNameLabel(entry.item, menuPageText.nameFallback)
+      .toLocaleLowerCase()
+      .trim() === requestedKey;
+  const targetEntry = entries.find(matchesRequested);
+  if (!targetEntry) {
+    return {
+      categoryKey: menuPageText.allCategoryKey,
+      index: 0,
+      scrollIndex: null,
+    };
+  }
+
+  const categoryKey = targetEntry.categoryKey;
+  const filteredEntries =
+    categoryKey === menuPageText.allCategoryKey
+      ? entries
+      : entries.filter((entry) => entry.categoryKey === categoryKey);
+  const targetIndex = filteredEntries.findIndex(matchesRequested);
+  if (targetIndex === -1) {
+    return {
+      categoryKey,
+      index: 0,
+      scrollIndex: null,
+    };
+  }
+
+  return {
+    categoryKey,
+    index: targetIndex,
+    scrollIndex: targetIndex,
+  };
+};
+
 // Этот компонент показывает список позиций меню в виде карточек.
 export default function MenuPage({ items }: MenuPageProps) {
   // Этот объект держит доступ к ленте карточек для вычисления центра.
   const gridRef = useRef<HTMLDivElement | null>(null);
-  // Это число хранит номер карточки, которая сейчас в центре.
-  const [activeIndex, setActiveIndex] = useState(0);
-  // Это поле хранит ключ категории, выбранной человеком.
-  const [activeCategoryKey, setActiveCategoryKey] = useState(
-    menuPageText.allCategoryKey
-  );
   // Этот объект читает параметры адресной строки, чтобы найти нужную позицию.
   const searchParams = useSearchParams();
   // Этот текст хранит название позиции из адреса, если оно задано.
   const requestedItemName =
     searchParams.get(menuPageText.itemQueryKey)?.trim() ?? "";
-  // Этот признак не дает повторно сбивать выбор после первого перехода.
-  const hasAppliedQueryRef = useRef(false);
 
   // Этот блок готовит список позиций вместе с их категориями.
   const itemsWithCategory = useMemo<MenuItemWithCategory[]>(
@@ -96,6 +142,25 @@ export default function MenuPage({ items }: MenuPageProps) {
     ];
   }, [itemsWithCategory]);
 
+  // Этот объект выбирает стартовую категорию и карточку на основе адреса.
+  const initialSelection = getInitialSelection(
+    itemsWithCategory,
+    requestedItemName
+  );
+
+  // Это поле хранит ключ категории, выбранной человеком.
+  const [activeCategoryKey, setActiveCategoryKey] = useState(
+    () => initialSelection.categoryKey
+  );
+  // Это число хранит номер карточки, которая сейчас в центре.
+  const [activeIndex, setActiveIndex] = useState(
+    () => initialSelection.index
+  );
+  // Этот объект хранит индекс карточки из адреса, чтобы один раз прокрутить ее в центр.
+  const initialScrollIndexRef = useRef<number | null>(
+    initialSelection.scrollIndex
+  );
+
   // Этот ключ выбирает доступную категорию, если прежняя больше не существует.
   const resolvedCategoryKey = categories.some(
     (category) => category.key === activeCategoryKey
@@ -115,29 +180,29 @@ export default function MenuPage({ items }: MenuPageProps) {
   const scrollStorageKey = `${menuPageText.scrollStoragePrefix}-${resolvedCategoryKey}`;
 
   // Эта функция мягко перемещает нужную карточку в центр ленты.
-  const scrollCardToCenter = (
-    index: number,
-    behavior: ScrollBehavior = "smooth"
-  ) => {
-    const grid = gridRef.current;
-    if (!grid) {
-      return;
-    }
+  const scrollCardToCenter = useCallback(
+    (index: number, behavior: ScrollBehavior = "smooth") => {
+      const grid = gridRef.current;
+      if (!grid) {
+        return;
+      }
 
-    const cards = Array.from(
-      grid.querySelectorAll<HTMLElement>("[data-menu-card='true']")
-    );
-    const target = cards[index];
-    if (!target) {
-      return;
-    }
+      const cards = Array.from(
+        grid.querySelectorAll<HTMLElement>("[data-menu-card='true']")
+      );
+      const target = cards[index];
+      if (!target) {
+        return;
+      }
 
-    target.scrollIntoView({
-      behavior,
-      block: "nearest",
-      inline: "center",
-    });
-  };
+      target.scrollIntoView({
+        behavior,
+        block: "nearest",
+        inline: "center",
+      });
+    },
+    []
+  );
 
   // Этот блок восстанавливает позицию ленты при возвращении и выбирает карточку, которая ближе всего к центру.
   useEffect(() => {
@@ -218,42 +283,15 @@ export default function MenuPage({ items }: MenuPageProps) {
     };
   }, [visibleItems.length, scrollStorageKey]);
 
-  // Этот блок переводит страницу к позиции из адресной строки и фиксирует нужную категорию.
+  // Этот блок один раз прокручивает ленту к карточке из адресной строки.
   useEffect(() => {
-    if (!requestedItemName || hasAppliedQueryRef.current) {
+    if (initialScrollIndexRef.current === null || visibleItems.length === 0) {
       return;
     }
-
-    const requestedKey = requestedItemName.toLocaleLowerCase();
-    const matchesRequested = (entry: MenuItemWithCategory) =>
-      getMenuNameLabel(entry.item, menuPageText.nameFallback)
-        .toLocaleLowerCase()
-        .trim() === requestedKey;
-    const targetEntry = itemsWithCategory.find(matchesRequested);
-    if (!targetEntry) {
-      return;
-    }
-
-    if (resolvedCategoryKey !== targetEntry.categoryKey) {
-      setActiveCategoryKey(targetEntry.categoryKey);
-      return;
-    }
-
-    const visibleIndex = visibleItems.findIndex(matchesRequested);
-    if (visibleIndex === -1) {
-      return;
-    }
-
-    hasAppliedQueryRef.current = true;
-    setActiveIndex(visibleIndex);
-    scrollCardToCenter(visibleIndex, "auto");
-  }, [
-    itemsWithCategory,
-    requestedItemName,
-    resolvedCategoryKey,
-    scrollCardToCenter,
-    visibleItems,
-  ]);
+    const targetIndex = initialScrollIndexRef.current;
+    initialScrollIndexRef.current = null;
+    scrollCardToCenter(targetIndex, "auto");
+  }, [scrollCardToCenter, visibleItems.length]);
 
   // Эта функция выделяет карточку при выборе и сдвигает ее в центр.
   const handleCardFocus = (index: number) => {

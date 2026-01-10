@@ -37,6 +37,7 @@
   grid-auto-columns: minmax(240px, 1fr);
   overflow-x: auto;
   width: 100vw;
+  box-sizing: border-box;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   padding-bottom: var(--space-2);
@@ -108,5 +109,7 @@
 @media (min-width: 720px) {
   .featuresGrid {
     grid-auto-columns: minmax(280px, 1fr);
+    padding-inline: clamp(2rem, 6vw, 6rem);
+    scroll-padding-inline: clamp(2rem, 6vw, 6rem);
   }
 }

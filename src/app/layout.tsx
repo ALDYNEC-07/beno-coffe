@@ -8,7 +8,7 @@ import "./globals.css";
 
 // Здесь хранится заголовок страницы и короткое описание для браузера.
 export const metadata: Metadata = {
-  title: "New Site",
+  title: "BENO COFFEE",
   description: "Clean starting point",
 };
 

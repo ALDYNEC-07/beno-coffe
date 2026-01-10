@@ -5,7 +5,7 @@
 */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./Footer.module.css";
 
@@ -18,28 +18,34 @@ const footerIntro = {
 // Этот объект хранит данные о кратком расписании и адресе.
 const hoursInfo = {
   title: "Часы и адрес",
-  todayLabel: "Сегодня: 8:00–20:00",
+  todayLabel: "Работаем каждый день с 7:00 до 00:00",
   addressLabel: "Адрес:",
-  addressText: "Улица, дом — ориентир рядом",
-  addressLink: "/map",
+  addressText: "Грозный, Мамсурова 27",
+  addressLink:
+    "https://2gis.ru/grozny/search/%D0%B3.%D0%93%D1%80%D0%BE%D0%B7%D0%BD%D1%8B%D0%B9%2C%20%D0%BF%D0%BE%D1%81%D0%B5%D0%BB%D0%BE%D0%BA%20%D0%A7%D0%B5%D1%80%D0%BD%D0%BE%D1%80%D0%B5%D1%87%D1%8C%D0%B5%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%20%D0%9C%D0%B0%D0%BC%D1%81%D1%83%D1%80%D0%BE%D0%B2%D0%B0%2027%20Grozny",
 };
 
-// Этот объект хранит данные для блока связи.
+// Этот объект хранит данные для блока контактов.
 const contactInfo = {
-  title: "Связь",
+  title: "Контакты",
   phoneLabel: "Телефон:",
-  phoneText: "+0 (000) 000-00-00",
-  phoneLink: "tel:+00000000000",
-  emailLabel: "E-mail:",
-  emailText: "hello@beno.coffee",
-  emailLink: "mailto:hello@beno.coffee",
+  phoneText: "+7 926 704-04-04",
+  phoneLink: "tel:+79267040404",
   socialLabel: "Соцсети:",
 };
 
 // Этот список хранит ссылки на соцсети кофейни.
 const socialLinks = [
-  { label: "Instagram", href: "/instagram", ariaLabel: "Instagram BENO" },
-  { label: "Facebook", href: "/facebook", ariaLabel: "Facebook BENO" },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/benocoffee_?igsh=MTlzd2NxczBvbTlmYw==",
+    ariaLabel: "Instagram BENO",
+  },
+  {
+    label: "WhatsApp",
+    href: "https://wa.me/79267040404",
+    ariaLabel: "WhatsApp BENO",
+  },
 ];
 
 // Этот диапазон лет нужен для строки копирайта внизу подвала.
@@ -53,10 +59,32 @@ export default function Footer() {
     contact: false,
   });
 
+  // Эта функция раскрывает блок связи, когда в адресе выбран подвал.
+  const openContactFromHash = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    if (window.location.hash === "#footer") {
+      setOpenBlocks((prev) => ({ ...prev, contact: true }));
+    }
+  };
+
   // Эта функция переключает раскрытие блока при нажатии на его заголовок.
   const handleToggle = (blockKey: "intro" | "hours" | "contact") => {
     setOpenBlocks((prev) => ({ ...prev, [blockKey]: !prev[blockKey] }));
   };
+
+  // Этот блок при загрузке и смене адреса раскрывает секцию связи в подвале.
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      openContactFromHash();
+    });
+    window.addEventListener("hashchange", openContactFromHash);
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener("hashchange", openContactFromHash);
+    };
+  }, []);
 
   return (
     // Этот блок показывает подвал с контактами и служебной информацией.
@@ -157,12 +185,6 @@ export default function Footer() {
                   <strong>{contactInfo.phoneLabel}</strong>{" "}
                   <a className={styles.inlineLink} href={contactInfo.phoneLink}>
                     {contactInfo.phoneText}
-                  </a>
-                </li>
-                <li>
-                  <strong>{contactInfo.emailLabel}</strong>{" "}
-                  <a className={styles.inlineLink} href={contactInfo.emailLink}>
-                    {contactInfo.emailText}
                   </a>
                 </li>
                 <li>

@@ -15,6 +15,7 @@
   padding-block: var(--space-3);
   background: transparent;
   isolation: isolate;
+  color: #000;
 }
 
 .header::before {
@@ -189,7 +190,7 @@
   padding: 0.75rem 1rem;
   text-decoration: none;
   border-radius: 10px;
-  color: #5f4308;
+  color: #000;
   font-size: var(--text-base);
 }
 
@@ -223,7 +224,7 @@
   top: 50%;
   width: 20px;
   height: 1px;
-  background: #5f4308;
+  background: #000;
   border: 0 solid transparent;
   box-sizing: border-box;
   border-radius: 999px;
@@ -265,7 +266,7 @@
   height: 26px;
   background-color: transparent;
   border-width: 1px;
-  border-color: #5f4308;
+  border-color: #000;
   transform: translate(-50%, -50%) translateZ(0);
 }
 
