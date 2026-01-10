@@ -61,7 +61,6 @@
 }
 
 .card {
-  border: var(--border);
   border-radius: var(--radius);
   padding: var(--space-3);
   background: #fff;

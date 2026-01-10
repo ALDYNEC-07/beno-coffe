@@ -82,7 +82,7 @@
     rgba(233, 217, 197, 0.68),
     rgba(210, 186, 154, 0.32)
   );
-  border: 1px solid rgba(255, 244, 230, 0.7);
+  border: 1px solid rgba(255, 244, 230, 0.5);
   border-radius: calc(var(--radius) - 6px);
   box-shadow: 0 8px 24px rgba(60, 40, 20, 0.16);
   backdrop-filter: blur(14px) saturate(150%);
