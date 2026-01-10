@@ -18,10 +18,11 @@ const footerIntro = {
 // Этот объект хранит данные о кратком расписании и адресе.
 const hoursInfo = {
   title: "Часы и адрес",
-  todayLabel: "Сегодня: 8:00–20:00",
+  todayLabel: "Работаем каждый день с 7:00 до 00:00",
   addressLabel: "Адрес:",
-  addressText: "Улица, дом — ориентир рядом",
-  addressLink: "/map",
+  addressText: "Грозный, Мамсурова 27",
+  addressLink:
+    "https://2gis.ru/grozny/search/%D0%B3.%D0%93%D1%80%D0%BE%D0%B7%D0%BD%D1%8B%D0%B9%2C%20%D0%BF%D0%BE%D1%81%D0%B5%D0%BB%D0%BE%D0%BA%20%D0%A7%D0%B5%D1%80%D0%BD%D0%BE%D1%80%D0%B5%D1%87%D1%8C%D0%B5%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%20%D0%9C%D0%B0%D0%BC%D1%81%D1%83%D1%80%D0%BE%D0%B2%D0%B0%2027%20Grozny",
 };
 
 // Этот объект хранит данные для блока контактов.
