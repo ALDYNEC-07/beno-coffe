@@ -62,26 +62,22 @@ export default function Features() {
         <div className={styles.featuresGrid}>
           {features.map((feature) => (
             <article key={feature.title} className={styles.featureCard}>
-              {/* Этот блок показывает логотип или текст-заглушку и основные тексты преимущества. */}
+              {/* Этот блок показывает логотип и основные тексты преимущества. */}
               <div className={styles.featureTop}>
                 <div className={styles.iconBox}>
-                  {feature.iconSrc ? (
-                    <Image
-                      src={feature.iconSrc}
-                      alt={feature.iconAlt ?? ""}
-                      fill
-                      sizes="52px"
-                      className={styles.logo}
-                      style={
-                        {
-                          "--logo-scale": feature.iconScale,
-                        } as CSSProperties
-                      }
-                      unoptimized
-                    />
-                  ) : (
-                    <span>{feature.iconText}</span>
-                  )}
+                  <Image
+                    src={feature.iconSrc}
+                    alt={feature.iconAlt ?? ""}
+                    fill
+                    sizes="52px"
+                    className={styles.logo}
+                    style={
+                      {
+                        "--logo-scale": feature.iconScale,
+                      } as CSSProperties
+                    }
+                    unoptimized
+                  />
                 </div>
                 <div className={styles.featureText}>
                   <h3 className={styles.subtitle}>{feature.title}</h3>
