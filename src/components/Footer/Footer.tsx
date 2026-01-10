@@ -35,7 +35,11 @@ const contactInfo = {
 
 // Этот список хранит ссылки на соцсети кофейни.
 const socialLinks = [
-  { label: "Instagram", href: "/instagram", ariaLabel: "Instagram BENO" },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/benocoffee_?igsh=MTlzd2NxczBvbTlmYw==",
+    ariaLabel: "Instagram BENO",
+  },
   {
     label: "WhatsApp",
     href: "https://wa.me/79267040404",
