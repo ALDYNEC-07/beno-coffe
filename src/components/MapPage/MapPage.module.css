@@ -1,0 +1,35 @@
+.mapPage {
+  padding: var(--space-6) 0;
+}
+
+.header {
+  max-width: var(--measure);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--h1);
+}
+
+.description {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-base);
+}
+
+.placeholder {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  border: var(--border);
+  border-radius: var(--radius);
+  background: #f7f4ef;
+}
+
+.placeholderTitle {
+  margin: 0 0 var(--space-1);
+  font-size: var(--h3);
+}
+
+.placeholderText {
+  margin: 0;
+  font-size: var(--text-sm);
+}
