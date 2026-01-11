@@ -43,8 +43,11 @@ const mapPageText = {
   final: {
     title: "Ждем в гости",
     text: "Заглядывайте на кофе, будем рады показать лучший столик.",
-    primary: "Скоро откроем маршрут онлайн",
+    primary: "Открыть маршрут онлайн",
     secondary: "Посмотреть меню",
+    primaryHref:
+      "https://yandex.ru/maps/?ll=45.658818%2C43.268665&z=16&text=%D0%93%D1%80%D0%BE%D0%B7%D0%BD%D1%8B%D0%B9%2C%20%D0%9C%D0%B0%D0%BC%D1%81%D1%83%D1%80%D0%BE%D0%B2%D0%B0%2027",
+    secondaryHref: "/menu",
   },
 };
 
@@ -122,21 +125,24 @@ export default function MapPage() {
             <h2 className={styles.ctaTitle}>{mapPageText.final.title}</h2>
             <p className={styles.ctaText}>{mapPageText.final.text}</p>
           </div>
+          {/* Этот блок показывает кнопки с основными действиями страницы. */}
           <div className={styles.ctaActions}>
-            <button
-              type="button"
+            {/* Эта кнопка ведет на карту с маршрутом в новом окне. */}
+            <a
               className={`button ${styles.ctaButton}`}
-              disabled
+              href={mapPageText.final.primaryHref}
+              target="_blank"
+              rel="noreferrer"
             >
               {mapPageText.final.primary}
-            </button>
-            <button
-              type="button"
+            </a>
+            {/* Эта кнопка ведет на страницу полного меню. */}
+            <a
               className={`button ${styles.ctaButton}`}
-              disabled
+              href={mapPageText.final.secondaryHref}
             >
               {mapPageText.final.secondary}
-            </button>
+            </a>
           </div>
         </div>
       </div>
