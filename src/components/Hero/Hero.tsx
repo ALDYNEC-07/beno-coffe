@@ -129,13 +129,13 @@ export default function Hero() {
                 className={`${styles.metaRow} ${styles.metaRowSpaced} ${styles.quickLinks}`}
                 aria-label="Быстрые переходы"
               >
-                <a
+                <Link
                   className={`button ${styles.metaButton}`}
-                  href="#footer"
-                  aria-label="Перейти к контактам и адресу"
+                  href="/map"
+                  aria-label="Перейти к странице адреса"
                 >
                   Контакты
-                </a>
+                </Link>
                 <Link className={`button ${styles.metaButton}`} href="/menu">
                   Смотреть меню
                 </Link>

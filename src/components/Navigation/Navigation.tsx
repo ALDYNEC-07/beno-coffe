@@ -15,7 +15,7 @@ const navLinks: { href: string; label: string }[] = [
   { href: "#new", label: "Авторское" },
   { href: "#hits", label: "Хиты" },
   { href: "#about", label: "О нас" },
-  { href: "#footer", label: "Контакты" },
+  { href: "/map", label: "Контакты" },
   { href: "/menu", label: "Полное меню" },
 ];
 
