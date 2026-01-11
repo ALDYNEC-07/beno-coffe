@@ -19,44 +19,27 @@ const mapPageText = {
       "https://yandex.ru/map-widget/v1/?ll=45.658818%2C43.268665&z=16&mode=search&text=%D0%93%D1%80%D0%BE%D0%B7%D0%BD%D1%8B%D0%B9%2C%20%D0%9C%D0%B0%D0%BC%D1%81%D1%83%D1%80%D0%BE%D0%B2%D0%B0%2027",
     embedTitle: "Карта: Грозный, Мамсурова 27",
   },
-  routesTitle: "Как добраться",
+  routesTitle: "Легко добраться",
   routes: [
     {
       title: "Пешком",
-      icon: "👣",
-      description: "Удобный вход с главной улицы, вывеску видно издалека.",
-      detail: "От центральной площади — примерно 6–8 минут.",
+      description:
+        "Вход прямо с улицы — без препятствий. Кофейню видно издалека: единственная стеклянная витрина среди ларьков.",
+      detail: "Большая вывеска BENO — пройти мимо сложно.",
     },
     {
       title: "На машине",
-      icon: "🚗",
-      description: "Подъезд с двух сторон квартала и просторный тротуар.",
-      detail: "Остановиться можно на соседней парковке.",
+      description:
+        "Парковка прямо рядом с кофейней — буквально несколько шагов. Если мест нет, рядом есть ещё одна.",
+      detail: "Оттуда до BENO — около минуты.",
     },
     {
       title: "На транспорте",
-      icon: "🚌",
-      description: "Остановка в 200 метрах, удобно идти по прямой.",
-      detail: "Выходите у магазина и следуйте к вывеске BENO.",
+      description:
+        "Выходите на ближайшей остановке — она прямо рядом с кофейней. Дальше — несколько шагов до входа.",
+      detail: "Остановка совпадает с парковкой.",
     },
   ],
-  detailsTitle: "Парковка и доступность",
-  details: [
-    {
-      title: "Парковка",
-      text: "Рядом есть открытая парковка и несколько мест вдоль улицы.",
-    },
-    {
-      title: "Доступность",
-      text: "Вход на уровне тротуара, двери широкие и удобные.",
-    },
-  ],
-  hoursTitle: "Режим работы",
-  hours: [
-    { label: "Пн–Пт", value: "7:00–01:00" },
-    { label: "Сб–Вс", value: "8:00–01:00" },
-  ],
-  hoursNote: "Если планируете поздний визит, лучше уточнить по телефону.",
   final: {
     title: "Ждем в гости",
     text: "Заглядывайте на кофе, будем рады показать лучший столик.",
@@ -125,43 +108,11 @@ export default function MapPage() {
           <div className={styles.routeGrid}>
             {mapPageText.routes.map((route) => (
               <article key={route.title} className={styles.routeCard}>
-                <div className={styles.routeIcon} aria-hidden="true">
-                  {route.icon}
-                </div>
                 <h3 className={styles.routeTitle}>{route.title}</h3>
                 <p className={styles.routeText}>{route.description}</p>
                 <p className={styles.routeDetail}>{route.detail}</p>
               </article>
             ))}
-          </div>
-        </div>
-
-        {/* Этот блок показывает информацию о парковке и доступности. */}
-        <div className={styles.sectionSplit}>
-          <div className={styles.infoCard}>
-            <h2 className={styles.sectionTitle}>{mapPageText.detailsTitle}</h2>
-            <div className={styles.infoGrid}>
-              {mapPageText.details.map((detail) => (
-                <div key={detail.title} className={styles.infoItem}>
-                  <h3 className={styles.infoTitle}>{detail.title}</h3>
-                  <p className={styles.infoText}>{detail.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Этот блок показывает режим работы и короткую подсказку. */}
-          <div className={styles.infoCard}>
-            <h2 className={styles.sectionTitle}>{mapPageText.hoursTitle}</h2>
-            <ul className={styles.hoursList}>
-              {mapPageText.hours.map((hour) => (
-                <li key={hour.label} className={styles.hoursItem}>
-                  <span>{hour.label}</span>
-                  <span className={styles.hoursValue}>{hour.value}</span>
-                </li>
-              ))}
-            </ul>
-            <p className={styles.hoursNote}>{mapPageText.hoursNote}</p>
           </div>
         </div>
 

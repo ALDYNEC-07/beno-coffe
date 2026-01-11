@@ -149,12 +149,8 @@
   box-shadow: 0 12px 28px rgba(60, 40, 20, 0.08);
 }
 
-.routeIcon {
-  font-size: 1.5rem;
-}
-
 .routeTitle {
-  margin: var(--space-2) 0 0;
+  margin: 0 0 var(--space-1);
   font-size: var(--h3);
 }
 
@@ -165,67 +161,6 @@
 
 .routeDetail {
   margin: var(--space-1) 0 0;
-  font-size: var(--text-sm);
-  color: rgba(27, 27, 27, 0.7);
-}
-
-.sectionSplit {
-  margin-top: var(--space-6);
-  display: grid;
-  gap: var(--space-4);
-}
-
-.infoCard {
-  padding: var(--space-3);
-  border-radius: var(--radius);
-  border: 1px solid rgba(27, 27, 27, 0.12);
-  background: #fffaf2;
-  box-shadow: 0 14px 30px rgba(60, 40, 20, 0.1);
-}
-
-.infoGrid {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.infoItem {
-  padding: var(--space-2);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.7);
-}
-
-.infoTitle {
-  margin: 0 0 var(--space-1);
-  font-size: var(--text-lg);
-}
-
-.infoText {
-  margin: 0;
-  font-size: var(--text-base);
-}
-
-.hoursList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: var(--space-1);
-}
-
-.hoursItem {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: var(--space-1);
-  border-bottom: 1px solid rgba(27, 27, 27, 0.1);
-  font-size: var(--text-base);
-}
-
-.hoursValue {
-  font-weight: 600;
-}
-
-.hoursNote {
-  margin: var(--space-2) 0 0;
   font-size: var(--text-sm);
   color: rgba(27, 27, 27, 0.7);
 }
@@ -282,10 +217,6 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .sectionSplit {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .cta {
     grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
   }
@@ -295,6 +226,7 @@
   .actionRow {
     flex-wrap: nowrap;
     overflow-x: auto;
+    padding-top: calc(var(--space-2, 0.75rem) + 0.35rem);
     padding-bottom: var(--space-1);
     -webkit-overflow-scrolling: touch;
     width: 100vw;
@@ -307,6 +239,25 @@
 
   .actionRow > * {
     flex: 0 0 auto;
+  }
+
+  .routeGrid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: var(--space-2);
+    padding-bottom: var(--space-2);
+    -webkit-overflow-scrolling: touch;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding-inline: var(--space-3);
+    scroll-padding-inline: var(--space-3);
+    box-sizing: border-box;
+  }
+
+  .routeCard {
+    flex: 0 0 min(82vw, 320px);
   }
 
   .mapFrame {
