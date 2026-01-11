@@ -6,7 +6,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState, type MouseEvent } from "react";
+import { useState, type AnimationEvent } from "react";
 import styles from "./Navigation.module.css";
 
 // Этот список хранит подписи и адреса для пунктов меню.
@@ -53,61 +53,39 @@ function NavigationLinksList({
 }
 
 export default function Navigation() {
-  // Этот счетчик помогает заново запускать анимацию при каждом открытии меню.
-  const [menuOpenKey, setMenuOpenKey] = useState(0);
   // Этот признак хранит, открыто ли меню прямо сейчас.
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // Этот признак хранит, что меню в процессе плавного закрытия.
+  // Этот признак хранит, что меню уже закрывается и ждет конца анимации.
   const [isMenuClosing, setIsMenuClosing] = useState(false);
-  // Этот таймер нужен, чтобы закрытие дождалось конца анимации.
-  const closeTimeoutRef = useRef<number | null>(null);
-
-  // Это время закрытия совпадает с длительностью анимации в стиле.
-  const closeAnimationMs = 360;
   // Этот текст помогает стилям понять, как именно ведет себя меню.
   const menuState = isMenuClosing ? "closing" : isMenuOpen ? "open" : "closed";
   // Этот признак показывает, видно ли мобильное меню на экране.
   const isPanelVisible = menuState !== "closed";
 
-  // Этот блок открывает меню и запускает анимацию заново.
-  const openMenu = () => {
-    if (closeTimeoutRef.current !== null) {
-      window.clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
+  // Этот обработчик срабатывает при клике по кнопке меню.
+  const handleMenuButtonClick = () => {
+    if (isMenuOpen && !isMenuClosing) {
+      setIsMenuClosing(true);
+      return;
     }
     setIsMenuOpen(true);
     setIsMenuClosing(false);
-    setMenuOpenKey((prevValue) => prevValue + 1);
-  };
-
-  // Этот блок запускает плавное закрытие меню.
-  const closeMenu = () => {
-    setIsMenuClosing(true);
-    if (closeTimeoutRef.current !== null) {
-      window.clearTimeout(closeTimeoutRef.current);
-    }
-    closeTimeoutRef.current = window.setTimeout(() => {
-      setIsMenuOpen(false);
-      setIsMenuClosing(false);
-      closeTimeoutRef.current = null;
-    }, closeAnimationMs);
-  };
-
-  // Этот обработчик срабатывает при клике по кнопке меню.
-  const handleMenuButtonClick = (event: MouseEvent<HTMLElement>) => {
-    event.preventDefault();
-    if (isMenuOpen && !isMenuClosing) {
-      closeMenu();
-      return;
-    }
-    openMenu();
   };
 
   // Этот обработчик закрывает меню, когда человек выбирает пункт.
   const handleMenuLinkClick = () => {
-    if (isMenuOpen && !isMenuClosing) {
-      closeMenu();
+    if (isMenuOpen) {
+      setIsMenuClosing(true);
     }
+  };
+
+  // Этот обработчик закрывает меню после завершения анимации.
+  const handleMenuAnimationEnd = (event: AnimationEvent<HTMLDivElement>) => {
+    if (!isMenuClosing || event.currentTarget !== event.target) {
+      return;
+    }
+    setIsMenuOpen(false);
+    setIsMenuClosing(false);
   };
 
   return (
@@ -143,7 +121,7 @@ export default function Navigation() {
                 className={styles.navPanel}
                 id="nav-panel"
                 aria-hidden={!isPanelVisible}
-                key={menuOpenKey}
+                onAnimationEnd={handleMenuAnimationEnd}
               >
                 {/* Этот блок держит список ссылок по центру экрана. */}
                 <div className={styles.navSheet}>

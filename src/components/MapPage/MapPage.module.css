@@ -130,7 +130,6 @@
     rgba(255, 255, 255, 0.9),
     rgba(235, 218, 198, 0.9)
   );
-  border: 1px solid rgba(27, 27, 27, 0.12);
   display: grid;
   gap: var(--space-3);
   align-items: center;
@@ -153,7 +152,7 @@
 }
 
 .ctaButton {
-  border: 1px solid rgba(27, 27, 27, 0.2);
+  border: 1px solid #9b6a1259;
   background: linear-gradient(135deg, #e9d9c5e6, #d2ba9abf);
   color: #3f2c05;
   font-weight: 600;
