@@ -7,18 +7,16 @@ import styles from "./MapPage.module.css";
 
 // Этот объект хранит весь текст и данные для страницы адреса.
 const mapPageText = {
-  title: "Как добраться",
   lead:
-    "Показываем удобные ориентиры, способы пути и место для будущей карты.",
+    "Кофейня ближе, чем вам кажется.",
   actions: {
     primary: "Построить маршрут",
     secondary: "Скопировать адрес",
-    note: "Кнопки станут активными чуть позже.",
   },
   address: {
     label: "Адрес",
-    value: "Улица, дом — ориентир рядом",
-    note: "Вход со стороны кофейни, рядом с витриной на первом этаже.",
+    value: "Грозный, Мамсурова 27.",
+    note: "В нескольких минутах от грозненского море.",
     time: "Открыто сегодня с 7:00 до 01:00",
   },
   map: {
@@ -76,17 +74,14 @@ const mapPageText = {
 export default function MapPage() {
   return (
     // Этот блок содержит всю страницу адреса и маршрута.
-    <section className={styles.mapPage} aria-labelledby="map-title">
+    <section className={styles.mapPage} aria-label="Страница адреса">
       <div className="container">
         {/* Этот блок показывает верхний экран страницы адреса. */}
         <div className={styles.hero}>
-          {/* Этот блок содержит заголовок, описание и кнопки. */}
+          {/* Этот блок содержит описание и кнопки. */}
           <div className={styles.heroCopy}>
             <div className="stack">
-              <h1 id="map-title" className={styles.title}>
-                {mapPageText.title}
-              </h1>
-              <p className={styles.lead}>{mapPageText.lead}</p>
+              <h3 className={styles.lead}>{mapPageText.lead}</h3>
             </div>
             {/* Этот блок показывает кнопки для будущих действий. */}
             <div className={styles.actionRow} aria-label="Будущие действия">
@@ -95,7 +90,6 @@ export default function MapPage() {
                 className={`button ${styles.actionButton}`}
                 disabled
               >
-                <span aria-hidden="true">🧭</span>
                 {mapPageText.actions.primary}
               </button>
               <button
@@ -103,12 +97,9 @@ export default function MapPage() {
                 className={`button ${styles.actionButton}`}
                 disabled
               >
-                <span aria-hidden="true">📍</span>
                 {mapPageText.actions.secondary}
               </button>
             </div>
-            <p className={styles.actionNote}>{mapPageText.actions.note}</p>
-
             {/* Этот блок показывает адрес, ориентиры и время работы. */}
             <div className={styles.addressCard}>
               <div className={styles.addressHeader}>

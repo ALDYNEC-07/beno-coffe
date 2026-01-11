@@ -385,6 +385,23 @@
 }
 
 @media (max-width: 719px) {
+  .actionRow {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: var(--space-1);
+    -webkit-overflow-scrolling: touch;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding-inline: var(--space-3);
+    scroll-padding-inline: var(--space-3);
+    box-sizing: border-box;
+  }
+
+  .actionRow > * {
+    flex: 0 0 auto;
+  }
+
   .mapFrame {
     padding: var(--space-2);
   }
