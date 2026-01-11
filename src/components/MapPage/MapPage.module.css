@@ -198,13 +198,18 @@
 
 .ctaButton {
   border: 1px solid rgba(27, 27, 27, 0.2);
-  background: #1b1b1b;
-  color: #fff;
+  background: linear-gradient(135deg, #e9d9c5e6, #d2ba9abf);
+  color: #3f2c05;
   font-weight: 600;
 }
 
 .ctaButton:disabled {
-  background: rgba(27, 27, 27, 0.85);
+  background: linear-gradient(
+    135deg,
+    rgba(233, 217, 197, 0.7),
+    rgba(210, 186, 154, 0.5)
+  );
+  color: rgba(63, 44, 5, 0.75);
   cursor: not-allowed;
 }
 
