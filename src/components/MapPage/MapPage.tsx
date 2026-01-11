@@ -5,33 +5,40 @@
 */
 "use client";
 
+import { contactData } from "@/components/shared/contactData";
 import styles from "./MapPage.module.css";
+
+// Этот текст хранит адрес в формате для ссылок на карту.
+const mapAddressQuery = encodeURIComponent(contactData.addressText);
+
+// Этот список хранит действия для копирования и перехода в соцсети.
+const copyActions = [
+  { label: "Скопировать адрес", value: contactData.addressText, kind: "copy" },
+  { label: "Скопировать номер", value: contactData.phoneText, kind: "copy" },
+  {
+    label: `Перейти в ${contactData.socialLinks.whatsapp.label}`,
+    href: contactData.socialLinks.whatsapp.href,
+    ariaLabel: `Открыть ${contactData.socialLinks.whatsapp.label} BENO`,
+    kind: "link",
+  },
+  {
+    label: `Перейти в ${contactData.socialLinks.instagram.label}`,
+    href: contactData.socialLinks.instagram.href,
+    ariaLabel: `Открыть ${contactData.socialLinks.instagram.label} BENO`,
+    kind: "link",
+  },
+];
 
 // Этот объект хранит весь текст и данные для страницы адреса.
 const mapPageText = {
-  copyActions: [
-    { label: "Скопировать адрес", value: "Грозный, Мамсурова 27", kind: "copy" },
-    { label: "Скопировать номер", value: "+7 926 704-04-04", kind: "copy" },
-    {
-      label: "Перейти в WhatsApp",
-      href: "https://wa.me/79267040404",
-      ariaLabel: "Открыть WhatsApp BENO",
-      kind: "link",
-    },
-    {
-      label: "Перейти в Instagram",
-      href: "https://www.instagram.com/benocoffee_?igsh=MTlzd2NxczBvbTlmYw==",
-      ariaLabel: "Открыть Instagram BENO",
-      kind: "link",
-    },
-  ],
+  copyActions,
   map: {
     title: "Кофейня ближе, чем вам кажется.",
     badge: "30 минут от центра",
     note: "В нескольких минутах от грозненского море.",
     embedUrl:
-      "https://yandex.ru/map-widget/v1/?ll=45.658818%2C43.268665&z=16&mode=search&text=%D0%93%D1%80%D0%BE%D0%B7%D0%BD%D1%8B%D0%B9%2C%20%D0%9C%D0%B0%D0%BC%D1%81%D1%83%D1%80%D0%BE%D0%B2%D0%B0%2027",
-    embedTitle: "Карта: Грозный, Мамсурова 27",
+      `https://yandex.ru/map-widget/v1/?ll=45.658818%2C43.268665&z=16&mode=search&text=${mapAddressQuery}`,
+    embedTitle: `Карта: ${contactData.addressText}`,
   },
   routesTitle: "Легко добраться",
   routes: [
@@ -60,7 +67,7 @@ const mapPageText = {
     primary: "Открыть маршрут онлайн",
     secondary: "Посмотреть меню",
     primaryHref:
-      "https://yandex.ru/maps/?ll=45.658818%2C43.268665&z=16&text=%D0%93%D1%80%D0%BE%D0%B7%D0%BD%D1%8B%D0%B9%2C%20%D0%9C%D0%B0%D0%BC%D1%81%D1%83%D1%80%D0%BE%D0%B2%D0%B0%2027",
+      `https://yandex.ru/maps/?ll=45.658818%2C43.268665&z=16&text=${mapAddressQuery}`,
     secondaryHref: "/menu",
   },
 };
