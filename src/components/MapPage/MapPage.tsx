@@ -10,6 +10,12 @@ import styles from "./MapPage.module.css";
 
 // Этот текст хранит адрес в формате для ссылок на карту.
 const mapAddressQuery = encodeURIComponent(contactData.addressText);
+// Этот текст хранит координаты кофейни для ссылок на карту.
+const mapCoordinates = "45.658818,43.268665";
+// Этот текст хранит базовый адрес для встраивания карты.
+const mapWidgetBaseUrl = "https://yandex.ru/map-widget/v1/";
+// Этот текст хранит базовый адрес для маршрута в браузере.
+const mapRouteBaseUrl = "https://yandex.ru/maps/";
 
 // Этот список хранит действия для копирования и перехода в соцсети.
 const copyActions = [
@@ -35,9 +41,9 @@ const mapPageText = {
   map: {
     title: "Кофейня ближе, чем вам кажется.",
     badge: "30 минут от центра",
-    note: "В нескольких минутах от грозненского море.",
+    note: "В нескольких минутах от грозненского моря.",
     embedUrl:
-      `https://yandex.ru/map-widget/v1/?ll=45.658818%2C43.268665&z=16&mode=search&text=${mapAddressQuery}`,
+      `${mapWidgetBaseUrl}?ll=${mapCoordinates}&z=16&mode=search&text=${mapAddressQuery}`,
     embedTitle: `Карта: ${contactData.addressText}`,
   },
   routesTitle: "Легко добраться",
@@ -67,7 +73,7 @@ const mapPageText = {
     primary: "Открыть маршрут онлайн",
     secondary: "Посмотреть меню",
     primaryHref:
-      `https://yandex.ru/maps/?ll=45.658818%2C43.268665&z=16&text=${mapAddressQuery}`,
+      `${mapRouteBaseUrl}?ll=${mapCoordinates}&z=16&text=${mapAddressQuery}`,
     secondaryHref: "/menu",
   },
 };
@@ -166,7 +172,7 @@ export default function MapPage() {
 
         {/* Этот блок завершает страницу приглашением в кофейню. */}
         <div className={styles.cta}>
-          <div className={styles.ctaCopy}>
+          <div>
             <h2 className={styles.ctaTitle}>{mapPageText.final.title}</h2>
             <p className={styles.ctaText}>{mapPageText.final.text}</p>
           </div>
