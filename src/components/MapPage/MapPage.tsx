@@ -108,7 +108,7 @@ export default function MapPage() {
                   href={action.href}
                   aria-label={action.ariaLabel}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noreferrer noopener"
                 >
                   {action.label}
                 </a>
@@ -177,7 +177,7 @@ export default function MapPage() {
               className={`button ${styles.ctaButton}`}
               href={mapPageText.final.primaryHref}
               target="_blank"
-              rel="noreferrer"
+              rel="noreferrer noopener"
             >
               {mapPageText.final.primary}
             </a>
