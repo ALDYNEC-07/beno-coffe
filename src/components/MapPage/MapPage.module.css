@@ -200,7 +200,7 @@
   }
 
   .routeCard {
-    flex: 0 0 min(82vw, 320px);
+    flex: 0 0 min(76vw, 300px);
   }
 
   .mapFrame {
