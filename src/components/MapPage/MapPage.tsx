@@ -10,8 +10,12 @@ import styles from "./MapPage.module.css";
 
 // Этот текст хранит адрес в формате для ссылок на карту.
 const mapAddressQuery = encodeURIComponent(contactData.addressText);
-// Этот текст хранит координаты кофейни для ссылок на карту.
-const mapCoordinates = "45.658818,43.268665";
+// Этот текст хранит координаты кофейни в формате для ссылок на карту.
+const mapCoordinates = "45.658818%2C43.268665";
+// Этот текст хранит масштаб карты для ссылок.
+const mapZoom = "16";
+// Этот текст хранит режим поиска для встраиваемой карты.
+const mapSearchMode = "search";
 // Этот текст хранит базовый адрес для встраивания карты.
 const mapWidgetBaseUrl = "https://yandex.ru/map-widget/v1/";
 // Этот текст хранит базовый адрес для маршрута в браузере.
@@ -43,7 +47,7 @@ const mapPageText = {
     badge: "30 минут от центра",
     note: "В нескольких минутах от грозненского моря.",
     embedUrl:
-      `${mapWidgetBaseUrl}?ll=${mapCoordinates}&z=16&mode=search&text=${mapAddressQuery}`,
+      `${mapWidgetBaseUrl}?ll=${mapCoordinates}&z=${mapZoom}&mode=${mapSearchMode}&text=${mapAddressQuery}`,
     embedTitle: `Карта: ${contactData.addressText}`,
   },
   routesTitle: "Легко добраться",
@@ -73,7 +77,7 @@ const mapPageText = {
     primary: "Открыть маршрут онлайн",
     secondary: "Посмотреть меню",
     primaryHref:
-      `${mapRouteBaseUrl}?ll=${mapCoordinates}&z=16&text=${mapAddressQuery}`,
+      `${mapRouteBaseUrl}?ll=${mapCoordinates}&z=${mapZoom}&text=${mapAddressQuery}`,
     secondaryHref: "/menu",
   },
 };
