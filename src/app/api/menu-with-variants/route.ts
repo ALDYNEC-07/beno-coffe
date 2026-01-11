@@ -15,6 +15,27 @@ type BaserowEnvValues = Record<BaserowEnvKey, string>;
 type BaserowRecord = Record<string, unknown>;
 type MenuItemWithVariants = MenuItem & { variants: MenuVariant[] };
 
+// Этот срок хранит, сколько данных меню держать в памяти до обновления.
+const MENU_CACHE_TTL_MS = 5 * 60 * 1000;
+// Этот срок ограничивает время ожидания ответов от Baserow.
+const BASEROW_TIMEOUT_MS = 10000;
+// Этот блок хранит последнее успешное меню для резервного ответа.
+let cachedMenuData: { data: MenuItemWithVariants[]; updatedAt: number } | null =
+  null;
+
+// Этот помощник проверяет, свежий ли кэш меню.
+function hasFreshCache() {
+  if (!cachedMenuData) {
+    return false;
+  }
+  return Date.now() - cachedMenuData.updatedAt < MENU_CACHE_TTL_MS;
+}
+
+// Этот помощник записывает меню в кэш.
+function storeMenuCache(data: MenuItemWithVariants[]) {
+  cachedMenuData = { data, updatedAt: Date.now() };
+}
+
 // Эта функция приводит поле ссылок к списку объектов одного вида.
 function normalizeLinks(value: unknown) {
   if (Array.isArray(value)) {
@@ -73,8 +94,23 @@ function normalizeItemId(value: unknown): MenuItem["id"] {
 
 // Этот обработчик возвращает данные меню вместе с вариантами.
 export async function GET() {
+  // Этот блок сразу возвращает свежий кэш, чтобы не ждать Baserow.
+  if (hasFreshCache() && cachedMenuData) {
+    return Response.json(cachedMenuData.data, {
+      headers: { "x-menu-cache": "fresh" },
+    });
+  }
+
   const { values, missing } = getBaserowEnv(BASEROW_ENV_KEYS);
   if (missing.length > 0) {
+    if (cachedMenuData) {
+      return Response.json(cachedMenuData.data, {
+        headers: {
+          "x-menu-cache": "stale",
+          "x-menu-error": "missing-env",
+        },
+      });
+    }
     return Response.json(
       { error: "Missing Baserow configuration", missing },
       { status: 500 }
@@ -88,16 +124,19 @@ export async function GET() {
       baseUrl: baserowValues.BASEROW_API_URL,
       tableId: baserowValues.BASEROW_TABLE_ID,
       token: baserowValues.BASEROW_TOKEN,
+      timeoutMs: BASEROW_TIMEOUT_MS,
     }),
     fetchBaserowTable({
       baseUrl: baserowValues.BASEROW_API_URL,
       tableId: baserowValues.BASEROW_VARIANTS_TABLE_ID,
       token: baserowValues.BASEROW_TOKEN,
+      timeoutMs: BASEROW_TIMEOUT_MS,
     }),
     fetchBaserowTable({
       baseUrl: baserowValues.BASEROW_API_URL,
       tableId: baserowValues.BASEROW_SIZES_TABLE_ID,
       token: baserowValues.BASEROW_TOKEN,
+      timeoutMs: BASEROW_TIMEOUT_MS,
     }),
   ]);
 
@@ -107,6 +146,14 @@ export async function GET() {
       : !variantsRes.ok
       ? variantsRes.status
       : sizesRes.status;
+    if (cachedMenuData) {
+      return Response.json(cachedMenuData.data, {
+        headers: {
+          "x-menu-cache": "stale",
+          "x-menu-error": "baserow-failed",
+        },
+      });
+    }
     return Response.json(
       { error: "Baserow request failed", status },
       { status: 500 }
@@ -189,6 +236,8 @@ export async function GET() {
       return 0;
     });
   });
+
+  storeMenuCache(menuWithVariants);
 
   return Response.json(menuWithVariants);
 }

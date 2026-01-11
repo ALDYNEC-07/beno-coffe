@@ -348,52 +348,76 @@ export default function MenuPage({ items }: MenuPageProps) {
                 const cardLinkClassName = isSelected
                   ? `${styles.cardLink} ${styles.cardLinkSelected}`
                   : `${styles.cardLink} ${styles.cardLinkBlurred}`;
+                // Этот блок определяет ссылку на подробную страницу, если у позиции есть идентификатор.
+                const itemHref =
+                  item.id !== undefined && item.id !== null
+                    ? `/menu/${item.id}`
+                    : null;
+                // Этот блок собирает содержимое карточки позиции.
+                const cardContent = (
+                  <article className={cardClassName}>
+                    {/* Этот блок показывает фоновую фотографию для карточки позиции. */}
+                    {imageSrc ? (
+                      <div className={styles.imageWrap} aria-hidden="true">
+                        <Image
+                          className={styles.image}
+                          src={imageSrc}
+                          alt=""
+                          fill
+                          loading={isSelected ? "eager" : "lazy"}
+                          sizes="(max-width: 719px) 67vw, 270px"
+                        />
+                      </div>
+                    ) : null}
+                    {/* Этот блок показывает пометку популярной позиции в правом верхнем углу карточки. */}
+                    {isPopular ? (
+                      <span
+                        className={styles.badge}
+                        aria-label="Популярная позиция"
+                      >
+                        {menuPageText.popularLabel}
+                      </span>
+                    ) : null}
+                    {/* Этот блок показывает минимальную информацию о позиции внизу карточки. */}
+                    <div className={styles.cardHeader}>
+                      <div className={styles.nameBlock}>
+                        <div className={styles.nameRow}>
+                          <h2 className={styles.name}>{nameLabel}</h2>
+                        </div>
+                        <p className={styles.category}>{categoryLabel}</p>
+                      </div>
+                      <p className={styles.price}>{priceLabel}</p>
+                    </div>
+                  </article>
+                );
+
+                if (itemHref) {
+                  return (
+                    // Этот блок делает карточку кликабельной и ведет к странице позиции.
+                    <Link
+                      key={item.id ?? `${nameLabel}-${index}`}
+                      className={cardLinkClassName}
+                      href={itemHref}
+                      aria-label={`Открыть позицию ${nameLabel}`}
+                      data-menu-card="true"
+                      onFocus={() => handleCardFocus(index)}
+                    >
+                      {cardContent}
+                    </Link>
+                  );
+                }
 
                 return (
-                  // Этот блок делает карточку кликабельной и ведет к странице позиции.
-                  <Link
+                  // Этот блок показывает карточку без перехода, если отдельной страницы нет.
+                  <div
                     key={item.id ?? `${nameLabel}-${index}`}
                     className={cardLinkClassName}
-                    href={`/menu/${item.id}`}
-                    aria-label={`Открыть позицию ${nameLabel}`}
                     data-menu-card="true"
-                    onFocus={() => handleCardFocus(index)}
+                    aria-label={`Позиция ${nameLabel}`}
+                    aria-disabled="true"
                   >
-                    <article className={cardClassName}>
-                      {/* Этот блок показывает фоновую фотографию для карточки позиции. */}
-                      {imageSrc ? (
-                        <div className={styles.imageWrap} aria-hidden="true">
-                          <Image
-                            className={styles.image}
-                            src={imageSrc}
-                            alt=""
-                            fill
-                            loading={isSelected ? "eager" : "lazy"}
-                            sizes="(max-width: 719px) 67vw, 270px"
-                          />
-                        </div>
-                      ) : null}
-                      {/* Этот блок показывает пометку популярной позиции в правом верхнем углу карточки. */}
-                      {isPopular ? (
-                        <span
-                          className={styles.badge}
-                          aria-label="Популярная позиция"
-                        >
-                          {menuPageText.popularLabel}
-                        </span>
-                      ) : null}
-                      {/* Этот блок показывает минимальную информацию о позиции внизу карточки. */}
-                      <div className={styles.cardHeader}>
-                        <div className={styles.nameBlock}>
-                          <div className={styles.nameRow}>
-                            <h2 className={styles.name}>{nameLabel}</h2>
-                          </div>
-                          <p className={styles.category}>{categoryLabel}</p>
-                        </div>
-                        <p className={styles.price}>{priceLabel}</p>
-                      </div>
-                    </article>
-                  </Link>
+                    {cardContent}
+                  </div>
                 );
               })}
             </div>
