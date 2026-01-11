@@ -7,22 +7,17 @@ import styles from "./MapPage.module.css";
 
 // Этот объект хранит весь текст и данные для страницы адреса.
 const mapPageText = {
-  lead:
-    "Кофейня ближе, чем вам кажется.",
   actions: {
     primary: "Построить маршрут",
     secondary: "Скопировать адрес",
   },
-  address: {
-    label: "Адрес",
-    value: "Грозный, Мамсурова 27.",
-    note: "В нескольких минутах от грозненского море.",
-    time: "Открыто сегодня с 7:00 до 01:00",
-  },
   map: {
-    title: "Карта и маршрут в разработке",
-    text: "Скоро здесь появится интерактивная карта и быстрый старт навигации.",
-    badge: "5 минут от центра",
+    title: "Кофейня ближе, чем вам кажется.",
+    badge: "30 минут от центра",
+    note: "В нескольких минутах от грозненского море.",
+    embedUrl:
+      "https://yandex.ru/map-widget/v1/?ll=45.658818%2C43.268665&z=16&mode=search&text=%D0%93%D1%80%D0%BE%D0%B7%D0%BD%D1%8B%D0%B9%2C%20%D0%9C%D0%B0%D0%BC%D1%81%D1%83%D1%80%D0%BE%D0%B2%D0%B0%2027",
+    embedTitle: "Карта: Грозный, Мамсурова 27",
   },
   routesTitle: "Как добраться",
   routes: [
@@ -78,11 +73,8 @@ export default function MapPage() {
       <div className="container">
         {/* Этот блок показывает верхний экран страницы адреса. */}
         <div className={styles.hero}>
-          {/* Этот блок содержит описание и кнопки. */}
+          {/* Этот блок содержит кнопки для быстрых действий. */}
           <div className={styles.heroCopy}>
-            <div className="stack">
-              <h3 className={styles.lead}>{mapPageText.lead}</h3>
-            </div>
             {/* Этот блок показывает кнопки для будущих действий. */}
             <div className={styles.actionRow} aria-label="Будущие действия">
               <button
@@ -100,33 +92,28 @@ export default function MapPage() {
                 {mapPageText.actions.secondary}
               </button>
             </div>
-            {/* Этот блок показывает адрес, ориентиры и время работы. */}
-            <div className={styles.addressCard}>
-              <div className={styles.addressHeader}>
-                <p className={styles.addressLabel}>{mapPageText.address.label}</p>
-                <span className={styles.addressBadge}>
-                  {mapPageText.address.time}
-                </span>
-              </div>
-              <p className={styles.addressValue}>{mapPageText.address.value}</p>
-              <p className={styles.addressNote}>{mapPageText.address.note}</p>
-            </div>
           </div>
 
-          {/* Этот блок показывает место под будущую карту и маршрут. */}
+          {/* Этот блок показывает встроенную карту и подпись. */}
           <div className={styles.mapColumn}>
-            <div className={styles.mapFrame} role="status">
+            <div className={styles.mapFrame}>
               <div className={styles.mapHeader}>
                 <span className={styles.mapTag}>Карта</span>
                 <span className={styles.mapBadge}>{mapPageText.map.badge}</span>
               </div>
-              <div className={styles.mapCanvas} aria-hidden="true">
-                <span className={styles.mapPin} />
-                <span className={styles.mapPath} />
+              {/* Этот блок показывает встроенную карту с адресом кофейни. */}
+              <div className={styles.mapCanvas}>
+                <iframe
+                  className={styles.mapEmbed}
+                  src={mapPageText.map.embedUrl}
+                  title={mapPageText.map.embedTitle}
+                  loading="lazy"
+                  allowFullScreen
+                />
               </div>
               <div className={styles.mapCopy}>
                 <h2 className={styles.mapTitle}>{mapPageText.map.title}</h2>
-                <p className={styles.mapText}>{mapPageText.map.text}</p>
+                <p className={styles.mapNote}>{mapPageText.map.note}</p>
               </div>
             </div>
           </div>

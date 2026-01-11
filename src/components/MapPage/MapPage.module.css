@@ -1,5 +1,5 @@
 .mapPage {
-  padding: var(--space-6) 0 var(--space-6);
+  padding: calc(var(--space-2, 0.75rem) + 0.35rem) 0 var(--space-6);
   color: #1b1b1b;
   background-color: #fffaf3;
   background-image: radial-gradient(70% 120% at 50% -10%, #ffffffe6, #fff0),
@@ -22,12 +22,6 @@
   margin: 0;
   font-size: var(--h1);
   line-height: 1.1;
-}
-
-.lead {
-  margin: 0;
-  max-width: var(--measure);
-  font-size: var(--text-lg);
 }
 
 .actionRow {
@@ -62,50 +56,6 @@
   color: rgba(27, 27, 27, 0.7);
 }
 
-.addressCard {
-  padding: var(--space-3);
-  border: 1px solid rgba(27, 27, 27, 0.12);
-  border-radius: var(--radius);
-  background: #fff;
-  box-shadow: 0 16px 32px rgba(60, 40, 20, 0.08);
-}
-
-.addressHeader {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  align-items: center;
-  justify-content: space-between;
-}
-
-.addressLabel {
-  margin: 0;
-  font-size: var(--text-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(27, 27, 27, 0.6);
-}
-
-.addressBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  font-size: var(--text-sm);
-  background: rgba(233, 217, 197, 0.8);
-  color: #5f4308;
-}
-
-.addressValue {
-  margin: var(--space-2) 0 0;
-  font-size: var(--h3);
-}
-
-.addressNote {
-  margin: var(--space-1) 0 0;
-  font-size: var(--text-sm);
-  color: rgba(27, 27, 27, 0.7);
-}
 
 .mapColumn {
   display: grid;
@@ -148,61 +98,17 @@
   position: relative;
   margin: var(--space-3) 0;
   min-height: clamp(220px, 32vw, 300px);
+  height: clamp(220px, 32vw, 300px);
   border-radius: var(--radius);
-  background-image: linear-gradient(
-      0deg,
-      rgba(27, 27, 27, 0.08) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(27, 27, 27, 0.08) 1px,
-      transparent 1px
-    ),
-    radial-gradient(
-      120% 100% at 80% 10%,
-      rgba(255, 255, 255, 0.6),
-      rgba(255, 255, 255, 0)
-    );
-  background-size: 36px 36px, 36px 36px, 100% 100%;
+  background: #fff;
   overflow: hidden;
 }
 
-.mapPin {
-  position: absolute;
-  top: 50%;
-  left: 55%;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #1b1b1b;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 10px 18px rgba(27, 27, 27, 0.2);
-}
-
-.mapPin::after {
-  content: "";
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  width: 14px;
-  height: 14px;
-  background: #1b1b1b;
-  transform: translate(-50%, -20%) rotate(45deg);
-  border-radius: 4px;
-}
-
-.mapPath {
-  position: absolute;
-  inset: 20% 10% auto 10%;
-  height: 6px;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    rgba(27, 27, 27, 0.08),
-    rgba(27, 27, 27, 0.35),
-    rgba(27, 27, 27, 0.08)
-  );
+.mapEmbed {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
 }
 
 .mapCopy {
@@ -215,9 +121,10 @@
   font-size: var(--h3);
 }
 
-.mapText {
-  margin: 0;
-  font-size: var(--text-base);
+.mapNote {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  color: rgba(27, 27, 27, 0.6);
 }
 
 .section {
@@ -406,7 +313,4 @@
     padding: var(--space-2);
   }
 
-  .addressValue {
-    font-size: var(--h2);
-  }
 }
