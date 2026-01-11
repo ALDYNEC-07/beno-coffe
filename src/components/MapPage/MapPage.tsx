@@ -1,42 +1,214 @@
 /*
- Этот файл определяет страницу с адресом кофейни и будущей картой.
- Он показывает заголовок, пояснение и место под схему проезда.
- Человек может понять, что здесь будет информация о маршруте и адресе.
+ Этот файл определяет страницу с адресом кофейни.
+ Он показывает маршрут, ориентиры и блоки с полезной информацией.
+ Человек может быстро понять, как добраться до кофейни.
 */
 import styles from "./MapPage.module.css";
 
-// Этот объект хранит основные тексты для страницы адреса.
+// Этот объект хранит весь текст и данные для страницы адреса.
 const mapPageText = {
   title: "Как добраться",
-  description:
-    "Здесь скоро появится подробный адрес, карта и варианты маршрута.",
-  placeholderTitle: "Карта и маршрут в разработке",
-  placeholderText:
-    "Мы готовим удобную схему проезда и подсказки для гостей.",
+  lead:
+    "Показываем удобные ориентиры, способы пути и место для будущей карты.",
+  actions: {
+    primary: "Построить маршрут",
+    secondary: "Скопировать адрес",
+    note: "Кнопки станут активными чуть позже.",
+  },
+  address: {
+    label: "Адрес",
+    value: "Улица, дом — ориентир рядом",
+    note: "Вход со стороны кофейни, рядом с витриной на первом этаже.",
+    time: "Открыто сегодня с 7:00 до 01:00",
+  },
+  map: {
+    title: "Карта и маршрут в разработке",
+    text: "Скоро здесь появится интерактивная карта и быстрый старт навигации.",
+    badge: "5 минут от центра",
+  },
+  routesTitle: "Как добраться",
+  routes: [
+    {
+      title: "Пешком",
+      icon: "👣",
+      description: "Удобный вход с главной улицы, вывеску видно издалека.",
+      detail: "От центральной площади — примерно 6–8 минут.",
+    },
+    {
+      title: "На машине",
+      icon: "🚗",
+      description: "Подъезд с двух сторон квартала и просторный тротуар.",
+      detail: "Остановиться можно на соседней парковке.",
+    },
+    {
+      title: "На транспорте",
+      icon: "🚌",
+      description: "Остановка в 200 метрах, удобно идти по прямой.",
+      detail: "Выходите у магазина и следуйте к вывеске BENO.",
+    },
+  ],
+  detailsTitle: "Парковка и доступность",
+  details: [
+    {
+      title: "Парковка",
+      text: "Рядом есть открытая парковка и несколько мест вдоль улицы.",
+    },
+    {
+      title: "Доступность",
+      text: "Вход на уровне тротуара, двери широкие и удобные.",
+    },
+  ],
+  hoursTitle: "Режим работы",
+  hours: [
+    { label: "Пн–Пт", value: "7:00–01:00" },
+    { label: "Сб–Вс", value: "8:00–01:00" },
+  ],
+  hoursNote: "Если планируете поздний визит, лучше уточнить по телефону.",
+  final: {
+    title: "Ждем в гости",
+    text: "Заглядывайте на кофе, будем рады показать лучший столик.",
+    primary: "Скоро откроем маршрут онлайн",
+    secondary: "Посмотреть меню",
+  },
 };
 
 // Этот компонент показывает основное содержимое страницы адреса.
 export default function MapPage() {
   return (
-    // Этот блок содержит всю страницу адреса и секцию с будущей картой.
+    // Этот блок содержит всю страницу адреса и маршрута.
     <section className={styles.mapPage} aria-labelledby="map-title">
       <div className="container">
-        {/* Этот блок показывает заголовок и короткое объяснение страницы. */}
-        <div className={styles.header}>
-          <h1 id="map-title" className={styles.title}>
-            {mapPageText.title}
-          </h1>
-          <p className={styles.description}>{mapPageText.description}</p>
+        {/* Этот блок показывает верхний экран страницы адреса. */}
+        <div className={styles.hero}>
+          {/* Этот блок содержит заголовок, описание и кнопки. */}
+          <div className={styles.heroCopy}>
+            <div className="stack">
+              <h1 id="map-title" className={styles.title}>
+                {mapPageText.title}
+              </h1>
+              <p className={styles.lead}>{mapPageText.lead}</p>
+            </div>
+            {/* Этот блок показывает кнопки для будущих действий. */}
+            <div className={styles.actionRow} aria-label="Будущие действия">
+              <button
+                type="button"
+                className={`button ${styles.actionButton}`}
+                disabled
+              >
+                <span aria-hidden="true">🧭</span>
+                {mapPageText.actions.primary}
+              </button>
+              <button
+                type="button"
+                className={`button ${styles.actionButton}`}
+                disabled
+              >
+                <span aria-hidden="true">📍</span>
+                {mapPageText.actions.secondary}
+              </button>
+            </div>
+            <p className={styles.actionNote}>{mapPageText.actions.note}</p>
+
+            {/* Этот блок показывает адрес, ориентиры и время работы. */}
+            <div className={styles.addressCard}>
+              <div className={styles.addressHeader}>
+                <p className={styles.addressLabel}>{mapPageText.address.label}</p>
+                <span className={styles.addressBadge}>
+                  {mapPageText.address.time}
+                </span>
+              </div>
+              <p className={styles.addressValue}>{mapPageText.address.value}</p>
+              <p className={styles.addressNote}>{mapPageText.address.note}</p>
+            </div>
+          </div>
+
+          {/* Этот блок показывает место под будущую карту и маршрут. */}
+          <div className={styles.mapColumn}>
+            <div className={styles.mapFrame} role="status">
+              <div className={styles.mapHeader}>
+                <span className={styles.mapTag}>Карта</span>
+                <span className={styles.mapBadge}>{mapPageText.map.badge}</span>
+              </div>
+              <div className={styles.mapCanvas} aria-hidden="true">
+                <span className={styles.mapPin} />
+                <span className={styles.mapPath} />
+              </div>
+              <div className={styles.mapCopy}>
+                <h2 className={styles.mapTitle}>{mapPageText.map.title}</h2>
+                <p className={styles.mapText}>{mapPageText.map.text}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Этот блок показывает временную заглушку для карты и маршрута. */}
-        <div className={styles.placeholder} role="status">
-          <h2 className={styles.placeholderTitle}>
-            {mapPageText.placeholderTitle}
-          </h2>
-          <p className={styles.placeholderText}>
-            {mapPageText.placeholderText}
-          </p>
+        {/* Этот блок показывает варианты маршрута до кофейни. */}
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>{mapPageText.routesTitle}</h2>
+          <div className={styles.routeGrid}>
+            {mapPageText.routes.map((route) => (
+              <article key={route.title} className={styles.routeCard}>
+                <div className={styles.routeIcon} aria-hidden="true">
+                  {route.icon}
+                </div>
+                <h3 className={styles.routeTitle}>{route.title}</h3>
+                <p className={styles.routeText}>{route.description}</p>
+                <p className={styles.routeDetail}>{route.detail}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        {/* Этот блок показывает информацию о парковке и доступности. */}
+        <div className={styles.sectionSplit}>
+          <div className={styles.infoCard}>
+            <h2 className={styles.sectionTitle}>{mapPageText.detailsTitle}</h2>
+            <div className={styles.infoGrid}>
+              {mapPageText.details.map((detail) => (
+                <div key={detail.title} className={styles.infoItem}>
+                  <h3 className={styles.infoTitle}>{detail.title}</h3>
+                  <p className={styles.infoText}>{detail.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Этот блок показывает режим работы и короткую подсказку. */}
+          <div className={styles.infoCard}>
+            <h2 className={styles.sectionTitle}>{mapPageText.hoursTitle}</h2>
+            <ul className={styles.hoursList}>
+              {mapPageText.hours.map((hour) => (
+                <li key={hour.label} className={styles.hoursItem}>
+                  <span>{hour.label}</span>
+                  <span className={styles.hoursValue}>{hour.value}</span>
+                </li>
+              ))}
+            </ul>
+            <p className={styles.hoursNote}>{mapPageText.hoursNote}</p>
+          </div>
+        </div>
+
+        {/* Этот блок завершает страницу приглашением в кофейню. */}
+        <div className={styles.cta}>
+          <div className={styles.ctaCopy}>
+            <h2 className={styles.ctaTitle}>{mapPageText.final.title}</h2>
+            <p className={styles.ctaText}>{mapPageText.final.text}</p>
+          </div>
+          <div className={styles.ctaActions}>
+            <button
+              type="button"
+              className={`button ${styles.ctaButton}`}
+              disabled
+            >
+              {mapPageText.final.primary}
+            </button>
+            <button
+              type="button"
+              className={`button ${styles.ctaButton}`}
+              disabled
+            >
+              {mapPageText.final.secondary}
+            </button>
+          </div>
         </div>
       </div>
     </section>
