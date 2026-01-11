@@ -8,6 +8,16 @@
 import { contactData } from "@/components/shared/contactData";
 import styles from "./MapPage.module.css";
 
+// Эти описания задают варианты действий для блока копирования и ссылок.
+type MapCopyAction = { label: string; value: string; kind: "copy" };
+type MapLinkAction = {
+  label: string;
+  href: string;
+  ariaLabel: string;
+  kind: "link";
+};
+type MapAction = MapCopyAction | MapLinkAction;
+
 // Этот текст хранит адрес в формате для ссылок на карту.
 const mapAddressQuery = encodeURIComponent(contactData.addressText);
 // Этот текст хранит координаты кофейни в формате для ссылок на карту.
@@ -22,7 +32,7 @@ const mapWidgetBaseUrl = "https://yandex.ru/map-widget/v1/";
 const mapRouteBaseUrl = "https://yandex.ru/maps/";
 
 // Этот список хранит действия для копирования и перехода в соцсети.
-const copyActions = [
+const copyActions: MapAction[] = [
   { label: "Скопировать адрес", value: contactData.addressText, kind: "copy" },
   { label: "Скопировать номер", value: contactData.phoneText, kind: "copy" },
   {

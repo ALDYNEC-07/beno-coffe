@@ -11,10 +11,10 @@ import styles from "./Navigation.module.css";
 
 // Этот список хранит подписи и адреса для пунктов меню.
 const navLinks: { href: string; label: string }[] = [
-  { href: "#features", label: "Преимущества" },
-  { href: "#new", label: "Авторское" },
-  { href: "#hits", label: "Хиты" },
-  { href: "#about", label: "О нас" },
+  { href: "/#features", label: "Преимущества" },
+  { href: "/#new", label: "Авторское" },
+  { href: "/#hits", label: "Хиты" },
+  { href: "/#about", label: "О нас" },
   { href: "/map", label: "Контакты" },
   { href: "/menu", label: "Полное меню" },
 ];
@@ -38,14 +38,14 @@ function NavigationLinksList({
       {navLinks.map((link) => (
         <li key={link.href}>
           {/* Этот элемент показывает ссылку и подсказывает направление перехода. */}
-          <a
+          <Link
             className={linkClassName}
             href={link.href}
             onClick={onLinkClick}
-            data-link-direction={link.href.startsWith("#") ? "down" : "page"}
+            data-link-direction={link.href.includes("#") ? "down" : "page"}
           >
             {link.label}
-          </a>
+          </Link>
         </li>
       ))}
     </ul>
