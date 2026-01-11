@@ -3,10 +3,28 @@
  Он показывает маршрут, ориентиры и блоки с полезной информацией.
  Человек может быстро понять, как добраться до кофейни.
 */
+"use client";
+
 import styles from "./MapPage.module.css";
 
 // Этот объект хранит весь текст и данные для страницы адреса.
 const mapPageText = {
+  copyActions: [
+    { label: "Скопировать адрес", value: "Грозный, Мамсурова 27", kind: "copy" },
+    { label: "Скопировать номер", value: "+7 926 704-04-04", kind: "copy" },
+    {
+      label: "Перейти в WhatsApp",
+      href: "https://wa.me/79267040404",
+      ariaLabel: "Открыть WhatsApp BENO",
+      kind: "link",
+    },
+    {
+      label: "Перейти в Instagram",
+      href: "https://www.instagram.com/benocoffee_?igsh=MTlzd2NxczBvbTlmYw==",
+      ariaLabel: "Открыть Instagram BENO",
+      kind: "link",
+    },
+  ],
   map: {
     title: "Кофейня ближе, чем вам кажется.",
     badge: "30 минут от центра",
@@ -49,12 +67,57 @@ const mapPageText = {
 
 // Этот компонент показывает основное содержимое страницы адреса.
 export default function MapPage() {
+  // Эта функция копирует выбранный текст и дает запасной способ, если копирование недоступно.
+  const handleCopy = async (value: string) => {
+    if (typeof navigator === "undefined") {
+      return;
+    }
+
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(value);
+        return;
+      } catch {
+        // Если копирование не удалось, показываем текст для ручного копирования.
+      }
+    }
+
+    window.prompt("Скопируйте текст:", value);
+  };
+
   return (
     // Этот блок содержит всю страницу адреса и маршрута.
     <section className={styles.mapPage} aria-label="Страница адреса">
       <div className="container">
         {/* Этот блок показывает верхний экран страницы адреса. */}
         <div className={styles.hero}>
+          {/* Этот блок показывает кнопки для копирования адреса и контактов. */}
+          <div className={styles.actionRow} aria-label="Копирование контактов">
+            {mapPageText.copyActions.map((action) =>
+              action.kind === "link" ? (
+                <a
+                  key={action.label}
+                  className={`button ${styles.actionButton}`}
+                  href={action.href}
+                  aria-label={action.ariaLabel}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {action.label}
+                </a>
+              ) : (
+                <button
+                  key={action.label}
+                  type="button"
+                  className={`button ${styles.actionButton}`}
+                  onClick={() => handleCopy(action.value)}
+                >
+                  {action.label}
+                </button>
+              )
+            )}
+          </div>
+
           {/* Этот блок показывает встроенную карту и подпись. */}
           <div className={styles.mapColumn}>
             <div className={styles.mapFrame}>
