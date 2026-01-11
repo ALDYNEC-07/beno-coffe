@@ -7,10 +7,6 @@ import styles from "./MapPage.module.css";
 
 // Этот объект хранит весь текст и данные для страницы адреса.
 const mapPageText = {
-  actions: {
-    primary: "Построить маршрут",
-    secondary: "Скопировать адрес",
-  },
   map: {
     title: "Кофейня ближе, чем вам кажется.",
     badge: "30 минут от центра",
@@ -59,27 +55,6 @@ export default function MapPage() {
       <div className="container">
         {/* Этот блок показывает верхний экран страницы адреса. */}
         <div className={styles.hero}>
-          {/* Этот блок содержит кнопки для быстрых действий. */}
-          <div className={styles.heroCopy}>
-            {/* Этот блок показывает кнопки для будущих действий. */}
-            <div className={styles.actionRow} aria-label="Будущие действия">
-              <button
-                type="button"
-                className={`button ${styles.actionButton}`}
-                disabled
-              >
-                {mapPageText.actions.primary}
-              </button>
-              <button
-                type="button"
-                className={`button ${styles.actionButton}`}
-                disabled
-              >
-                {mapPageText.actions.secondary}
-              </button>
-            </div>
-          </div>
-
           {/* Этот блок показывает встроенную карту и подпись. */}
           <div className={styles.mapColumn}>
             <div className={styles.mapFrame}>

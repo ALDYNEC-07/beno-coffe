@@ -12,50 +12,6 @@
   align-items: start;
 }
 
-.heroCopy {
-  display: grid;
-  gap: var(--space-3);
-  align-content: start;
-}
-
-.title {
-  margin: 0;
-  font-size: var(--h1);
-  line-height: 1.1;
-}
-
-.actionRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.actionButton {
-  border: 1px solid rgba(155, 106, 18, 0.35);
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.9),
-    rgba(255, 255, 255, 0.4)
-  );
-  color: #5f4308;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  box-shadow: 0 3px 10px rgba(60, 40, 20, 0.12);
-  backdrop-filter: blur(12px) saturate(145%);
-  -webkit-backdrop-filter: blur(12px) saturate(145%);
-}
-
-.actionButton:disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.actionNote {
-  margin: 0;
-  font-size: var(--text-sm);
-  color: rgba(27, 27, 27, 0.7);
-}
-
 
 .mapColumn {
   display: grid;
@@ -228,24 +184,6 @@
 }
 
 @media (max-width: 719px) {
-  .actionRow {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: var(--space-1);
-    padding-top: var(--space-1);
-    -webkit-overflow-scrolling: touch;
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    padding-inline: var(--space-3);
-    scroll-padding-inline: var(--space-3);
-    box-sizing: border-box;
-  }
-
-  .actionRow > * {
-    flex: 0 0 auto;
-  }
-
   .routeGrid {
     display: flex;
     flex-wrap: nowrap;
