@@ -5,13 +5,32 @@
 */
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./Hero.module.css";
+
+// Этот объект хранит время работы кофейни для блока на первом экране.
+const heroWorkingHours = {
+  startMinutes: 7 * 60,
+  endMinutes: 24 * 60,
+  label: "с 7:00 до 00:00",
+  openLabel: "Открыто сейчас",
+  closedLabel: "Закрыто сейчас",
+};
 
 export default function Hero() {
   // Эта ссылка хранит доступ к видео, чтобы включать и останавливать его.
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Этот элемент хранит, открыта ли кофейня прямо сейчас.
+  const [isOpenNow, setIsOpenNow] = useState(() => {
+    const now = new Date();
+    const minutes = now.getHours() * 60 + now.getMinutes();
+    return (
+      minutes >= heroWorkingHours.startMinutes &&
+      minutes < heroWorkingHours.endMinutes
+    );
+  });
 
   // Этот код запускается сразу после появления секции, чтобы видео играло только в поле зрения.
   useEffect(() => {
@@ -59,6 +78,26 @@ export default function Hero() {
     };
   }, []);
 
+  // Этот код обновляет статус работы кофейни в течение дня.
+  useEffect(() => {
+    // Эта функция пересчитывает, открыта ли кофейня в текущий момент.
+    const updateOpenStatus = () => {
+      const now = new Date();
+      const minutes = now.getHours() * 60 + now.getMinutes();
+      setIsOpenNow(
+        minutes >= heroWorkingHours.startMinutes &&
+          minutes < heroWorkingHours.endMinutes
+      );
+    };
+
+    updateOpenStatus();
+    const intervalId = window.setInterval(updateOpenStatus, 60 * 1000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
   return (
     // Этот блок показывает главный экран приветствия кофейни.
     <section className={styles.hero}>
@@ -87,9 +126,13 @@ export default function Hero() {
                 className={`${styles.pill} ${styles.mediaPill}`}
                 aria-live="polite"
               >
-                <span>Открыто сейчас</span>
+                <span>
+                  {isOpenNow
+                    ? heroWorkingHours.openLabel
+                    : heroWorkingHours.closedLabel}
+                </span>
                 <span aria-hidden="true">•</span>
-                <span>с 7:00 до 01:00</span>
+                <span>{heroWorkingHours.label}</span>
               </span>
             </div>
           </div>
