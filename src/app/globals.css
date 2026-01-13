@@ -25,7 +25,7 @@ body {
 }
 
 body {
-  font-family: var(--font-body), "Helvetica Neue", Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
 h1,
@@ -34,7 +34,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-heading), "Times New Roman", serif;
+  font-family: "Times New Roman", serif;
 }
 
 section[id],
