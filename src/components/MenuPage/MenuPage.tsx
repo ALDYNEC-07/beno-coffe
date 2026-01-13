@@ -1,6 +1,6 @@
 /*
  Этот файл определяет секцию полного меню.
- Он показывает заголовок секции, скролл категорий и карточки позиций с названием, категорией и ценой, а центральная карточка выделена.
+ Он показывает скролл категорий и карточки позиций с названием и ценой, а центральная карточка выделена.
  Человек может выбрать категорию, пролистывать меню, видеть выбранную карточку в центре и открыть подробную страницу позиции.
 */
 "use client";
@@ -43,6 +43,7 @@ const menuPageText = {
   popularCategoryKey: "popular",
   popularCategoryLabel: "Популярные",
   categoriesLabel: "Категории меню",
+  detailsLabel: "Подробнее",
   scrollStoragePrefix: "menu-page-scroll-left",
   itemQueryKey: "item",
   ...commonMenuText,
@@ -307,10 +308,6 @@ export default function MenuPage({ items }: MenuPageProps) {
     // Этот блок содержит всю секцию меню и верхний выбор категорий.
     <section id="menu" className={styles.menuPage} aria-label="Полное меню">
       <div className="container">
-        {/* Этот блок показывает заголовок секции меню. */}
-        <div className={styles.titleWrap}>
-          <h1 className={styles.title}>BENO — место, куда возвращаются.</h1>
-        </div>
         {/* Этот блок показывает верхний скролл категорий, если есть позиции меню. */}
         {items.length > 0 ? (
           <div className={styles.header}>
@@ -322,7 +319,6 @@ export default function MenuPage({ items }: MenuPageProps) {
             />
           </div>
         ) : null}
-
         {/* Этот блок показывает горизонтальную ленту карточек с выделением центральной позиции или сообщение об отсутствии данных. */}
         {visibleItems.length === 0 ? (
           <p className={styles.empty}>{menuPageText.empty}</p>
@@ -387,7 +383,14 @@ export default function MenuPage({ items }: MenuPageProps) {
                         <div className={styles.nameRow}>
                           <h2 className={styles.name}>{nameLabel}</h2>
                         </div>
-                        <p className={styles.category}>{categoryLabel}</p>
+                        {itemHref ? (
+                          <>
+                            {/* Этот блок показывает подпись, что карточка ведет к подробностям. */}
+                            <p className={styles.detailsLabel}>
+                              {menuPageText.detailsLabel}
+                            </p>
+                          </>
+                        ) : null}
                       </div>
                       <p className={styles.price}>{priceLabel}</p>
                     </div>

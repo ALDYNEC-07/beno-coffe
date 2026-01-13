@@ -1,7 +1,7 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает видео и статус работы кофейни.
- Человек может увидеть, открыта ли кофейня сейчас и до какого времени.
+ Он показывает видео, заголовок внизу поверх видео и статус работы на больших экранах.
+ Человек может увидеть атмосферу, прочитать заголовок и узнать время работы.
 */
 "use client";
 
@@ -101,7 +101,7 @@ export default function Hero() {
     // Этот блок показывает главный экран приветствия кофейни.
     <section className={styles.hero}>
       <div className="container">
-        {/* Этот блок размещает видео и статус в сетке секции. */}
+        {/* Этот блок размещает видео, заголовок и статус в сетке секции. */}
         <div className={styles.layout}>
           {/* Этот блок показывает видео кофейни. */}
           <div className={styles.media}>
@@ -118,23 +118,35 @@ export default function Hero() {
               <source src="/benocoffee.mp4" type="video/mp4" />
               Ваш браузер не поддерживает видео.
             </video>
-            {/* Этот блок показывает статус работы поверх фото внизу. */}
-            <div className={styles.mediaBadge} aria-label="Время работы">
-              {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
-              <span
-                className={`${styles.pill} ${styles.mediaPill} ${
-                  isOpenNow ? styles.mediaPillOpen : styles.mediaPillClosed
-                }`}
-                aria-live="polite"
-              >
-                <span>
-                  {isOpenNow
-                    ? heroWorkingHours.openLabel
-                    : heroWorkingHours.closedLabel}
-                </span>
-                <span aria-hidden="true">•</span>
-                <span>{heroWorkingHours.label}</span>
-              </span>
+            {/* Этот блок размещает статус и заголовок поверх видео внизу. */}
+            <div className={styles.mediaOverlay}>
+              {/* Этот блок объединяет статус работы и главный заголовок в одном фоне. */}
+              <div className={styles.mediaTitle}>
+                <div className={styles.mediaHeading}>
+                  {/* Этот блок показывает статус работы поверх видео, но на маленьких экранах скрывается, чтобы оставить только заголовок. */}
+                  <div className={styles.mediaBadge} aria-label="Время работы">
+                    {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
+                    <span
+                      className={`${styles.pill} ${styles.mediaPill} ${
+                        isOpenNow ? styles.mediaPillOpen : styles.mediaPillClosed
+                      }`}
+                      aria-live="polite"
+                    >
+                      <span>
+                        {isOpenNow
+                          ? heroWorkingHours.openLabel
+                          : heroWorkingHours.closedLabel}
+                      </span>
+                      <span aria-hidden="true">•</span>
+                      <span>{heroWorkingHours.label}</span>
+                    </span>
+                  </div>
+                  {/* Этот блок показывает главный заголовок поверх видео под статусом. */}
+                  <h1 className={styles.mediaHeadingTitle}>
+                    Зайди на минуту — останься на час.
+                  </h1>
+                </div>
+              </div>
             </div>
           </div>
         </div>

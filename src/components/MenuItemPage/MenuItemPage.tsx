@@ -1,7 +1,7 @@
 /*
  Этот файл определяет страницу отдельной позиции меню.
  Он показывает подробное описание, цены и варианты размера выбранной позиции, а для некоторых позиций добавляет фотофон.
- Человек может посмотреть детали и вернуться обратно к меню на главной странице.
+ Человек может посмотреть детали, сделать заказ и вернуться обратно к меню на главной странице.
 */
 import Image from "next/image";
 import Link from "next/link";
@@ -18,6 +18,7 @@ import {
   getMenuNameLabel,
   getMenuImageSrc,
 } from "@/lib/menuView";
+import { contactData } from "@/components/shared/contactData";
 
 type MenuItemPageProps = {
   item: MenuItem | null;
@@ -34,6 +35,7 @@ const menuItemText = {
   sizeFallback: "Размер не указан",
   variantsTitle: "Варианты размера",
   descriptionTitle: "Описание",
+  orderLabel: "Сделать заказ",
 };
 
 // Этот компонент показывает подробную карточку выбранной позиции меню с возможным фотофоном.
@@ -42,6 +44,16 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
   const backLink = (
     <Link className={styles.backLink} href="/#menu">
       ← {menuItemText.backLabel}
+    </Link>
+  );
+  // Этот блок держит кнопку заказа, чтобы использовать ее в нескольких местах страницы.
+  const orderButton = (
+    <Link
+      className="button"
+      href={contactData.socialLinks.whatsapp.href}
+      aria-label="Сделать заказ через WhatsApp"
+    >
+      {menuItemText.orderLabel}
     </Link>
   );
 
@@ -124,11 +136,20 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
           <p className={styles.category}>{categoryLabel}</p>
         </div>
 
-        {/* Этот блок показывает цену выбранной позиции. */}
-        <div className={styles.priceRow}>
-          <span className={styles.priceTitle}>{priceTitle}</span>
-          <span className={styles.priceValue}>{priceLabel}</span>
-        </div>
+        {hasVariants ? (
+          <>
+            {/* Этот блок показывает кнопку заказа вместо общей цены, когда все цены указаны по размерам. */}
+            <div className={styles.orderRow}>{orderButton}</div>
+          </>
+        ) : (
+          <>
+            {/* Этот блок показывает цену выбранной позиции, когда вариантов размера нет. */}
+            <div className={styles.priceRow}>
+              <span className={styles.priceTitle}>{priceTitle}</span>
+              <span className={styles.priceValue}>{priceLabel}</span>
+            </div>
+          </>
+        )}
 
         {/* Этот блок показывает описание позиции, если оно есть. */}
         {description ? (
@@ -174,6 +195,13 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
               })}
             </ul>
           </div>
+        ) : null}
+
+        {!hasVariants ? (
+          <>
+            {/* Этот блок показывает кнопку для оформления заказа выбранной позиции. */}
+            <div className={styles.orderRow}>{orderButton}</div>
+          </>
         ) : null}
       </div>
     </section>
