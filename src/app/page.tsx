@@ -8,6 +8,7 @@ import MenuPage from "@/components/MenuPage/MenuPage";
 import Navigation from "@/components/Navigation/Navigation";
 import Footer from "@/components/Footer/Footer";
 import { fetchMenuItems } from "@/lib/menuApi";
+import { Suspense } from "react";
 
 // Этот блок собирает основные части главной страницы.
 export default async function Home() {
@@ -22,8 +23,10 @@ export default async function Home() {
       <main id="main">
         {/* Этот блок показывает главный приветственный экран. */}
         <Hero />
-        {/* Этот блок показывает полное меню прямо на главной странице. */}
-        <MenuPage items={items} />
+        {/* Этот блок показывает полное меню прямо на главной странице и ждёт готовности адресной строки. */}
+        <Suspense fallback={<p>Загружаем меню...</p>}>
+          <MenuPage items={items} />
+        </Suspense>
       </main>
       {/* Этот блок показывает подвал с контактами и служебными ссылками. */}
       <Footer />
