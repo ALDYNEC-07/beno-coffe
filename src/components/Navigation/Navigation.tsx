@@ -108,7 +108,6 @@ export default function Navigation() {
                 <span className={styles.burgerIcon} aria-hidden="true">
                   <span className={styles.burgerLine} />
                   <span className={styles.burgerLine} />
-                  <span className={styles.burgerLine} />
                 </span>
                 <span className={styles.srOnly}>Меню</span>
               </button>
