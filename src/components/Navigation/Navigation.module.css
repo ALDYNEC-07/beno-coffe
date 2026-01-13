@@ -112,7 +112,7 @@
   padding: clamp(1rem, 3vw, 1.75rem);
   border-radius: 18px;
   background: transparent;
-  text-align: left;
+  text-align: center;
   transform-origin: top center;
 }
 
@@ -138,8 +138,8 @@
   list-style: none;
   display: grid;
   gap: 1.1rem;
-  justify-items: start;
-  text-align: left;
+  justify-items: center;
+  text-align: center;
   width: 100%;
 }
 
@@ -186,11 +186,12 @@
 .navLink {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   padding: 0.75rem 1rem;
   text-decoration: none;
   border-radius: 10px;
   color: #000;
-  font-size: var(--text-base);
+  font-size: calc(var(--text-base) * 1.15);
 }
 
 .navLink:focus-visible,
@@ -306,6 +307,7 @@
   text-decoration: none;
   border-radius: 10px;
   color: inherit;
+  font-size: calc(var(--text-base) * 1.05);
 }
 
 .desktopLink:focus-visible {
