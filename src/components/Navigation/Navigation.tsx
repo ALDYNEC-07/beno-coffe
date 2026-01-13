@@ -11,8 +11,8 @@ import styles from "./Navigation.module.css";
 
 // Этот список хранит подписи и адреса для пунктов меню.
 const navLinks: { href: string; label: string }[] = [
-  { href: "/map", label: "Контакты" },
   { href: "/about#new", label: "Авторское" },
+  { href: "/map", label: "Контакты" },
   { href: "/about", label: "О нас" },
 ];
 
