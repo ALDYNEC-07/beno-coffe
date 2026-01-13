@@ -5,18 +5,8 @@
 */
 "use client";
 
-import { contactData } from "@/components/shared/contactData";
 import styles from "./MapPage.module.css";
-
-// Эти описания задают варианты действий для блока копирования и ссылок.
-type MapCopyAction = { label: string; value: string; kind: "copy" };
-type MapLinkAction = {
-  label: string;
-  href: string;
-  ariaLabel: string;
-  kind: "link";
-};
-type MapAction = MapCopyAction | MapLinkAction;
+import { contactData } from "@/components/shared/contactData";
 
 // Этот текст хранит адрес в формате для ссылок на карту.
 const mapAddressQuery = encodeURIComponent(contactData.addressText);
@@ -31,27 +21,8 @@ const mapWidgetBaseUrl = "https://yandex.ru/map-widget/v1/";
 // Этот текст хранит базовый адрес для маршрута в браузере.
 const mapRouteBaseUrl = "https://yandex.ru/maps/";
 
-// Этот список хранит действия для копирования и перехода в соцсети.
-const copyActions: MapAction[] = [
-  { label: "Скопировать адрес", value: contactData.addressText, kind: "copy" },
-  { label: "Скопировать номер", value: contactData.phoneText, kind: "copy" },
-  {
-    label: `Перейти в ${contactData.socialLinks.whatsapp.label}`,
-    href: contactData.socialLinks.whatsapp.href,
-    ariaLabel: `Открыть ${contactData.socialLinks.whatsapp.label} BENO`,
-    kind: "link",
-  },
-  {
-    label: `Перейти в ${contactData.socialLinks.instagram.label}`,
-    href: contactData.socialLinks.instagram.href,
-    ariaLabel: `Открыть ${contactData.socialLinks.instagram.label} BENO`,
-    kind: "link",
-  },
-];
-
 // Этот объект хранит весь текст и данные для страницы адреса.
 const mapPageText = {
-  copyActions,
   map: {
     title: "Кофейня ближе, чем вам кажется.",
     badge: "30 минут от центра",
@@ -94,57 +65,12 @@ const mapPageText = {
 
 // Этот компонент показывает основное содержимое страницы адреса.
 export default function MapPage() {
-  // Эта функция копирует выбранный текст и дает запасной способ, если копирование недоступно.
-  const handleCopy = async (value: string) => {
-    if (typeof navigator === "undefined") {
-      return;
-    }
-
-    if (navigator.clipboard?.writeText) {
-      try {
-        await navigator.clipboard.writeText(value);
-        return;
-      } catch {
-        // Если копирование не удалось, показываем текст для ручного копирования.
-      }
-    }
-
-    window.prompt("Скопируйте текст:", value);
-  };
-
   return (
     // Этот блок содержит всю страницу адреса и маршрута.
     <section className={styles.mapPage} aria-label="Страница адреса">
       <div className="container">
         {/* Этот блок показывает верхний экран страницы адреса. */}
         <div className={styles.hero}>
-          {/* Этот блок показывает кнопки для копирования адреса и контактов. */}
-          <div className={styles.actionRow} aria-label="Копирование контактов">
-            {mapPageText.copyActions.map((action) =>
-              action.kind === "link" ? (
-                <a
-                  key={action.label}
-                  className={`button ${styles.actionButton}`}
-                  href={action.href}
-                  aria-label={action.ariaLabel}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  {action.label}
-                </a>
-              ) : (
-                <button
-                  key={action.label}
-                  type="button"
-                  className={`button ${styles.actionButton}`}
-                  onClick={() => handleCopy(action.value)}
-                >
-                  {action.label}
-                </button>
-              )
-            )}
-          </div>
-
           {/* Этот блок показывает встроенную карту и подпись. */}
           <div className={styles.mapColumn}>
             <div className={styles.mapFrame}>

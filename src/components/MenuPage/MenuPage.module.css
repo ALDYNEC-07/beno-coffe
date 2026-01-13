@@ -39,6 +39,27 @@
   font-size: var(--text-base);
 }
 
+.actionSection {
+  margin-top: var(--space-5);
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.actionButton {
+  border: 1px solid #9b6a1259;
+  background: transparent;
+  color: #3f2c05;
+  font-weight: 600;
+}
+
+.actionButton:active {
+  background: linear-gradient(135deg, #e9d9c5e6, #d2ba9abf);
+}
+
 .gridWrap {
   width: 100vw;
   margin-left: calc(50% - 50vw);
@@ -249,5 +270,24 @@
 @media (min-width: 720px) {
   .header {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 719px) {
+  .actionRow {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-block: var(--space-1);
+    -webkit-overflow-scrolling: touch;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding-inline: var(--space-3);
+    scroll-padding-inline: var(--space-3);
+    box-sizing: border-box;
+  }
+
+  .actionRow > * {
+    flex: 0 0 auto;
   }
 }
