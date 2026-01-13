@@ -1,10 +1,9 @@
 /*
  Этот файл определяет главную страницу.
- Он показывает навигацию, первый экран и хиты.
+ Он показывает навигацию и первый экран.
  Человек может перейти по ссылкам в навигации и в ключевых секциях.
 */
 import Hero from "@/components/Hero/Hero";
-import Hits from "@/components/Hits/Hits";
 import Navigation from "@/components/Navigation/Navigation";
 import Footer from "@/components/Footer/Footer";
 
@@ -18,8 +17,6 @@ export default function Home() {
       <main id="main">
         {/* Этот блок показывает главный приветственный экран. */}
         <Hero />
-        {/* Этот блок показывает секцию с самыми популярными позициями. */}
-        <Hits />
       </main>
       {/* Этот блок показывает подвал с контактами и служебными ссылками. */}
       <Footer />
