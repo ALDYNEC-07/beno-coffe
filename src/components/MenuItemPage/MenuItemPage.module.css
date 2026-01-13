@@ -169,6 +169,11 @@
   gap: 0.35rem;
 }
 
+.orderRow {
+  display: flex;
+  align-items: center;
+}
+
 .variantItem {
   display: flex;
   align-items: baseline;

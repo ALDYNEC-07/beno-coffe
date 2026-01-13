@@ -41,11 +41,15 @@
   }
 
   .media {
-    min-height: clamp(360px, 78vw, 560px);
+    min-height: clamp(320px, 88svh, 560px);
     width: 100vw;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
     border-radius: 0;
+  }
+
+  .mediaBadge {
+    display: none;
   }
 }
 
