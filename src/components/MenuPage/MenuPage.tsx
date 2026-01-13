@@ -40,8 +40,8 @@ type InitialSelection = {
 const menuPageText = {
   empty: "Пока нет данных о меню. Загляните чуть позже!",
   priceFromPrefix: "от",
-  allCategoryKey: "all",
-  allCategoryLabel: "Все",
+  popularCategoryKey: "popular",
+  popularCategoryLabel: "Популярные",
   categoriesLabel: "Категории меню",
   scrollStoragePrefix: "menu-page-scroll-left",
   itemQueryKey: "item",
@@ -55,7 +55,7 @@ const getInitialSelection = (
 ): InitialSelection => {
   if (!requestedItemName) {
     return {
-      categoryKey: menuPageText.allCategoryKey,
+      categoryKey: menuPageText.popularCategoryKey,
       index: 0,
       scrollIndex: null,
     };
@@ -69,17 +69,16 @@ const getInitialSelection = (
   const targetEntry = entries.find(matchesRequested);
   if (!targetEntry) {
     return {
-      categoryKey: menuPageText.allCategoryKey,
+      categoryKey: menuPageText.popularCategoryKey,
       index: 0,
       scrollIndex: null,
     };
   }
 
   const categoryKey = targetEntry.categoryKey;
-  const filteredEntries =
-    categoryKey === menuPageText.allCategoryKey
-      ? entries
-      : entries.filter((entry) => entry.categoryKey === categoryKey);
+  const filteredEntries = entries.filter(
+    (entry) => entry.categoryKey === categoryKey
+  );
   const targetIndex = filteredEntries.findIndex(matchesRequested);
   if (targetIndex === -1) {
     return {
@@ -135,8 +134,8 @@ export default function MenuPage({ items }: MenuPageProps) {
 
     return [
       {
-        key: menuPageText.allCategoryKey,
-        label: menuPageText.allCategoryLabel,
+        key: menuPageText.popularCategoryKey,
+        label: menuPageText.popularCategoryLabel,
       },
       ...categoryOptions,
     ];
@@ -166,12 +165,12 @@ export default function MenuPage({ items }: MenuPageProps) {
     (category) => category.key === activeCategoryKey
   )
     ? activeCategoryKey
-    : menuPageText.allCategoryKey;
+    : menuPageText.popularCategoryKey;
 
-  // Этот блок оставляет только позиции выбранной категории.
+  // Этот блок оставляет только позиции выбранной категории или популярные позиции.
   const visibleItems =
-    resolvedCategoryKey === menuPageText.allCategoryKey
-      ? itemsWithCategory
+    resolvedCategoryKey === menuPageText.popularCategoryKey
+      ? itemsWithCategory.filter((entry) => Boolean(entry.item.popular))
       : itemsWithCategory.filter(
           (entry) => entry.categoryKey === resolvedCategoryKey
         );
