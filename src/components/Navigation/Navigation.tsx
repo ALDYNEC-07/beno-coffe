@@ -11,12 +11,11 @@ import styles from "./Navigation.module.css";
 
 // Этот список хранит подписи и адреса для пунктов меню.
 const navLinks: { href: string; label: string }[] = [
-  { href: "/#features", label: "Преимущества" },
-  { href: "/#new", label: "Авторское" },
-  { href: "/#hits", label: "Хиты" },
-  { href: "/#about", label: "О нас" },
+  { href: "/about#features", label: "Почему BENO COFFEE" },
+  { href: "/about#new", label: "Авторское" },
+  { href: "/about", label: "О нас" },
   { href: "/map", label: "Контакты" },
-  { href: "/menu", label: "Полное меню" },
+  { href: "/#menu", label: "Полное меню" },
 ];
 
 // Этот набор параметров нужен, чтобы показать список ссылок в нужном виде.

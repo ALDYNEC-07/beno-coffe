@@ -1,6 +1,6 @@
 /*
- Этот файл определяет страницу полного меню.
- Он показывает скролл категорий и карточки позиций с названием, категорией и ценой, а центральная карточка выделена.
+ Этот файл определяет секцию полного меню.
+ Он показывает заголовок секции, скролл категорий и карточки позиций с названием, категорией и ценой, а центральная карточка выделена.
  Человек может выбрать категорию, пролистывать меню, видеть выбранную карточку в центре и открыть подробную страницу позиции.
 */
 "use client";
@@ -36,12 +36,12 @@ type InitialSelection = {
   scrollIndex: number | null;
 };
 
-// Этот набор текста хранит подписи, запасные тексты и служебные ключи для страницы меню.
+// Этот набор текста хранит подписи, запасные тексты и служебные ключи для секции меню.
 const menuPageText = {
   empty: "Пока нет данных о меню. Загляните чуть позже!",
   priceFromPrefix: "от",
-  allCategoryKey: "all",
-  allCategoryLabel: "Все",
+  popularCategoryKey: "popular",
+  popularCategoryLabel: "Популярные",
   categoriesLabel: "Категории меню",
   scrollStoragePrefix: "menu-page-scroll-left",
   itemQueryKey: "item",
@@ -55,7 +55,7 @@ const getInitialSelection = (
 ): InitialSelection => {
   if (!requestedItemName) {
     return {
-      categoryKey: menuPageText.allCategoryKey,
+      categoryKey: menuPageText.popularCategoryKey,
       index: 0,
       scrollIndex: null,
     };
@@ -69,17 +69,16 @@ const getInitialSelection = (
   const targetEntry = entries.find(matchesRequested);
   if (!targetEntry) {
     return {
-      categoryKey: menuPageText.allCategoryKey,
+      categoryKey: menuPageText.popularCategoryKey,
       index: 0,
       scrollIndex: null,
     };
   }
 
   const categoryKey = targetEntry.categoryKey;
-  const filteredEntries =
-    categoryKey === menuPageText.allCategoryKey
-      ? entries
-      : entries.filter((entry) => entry.categoryKey === categoryKey);
+  const filteredEntries = entries.filter(
+    (entry) => entry.categoryKey === categoryKey
+  );
   const targetIndex = filteredEntries.findIndex(matchesRequested);
   if (targetIndex === -1) {
     return {
@@ -135,8 +134,8 @@ export default function MenuPage({ items }: MenuPageProps) {
 
     return [
       {
-        key: menuPageText.allCategoryKey,
-        label: menuPageText.allCategoryLabel,
+        key: menuPageText.popularCategoryKey,
+        label: menuPageText.popularCategoryLabel,
       },
       ...categoryOptions,
     ];
@@ -166,12 +165,12 @@ export default function MenuPage({ items }: MenuPageProps) {
     (category) => category.key === activeCategoryKey
   )
     ? activeCategoryKey
-    : menuPageText.allCategoryKey;
+    : menuPageText.popularCategoryKey;
 
-  // Этот блок оставляет только позиции выбранной категории.
+  // Этот блок оставляет только позиции выбранной категории или популярные позиции.
   const visibleItems =
-    resolvedCategoryKey === menuPageText.allCategoryKey
-      ? itemsWithCategory
+    resolvedCategoryKey === menuPageText.popularCategoryKey
+      ? itemsWithCategory.filter((entry) => Boolean(entry.item.popular))
       : itemsWithCategory.filter(
           (entry) => entry.categoryKey === resolvedCategoryKey
         );
@@ -305,9 +304,13 @@ export default function MenuPage({ items }: MenuPageProps) {
   };
 
   return (
-    // Этот блок содержит всю страницу меню и верхний выбор категорий.
-    <section className={styles.menuPage} aria-label="Полное меню">
+    // Этот блок содержит всю секцию меню и верхний выбор категорий.
+    <section id="menu" className={styles.menuPage} aria-label="Полное меню">
       <div className="container">
+        {/* Этот блок показывает заголовок секции меню. */}
+        <div className={styles.titleWrap}>
+          <h1 className={styles.title}>BENO — место, куда возвращаются.</h1>
+        </div>
         {/* Этот блок показывает верхний скролл категорий, если есть позиции меню. */}
         {items.length > 0 ? (
           <div className={styles.header}>

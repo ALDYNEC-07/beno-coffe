@@ -4,20 +4,7 @@
  Здесь позже можно разместить общие элементы.
 */
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
-
-// Здесь подключаются шрифты для заголовков и основного текста на сайте.
-const headingFont = Cormorant_Garamond({
-  subsets: ["latin"],
-  variable: "--font-heading",
-  display: "swap",
-});
-const bodyFont = Inter({
-  subsets: ["latin"],
-  variable: "--font-body",
-  display: "swap",
-});
 
 // Здесь хранится заголовок страницы и короткое описание для браузера.
 export const metadata: Metadata = {
@@ -32,10 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${headingFont.variable} ${bodyFont.variable}`}
-    >
+    <html lang="en">
       <body>
         {/* Здесь показывается каждая страница внутри общего каркаса. */}
         {children}

@@ -26,6 +26,18 @@
     );
 }
 
+.titleWrap {
+  padding-top: var(--space-5);
+  margin-bottom: var(--space-3);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--h1);
+  line-height: 1.1;
+  font-weight: 700;
+}
+
 .header {
   display: block;
   margin-bottom: 0;

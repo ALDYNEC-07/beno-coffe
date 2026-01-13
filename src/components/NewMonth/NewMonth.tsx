@@ -16,7 +16,7 @@ const monthlySpecial = {
   mediaSrc: "/assets/Toska-indeyca.jpg",
   mediaAlt: "Авторский напиток: тоска-индейца",
   menuLabel: "Посмотреть в меню",
-  menuLink: `/menu?item=${encodeURIComponent("Тоска индейца")}`,
+  menuLink: `/?item=${encodeURIComponent("Тоска индейца")}#menu`,
 };
 
 // Этот список хранит короткие анонсы, которые дополняют авторский раздел.

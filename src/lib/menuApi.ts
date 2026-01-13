@@ -5,6 +5,8 @@ import type { MenuItem } from "@/lib/menuData";
 
 // Эта константа хранит путь к серверному эндпоинту меню.
 const MENU_ENDPOINT = "/api/menu-with-variants";
+// Этот параметр задает срок кеширования меню, чтобы сократить лишние запросы.
+const MENU_REVALIDATE_SECONDS = 300;
 
 // Этот помощник собирает базовый адрес запроса из заголовков.
 async function getMenuBaseUrl() {
@@ -30,17 +32,21 @@ function normalizeMenuResponse(data: unknown) {
 
 // Этот помощник загружает полный список меню.
 export async function fetchMenuItems() {
-  const baseUrl = await getMenuBaseUrl();
-  const response = await fetch(`${baseUrl}${MENU_ENDPOINT}`, {
-    cache: "no-store",
-  });
+  try {
+    const baseUrl = await getMenuBaseUrl();
+    const response = await fetch(`${baseUrl}${MENU_ENDPOINT}`, {
+      next: { revalidate: MENU_REVALIDATE_SECONDS },
+    });
 
-  if (!response.ok) {
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+    return normalizeMenuResponse(data);
+  } catch {
     return [];
   }
-
-  const data = await response.json();
-  return normalizeMenuResponse(data);
 }
 
 // Этот помощник находит конкретную позицию меню по ее идентификатору.

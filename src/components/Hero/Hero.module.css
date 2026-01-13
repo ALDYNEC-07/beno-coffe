@@ -27,11 +27,12 @@
 .media {
   border-radius: var(--radius);
   overflow: hidden;
-  min-height: clamp(200px, 30vw, 340px);
+  min-height: clamp(320px, 45vw, 520px);
   display: grid;
   place-items: center;
   background: #fff;
   position: relative;
+  grid-column: 1 / -1;
 }
 
 @media (max-width: 719px) {
@@ -40,7 +41,7 @@
   }
 
   .media {
-    min-height: clamp(280px, 58vw, 420px);
+    min-height: clamp(360px, 78vw, 560px);
     width: 100vw;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
@@ -70,15 +71,31 @@
   position: relative;
   overflow: hidden;
   border: none;
-  background: linear-gradient(
-    135deg,
-    rgba(233, 217, 197, 0.92),
-    rgba(210, 186, 154, 0.7)
-  );
-  box-shadow: 0 10px 28px rgba(60, 40, 20, 0.22);
+  --pill-bg-start: rgba(233, 217, 197, 0.92);
+  --pill-bg-end: rgba(210, 186, 154, 0.7);
+  --pill-shadow: rgba(60, 40, 20, 0.22);
+  --pill-text-shadow: rgba(60, 40, 20, 0.35);
+  --pill-sheen-top: rgba(255, 255, 255, 0.95);
+  --pill-sheen-bottom: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, var(--pill-bg-start), var(--pill-bg-end));
+  box-shadow: 0 10px 28px var(--pill-shadow);
   backdrop-filter: blur(16px) saturate(165%);
   -webkit-backdrop-filter: blur(16px) saturate(165%);
-  text-shadow: 0 1px 2px rgba(60, 40, 20, 0.35);
+  text-shadow: 0 1px 2px var(--pill-text-shadow);
+}
+
+.mediaPillOpen {
+  --pill-bg-start: rgba(194, 230, 194, 0.9);
+  --pill-bg-end: rgba(120, 175, 120, 0.7);
+  --pill-shadow: rgba(30, 70, 40, 0.22);
+  --pill-text-shadow: rgba(30, 70, 40, 0.35);
+}
+
+.mediaPillClosed {
+  --pill-bg-start: rgba(245, 188, 175, 0.92);
+  --pill-bg-end: rgba(205, 110, 95, 0.75);
+  --pill-shadow: rgba(110, 35, 25, 0.22);
+  --pill-text-shadow: rgba(110, 35, 25, 0.35);
 }
 
 .mediaPill::before {
@@ -87,8 +104,8 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(255, 248, 236, 0.95),
-    rgba(255, 248, 236, 0.2)
+    var(--pill-sheen-top),
+    var(--pill-sheen-bottom)
   );
   opacity: 0.7;
   pointer-events: none;
@@ -117,63 +134,6 @@
   z-index: 1;
 }
 
-.copy {
-  display: grid;
-  gap: var(--space-3);
-  align-content: start;
-}
-
-.title {
-  font-size: var(--h1);
-  line-height: 1.1;
-  margin: 0;
-  font-weight: 700;
-}
-
-.lead {
-  font-size: var(--text-lg);
-  max-width: var(--measure);
-  margin: 0;
-}
-
-.heroMeta {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.metaRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  align-items: center;
-}
-
-.metaRowCompact {
-  margin-top: 0.25rem;
-}
-
-.metaRowSpaced {
-  margin-top: var(--space-2);
-}
-
-.quickLinks {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  padding-bottom: var(--space-2);
-  padding-inline: var(--space-3);
-  -webkit-overflow-scrolling: touch;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  scroll-padding-inline: var(--space-3);
-  box-sizing: border-box;
-}
-
-.quickLinks :global(.button) {
-  flex: 0 0 auto;
-}
-
-
 .pill {
   display: inline-flex;
   align-items: center;
@@ -185,66 +145,9 @@
   white-space: nowrap;
 }
 
-.metaButton {
-  border: 1px solid rgba(155, 106, 18, 0.35);
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.75),
-    rgba(255, 255, 255, 0.35)
-  );
-  color: #5f4308;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  box-shadow: 0 3px 10px rgba(60, 40, 20, 0.12);
-  backdrop-filter: blur(12px) saturate(145%);
-  -webkit-backdrop-filter: blur(12px) saturate(145%);
-}
-
-.metaBlock {
-  border: 1px solid rgba(155, 106, 18, 0.35);
-  border-radius: var(--radius);
-  padding: var(--space-2);
-  display: grid;
-  gap: 0.25rem;
-  min-width: min(280px, 100%);
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.75),
-    rgba(255, 255, 255, 0.35)
-  );
-  -webkit-backdrop-filter: blur(12px) saturate(145%);
-  backdrop-filter: blur(12px) saturate(145%);
-}
-
-.metaTitle {
-  font-size: var(--text-sm);
-  opacity: 0.9;
-  margin: 0;
-}
-
-.metaValue {
-  font-weight: 600;
-  margin: 0;
-}
-
 @media (min-width: 720px) {
   .layout {
     grid-template-columns: 1.2fr 1fr;
-  }
-
-  .quickLinks {
-    flex-wrap: wrap;
-    overflow-x: visible;
-    width: auto;
-    margin-left: 0;
-    margin-right: 0;
-    padding-bottom: 0;
-    padding-inline: 0;
-    scroll-padding-inline: 0;
-  }
-
-  .metaBlock {
-    min-width: 340px;
   }
 }
 
