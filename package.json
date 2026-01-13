@@ -10,16 +10,18 @@
     "test": "jest"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/spectral": "^5.2.8",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.8.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@testing-library/jest-dom": "^6.8.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "identity-obj-proxy": "^3.0.0",

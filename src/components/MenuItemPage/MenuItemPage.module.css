@@ -4,7 +4,7 @@
   --h2: clamp(1.25rem, 1.4vw + 1rem, 1.75rem);
   padding-block: var(--space-6);
   font-size: var(--text-base);
-  line-height: 1.5;
+  line-height: var(--line-height-body);
   letter-spacing: 0.2px;
   color: #1b1b1b;
 }
@@ -109,7 +109,7 @@
   font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  opacity: 0.7;
+  color: var(--text-muted-soft);
 }
 
 .badge {
@@ -137,12 +137,12 @@
   font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  opacity: 0.7;
+  color: var(--text-muted-soft);
 }
 
 .priceValue {
   font-size: var(--text-lg);
-  font-weight: 700;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -194,7 +194,7 @@
 }
 
 .variantMl {
-  opacity: 0.7;
+  color: var(--text-muted-soft);
 }
 
 .variantPrice {

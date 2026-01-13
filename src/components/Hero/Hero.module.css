@@ -2,7 +2,7 @@
   padding-top: var(--space-5);
   padding-bottom: 0;
   font-size: var(--text-base);
-  line-height: 1.5;
+  line-height: var(--line-height-body);
   letter-spacing: 0.2px;
   color: #1b1b1b;
   background-color: #fffaf3;
