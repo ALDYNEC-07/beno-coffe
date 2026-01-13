@@ -167,7 +167,7 @@ export default function Hero() {
                 <Link className={`button ${styles.metaButton}`} href="/menu">
                   Смотреть меню
                 </Link>
-                <a className={`button ${styles.metaButton}`} href="#new">
+                <a className={`button ${styles.metaButton}`} href="/about#new">
                   Авторское
                 </a>
                 <a className={`button ${styles.metaButton}`} href="/about">
