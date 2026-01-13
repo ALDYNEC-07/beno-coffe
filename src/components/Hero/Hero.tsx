@@ -123,7 +123,9 @@ export default function Hero() {
             <div className={styles.mediaBadge} aria-label="Время работы">
               {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
               <span
-                className={`${styles.pill} ${styles.mediaPill}`}
+                className={`${styles.pill} ${styles.mediaPill} ${
+                  isOpenNow ? styles.mediaPillOpen : styles.mediaPillClosed
+                }`}
                 aria-live="polite"
               >
                 <span>
