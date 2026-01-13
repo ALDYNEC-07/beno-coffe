@@ -38,7 +38,7 @@ describe("menuApi helpers", () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       "https://example.com/api/menu-with-variants",
-      { cache: "no-store" }
+      { next: { revalidate: 300 } }
     );
     expect(items).toHaveLength(2);
   });
@@ -74,6 +74,39 @@ describe("menuApi helpers", () => {
     expect(items).toEqual([]);
   });
 
+  // Этот блок проверяет, что сетевая ошибка не ломает страницу и возвращает пустой список.
+  test("fetchMenuItems returns empty list when fetch throws", async () => {
+    headersMock.mockResolvedValue({
+      get: (key: string) => (key === "host" ? "example.com" : "https"),
+    } as Headers);
+
+    const fetchMock = global.fetch as jest.Mock;
+    fetchMock.mockRejectedValue(new Error("Network error"));
+
+    const items = await fetchMenuItems();
+
+    expect(items).toEqual([]);
+  });
+
+  // Этот блок проверяет, что битый JSON не приводит к падению и возвращает пустой список.
+  test("fetchMenuItems returns empty list on invalid json", async () => {
+    headersMock.mockResolvedValue({
+      get: (key: string) => (key === "host" ? "example.com" : "https"),
+    } as Headers);
+
+    const fetchMock = global.fetch as jest.Mock;
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => {
+        throw new Error("Invalid JSON");
+      },
+    });
+
+    const items = await fetchMenuItems();
+
+    expect(items).toEqual([]);
+  });
+
   // Этот блок проверяет запасной адрес, если заголовок host отсутствует.
   test("fetchMenuItems falls back to localhost without host header", async () => {
     headersMock.mockResolvedValue({
@@ -90,7 +123,7 @@ describe("menuApi helpers", () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       "http://localhost:3000/api/menu-with-variants",
-      { cache: "no-store" }
+      { next: { revalidate: 300 } }
     );
   });
 
