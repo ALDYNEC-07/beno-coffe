@@ -1,7 +1,7 @@
 /*
  Этот файл определяет секцию полного меню.
- Он показывает скролл категорий, карточки позиций с названием и ценой, а в конце — кнопки связи.
- Человек может выбрать категорию, пролистывать меню, видеть выбранную карточку в центре, открыть подробную страницу позиции и быстро скопировать контакты.
+ Он показывает скролл категорий и карточки позиций с названием и ценой.
+ Человек может выбрать категорию, пролистывать меню, видеть выбранную карточку в центре и открыть подробную страницу позиции.
 */
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -11,7 +11,6 @@ import { useSearchParams } from "next/navigation";
 import styles from "./MenuPage.module.css";
 import type { MenuItem } from "@/lib/menuData";
 import { commonMenuText } from "@/lib/menuText";
-import { contactData } from "@/components/shared/contactData";
 import {
   getMenuCategoryKey,
   getMenuCategoryLabel,
@@ -37,15 +36,6 @@ type InitialSelection = {
   scrollIndex: number | null;
 };
 
-type MenuContactCopyAction = { label: string; value: string; kind: "copy" };
-type MenuContactLinkAction = {
-  label: string;
-  href: string;
-  ariaLabel: string;
-  kind: "link";
-};
-type MenuContactAction = MenuContactCopyAction | MenuContactLinkAction;
-
 // Этот набор текста хранит подписи, запасные тексты и служебные ключи для секции меню.
 const menuPageText = {
   empty: "Пока нет данных о меню. Загляните чуть позже!",
@@ -54,29 +44,10 @@ const menuPageText = {
   popularCategoryLabel: "Популярные",
   categoriesLabel: "Категории меню",
   detailsLabel: "Подробнее",
-  contactActionsLabel: "Быстрые действия для связи",
   scrollStoragePrefix: "menu-page-scroll-left",
   itemQueryKey: "item",
   ...commonMenuText,
 };
-
-// Этот список хранит кнопки для копирования контактов и перехода в мессенджеры.
-const menuContactActions: MenuContactAction[] = [
-  { label: "Скопировать адрес", value: contactData.addressText, kind: "copy" },
-  { label: "Скопировать номер", value: contactData.phoneText, kind: "copy" },
-  {
-    label: `Перейти в ${contactData.socialLinks.whatsapp.label}`,
-    href: contactData.socialLinks.whatsapp.href,
-    ariaLabel: `Открыть ${contactData.socialLinks.whatsapp.label} BENO`,
-    kind: "link",
-  },
-  {
-    label: `Перейти в ${contactData.socialLinks.instagram.label}`,
-    href: contactData.socialLinks.instagram.href,
-    ariaLabel: `Открыть ${contactData.socialLinks.instagram.label} BENO`,
-    kind: "link",
-  },
-];
 
 // Эта функция выбирает начальную категорию и карточку, если они указаны в адресе страницы.
 const getInitialSelection = (
@@ -333,24 +304,6 @@ export default function MenuPage({ items }: MenuPageProps) {
     setActiveCategoryKey(categoryKey);
   };
 
-  // Эта функция копирует выбранный текст и дает запасной способ, если копирование недоступно.
-  const handleCopy = async (value: string) => {
-    if (typeof navigator === "undefined") {
-      return;
-    }
-
-    if (navigator.clipboard?.writeText) {
-      try {
-        await navigator.clipboard.writeText(value);
-        return;
-      } catch {
-        // Если копирование не удалось, показываем текст для ручного копирования.
-      }
-    }
-
-    window.prompt("Скопируйте текст:", value);
-  };
-
   return (
     // Этот блок содержит всю секцию меню и верхний выбор категорий.
     <section id="menu" className={styles.menuPage} aria-label="Полное меню">
@@ -476,37 +429,6 @@ export default function MenuPage({ items }: MenuPageProps) {
             </div>
           </div>
         )}
-        {/* Этот блок показывает быстрые кнопки для связи и копирования контактов. */}
-        <div className={styles.actionSection}>
-          <div
-            className={styles.actionRow}
-            aria-label={menuPageText.contactActionsLabel}
-          >
-            {menuContactActions.map((action) =>
-              action.kind === "link" ? (
-                <a
-                  key={action.label}
-                  className={`button ${styles.actionButton}`}
-                  href={action.href}
-                  aria-label={action.ariaLabel}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  {action.label}
-                </a>
-              ) : (
-                <button
-                  key={action.label}
-                  type="button"
-                  className={`button ${styles.actionButton}`}
-                  onClick={() => handleCopy(action.value)}
-                >
-                  {action.label}
-                </button>
-              )
-            )}
-          </div>
-        </div>
       </div>
     </section>
   );

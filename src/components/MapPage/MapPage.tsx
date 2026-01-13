@@ -1,12 +1,21 @@
 /*
  Этот файл определяет страницу с адресом кофейни.
- Он показывает маршрут, ориентиры и блоки с полезной информацией.
- Человек может быстро понять, как добраться до кофейни.
+ Он показывает быстрые действия для связи, маршрут, ориентиры и блоки с полезной информацией.
+ Человек может скопировать контакты, открыть карту и быстро понять, как добраться до кофейни.
 */
 "use client";
 
-import styles from "./MapPage.module.css";
 import { contactData } from "@/components/shared/contactData";
+import styles from "./MapPage.module.css";
+
+type MapContactCopyAction = { label: string; value: string; kind: "copy" };
+type MapContactLinkAction = {
+  label: string;
+  href: string;
+  ariaLabel: string;
+  kind: "link";
+};
+type MapContactAction = MapContactCopyAction | MapContactLinkAction;
 
 // Этот текст хранит адрес в формате для ссылок на карту.
 const mapAddressQuery = encodeURIComponent(contactData.addressText);
@@ -32,6 +41,7 @@ const mapPageText = {
     embedTitle: `Карта: ${contactData.addressText}`,
   },
   routesTitle: "Легко добраться",
+  contactActionsLabel: "Быстрые действия для связи",
   routes: [
     {
       title: "Пешком",
@@ -63,12 +73,79 @@ const mapPageText = {
   },
 };
 
+// Этот список хранит быстрые действия для копирования контактов и перехода в мессенджеры.
+const mapContactActions: MapContactAction[] = [
+  { label: "Скопировать адрес", value: contactData.addressText, kind: "copy" },
+  { label: "Скопировать номер", value: contactData.phoneText, kind: "copy" },
+  {
+    label: `Перейти в ${contactData.socialLinks.whatsapp.label}`,
+    href: contactData.socialLinks.whatsapp.href,
+    ariaLabel: `Открыть ${contactData.socialLinks.whatsapp.label} BENO`,
+    kind: "link",
+  },
+  {
+    label: `Перейти в ${contactData.socialLinks.instagram.label}`,
+    href: contactData.socialLinks.instagram.href,
+    ariaLabel: `Открыть ${contactData.socialLinks.instagram.label} BENO`,
+    kind: "link",
+  },
+];
+
 // Этот компонент показывает основное содержимое страницы адреса.
 export default function MapPage() {
+  // Эта функция копирует выбранный текст и дает запасной способ, если копирование недоступно.
+  const handleCopy = async (value: string) => {
+    if (typeof navigator === "undefined") {
+      return;
+    }
+
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(value);
+        return;
+      } catch {
+        // Если копирование не удалось, показываем текст для ручного копирования.
+      }
+    }
+
+    window.prompt("Скопируйте текст:", value);
+  };
+
   return (
     // Этот блок содержит всю страницу адреса и маршрута.
     <section className={styles.mapPage} aria-label="Страница адреса">
       <div className="container">
+        {/* Этот блок показывает быстрые действия для связи и копирования контактов в начале страницы. */}
+        <div className={styles.actionSection}>
+          <div
+            className={styles.actionRow}
+            aria-label={mapPageText.contactActionsLabel}
+          >
+            {mapContactActions.map((action) =>
+              action.kind === "link" ? (
+                <a
+                  key={action.label}
+                  className={`button ${styles.actionButton}`}
+                  href={action.href}
+                  aria-label={action.ariaLabel}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  {action.label}
+                </a>
+              ) : (
+                <button
+                  key={action.label}
+                  type="button"
+                  className={`button ${styles.actionButton}`}
+                  onClick={() => handleCopy(action.value)}
+                >
+                  {action.label}
+                </button>
+              )
+            )}
+          </div>
+        </div>
         {/* Этот блок показывает верхний экран страницы адреса. */}
         <div className={styles.hero}>
           {/* Этот блок показывает встроенную карту и подпись. */}
