@@ -88,7 +88,7 @@ const mapPageText = {
     secondary: "Посмотреть меню",
     primaryHref:
       `${mapRouteBaseUrl}?ll=${mapCoordinates}&z=${mapZoom}&text=${mapAddressQuery}`,
-    secondaryHref: "/menu",
+    secondaryHref: "/#menu",
   },
 };
 
@@ -201,7 +201,7 @@ export default function MapPage() {
             >
               {mapPageText.final.primary}
             </a>
-            {/* Эта кнопка ведет на страницу полного меню. */}
+            {/* Эта кнопка ведет к меню на главной странице. */}
             <a
               className={`button ${styles.ctaButton}`}
               href={mapPageText.final.secondaryHref}

@@ -16,7 +16,7 @@ const navLinks: { href: string; label: string }[] = [
   { href: "/about#hits", label: "Хиты" },
   { href: "/about", label: "О нас" },
   { href: "/map", label: "Контакты" },
-  { href: "/menu", label: "Полное меню" },
+  { href: "/#menu", label: "Полное меню" },
 ];
 
 // Этот набор параметров нужен, чтобы показать список ссылок в нужном виде.

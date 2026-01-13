@@ -1,12 +1,11 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает крупный заголовок, подзаголовок, видео и быстрые факты.
- Человек может перейти к контактам, меню и ключевым разделам.
+ Он показывает видео и статус работы кофейни.
+ Человек может увидеть, открыта ли кофейня сейчас и до какого времени.
 */
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import styles from "./Hero.module.css";
 
 // Этот объект хранит время работы кофейни для блока на первом экране.
@@ -102,7 +101,7 @@ export default function Hero() {
     // Этот блок показывает главный экран приветствия кофейни.
     <section className={styles.hero}>
       <div className="container">
-        {/* Этот блок делит секцию на медиа и текстовую часть. */}
+        {/* Этот блок размещает видео и статус в сетке секции. */}
         <div className={styles.layout}>
           {/* Этот блок показывает видео кофейни. */}
           <div className={styles.media}>
@@ -136,44 +135,6 @@ export default function Hero() {
                 <span aria-hidden="true">•</span>
                 <span>{heroWorkingHours.label}</span>
               </span>
-            </div>
-          </div>
-
-          {/* Этот блок показывает текст, факты и быстрые ссылки. */}
-          <div className={styles.copy}>
-            {/* Этот блок содержит главный заголовок. */}
-            <div className="stack">
-              <h1 className={styles.title}>BENO — место, куда возвращаются.</h1>
-            </div>
-
-            {/* Этот блок собирает ключевую информацию одним взглядом. */}
-            <div
-              className={styles.heroMeta}
-              aria-label="Ключевая информация одним взглядом"
-            >
-              {/* Этот блок дает быстрые переходы к важным разделам и контактам. */}
-              {/* Ссылки идут в одну линию, их можно листать вправо. */}
-              <div
-                className={`${styles.metaRow} ${styles.metaRowSpaced} ${styles.quickLinks}`}
-                aria-label="Быстрые переходы"
-              >
-                <Link
-                  className={`button ${styles.metaButton}`}
-                  href="/map"
-                  aria-label="Перейти к странице адреса"
-                >
-                  Контакты
-                </Link>
-                <Link className={`button ${styles.metaButton}`} href="/menu">
-                  Смотреть меню
-                </Link>
-                <a className={`button ${styles.metaButton}`} href="/about#new">
-                  Авторское
-                </a>
-                <a className={`button ${styles.metaButton}`} href="/about">
-                  История BENO
-                </a>
-              </div>
             </div>
           </div>
         </div>

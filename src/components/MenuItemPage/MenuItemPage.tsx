@@ -1,7 +1,7 @@
 /*
  Этот файл определяет страницу отдельной позиции меню.
  Он показывает подробное описание, цены и варианты размера выбранной позиции, а для некоторых позиций добавляет фотофон.
- Человек может посмотреть детали и вернуться обратно к полному меню.
+ Человек может посмотреть детали и вернуться обратно к меню на главной странице.
 */
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +28,7 @@ const menuItemText = {
   ...commonMenuText,
   backLabel: "Вернуться к меню",
   notFoundTitle: "Такой позиции пока нет",
-  notFoundLead: "Возможно, она появится чуть позже. Проверьте полное меню.",
+  notFoundLead: "Возможно, она появится чуть позже. Проверьте меню на главной странице.",
   priceLabel: "Цена",
   priceFromLabel: "Цена от",
   sizeFallback: "Размер не указан",
@@ -40,7 +40,7 @@ const menuItemText = {
 export default function MenuItemPage({ item }: MenuItemPageProps) {
   // Этот блок держит ссылку для возврата в меню, чтобы не дублировать разметку.
   const backLink = (
-    <Link className={styles.backLink} href="/menu">
+    <Link className={styles.backLink} href="/#menu">
       ← {menuItemText.backLabel}
     </Link>
   );
@@ -56,7 +56,7 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
             <p className={styles.lead}>{menuItemText.notFoundLead}</p>
           </div>
 
-          {/* Этот блок ведет пользователя обратно к полному меню. */}
+          {/* Этот блок ведет пользователя обратно к меню на главной странице. */}
           {backLink}
         </div>
       </section>
@@ -108,7 +108,7 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
         </>
       ) : null}
       <div className={`container ${contentClassName}`}>
-        {/* Этот блок ведет пользователя обратно к полному меню. */}
+        {/* Этот блок ведет пользователя обратно к меню на главной странице. */}
         {backLink}
 
         {/* Этот блок показывает название, категорию и статус популярности. */}

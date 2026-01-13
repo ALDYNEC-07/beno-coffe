@@ -1,14 +1,19 @@
 /*
  Этот файл определяет главную страницу.
- Он показывает навигацию и первый экран.
- Человек может перейти по ссылкам в навигации и в ключевых секциях.
+ Он показывает навигацию, первый экран и полное меню.
+ Человек может перейти по ссылкам в навигации и посмотреть меню на месте.
 */
 import Hero from "@/components/Hero/Hero";
+import MenuPage from "@/components/MenuPage/MenuPage";
 import Navigation from "@/components/Navigation/Navigation";
 import Footer from "@/components/Footer/Footer";
+import { fetchMenuItems } from "@/lib/menuApi";
 
 // Этот блок собирает основные части главной страницы.
-export default function Home() {
+export default async function Home() {
+  // Этот блок загружает список меню для главной страницы.
+  const items = await fetchMenuItems();
+
   return (
     <>
       {/* Этот блок показывает верхнюю навигацию сайта. */}
@@ -17,6 +22,8 @@ export default function Home() {
       <main id="main">
         {/* Этот блок показывает главный приветственный экран. */}
         <Hero />
+        {/* Этот блок показывает полное меню прямо на главной странице. */}
+        <MenuPage items={items} />
       </main>
       {/* Этот блок показывает подвал с контактами и служебными ссылками. */}
       <Footer />
