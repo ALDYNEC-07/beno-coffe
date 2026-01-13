@@ -1,7 +1,7 @@
 /*
  Этот файл определяет страницу отдельной позиции меню.
  Он показывает подробное описание, цены и варианты размера выбранной позиции, а для некоторых позиций добавляет фотофон.
- Человек может посмотреть детали, сделать заказ и вернуться обратно к меню на главной странице.
+ Человек может посмотреть детали, позвонить или написать в WhatsApp и вернуться обратно к меню на главной странице.
 */
 import Image from "next/image";
 import Link from "next/link";
@@ -35,7 +35,8 @@ const menuItemText = {
   sizeFallback: "Размер не указан",
   variantsTitle: "Варианты размера",
   descriptionTitle: "Описание",
-  orderLabel: "Сделать заказ",
+  callLabel: "Позвонить",
+  whatsappLabel: "WhatsApp",
 };
 
 // Этот компонент показывает подробную карточку выбранной позиции меню с возможным фотофоном.
@@ -46,15 +47,24 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
       ← {menuItemText.backLabel}
     </Link>
   );
-  // Этот блок держит кнопку заказа, чтобы использовать ее в нескольких местах страницы.
-  const orderButton = (
-    <Link
-      className="button"
-      href={contactData.socialLinks.whatsapp.href}
-      aria-label="Сделать заказ через WhatsApp"
-    >
-      {menuItemText.orderLabel}
-    </Link>
+  // Этот блок держит кнопки для звонка и связи в WhatsApp, чтобы использовать их в нескольких местах страницы.
+  const orderActions = (
+    <>
+      <a
+        className="button"
+        href={contactData.phoneLink}
+        aria-label={`Позвонить по номеру ${contactData.phoneText}`}
+      >
+        {menuItemText.callLabel}
+      </a>
+      <a
+        className="button"
+        href={contactData.socialLinks.whatsapp.href}
+        aria-label={`Написать в ${menuItemText.whatsappLabel}`}
+      >
+        {menuItemText.whatsappLabel}
+      </a>
+    </>
   );
 
   if (!item) {
@@ -138,8 +148,8 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
 
         {hasVariants ? (
           <>
-            {/* Этот блок показывает кнопку заказа вместо общей цены, когда все цены указаны по размерам. */}
-            <div className={styles.orderRow}>{orderButton}</div>
+            {/* Этот блок показывает кнопки для связи вместо общей цены, когда все цены указаны по размерам. */}
+            <div className={styles.orderRow}>{orderActions}</div>
           </>
         ) : (
           <>
@@ -199,8 +209,8 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
 
         {!hasVariants ? (
           <>
-            {/* Этот блок показывает кнопку для оформления заказа выбранной позиции. */}
-            <div className={styles.orderRow}>{orderButton}</div>
+            {/* Этот блок показывает кнопки для связи по выбранной позиции. */}
+            <div className={styles.orderRow}>{orderActions}</div>
           </>
         ) : null}
       </div>

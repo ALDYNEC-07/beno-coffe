@@ -73,18 +73,23 @@ const mapPageText = {
   },
 };
 
-// Этот список хранит быстрые действия для копирования контактов и перехода в мессенджеры.
+// Этот список хранит быстрые действия для копирования адреса, звонка и перехода в мессенджеры.
 const mapContactActions: MapContactAction[] = [
   { label: "Скопировать адрес", value: contactData.addressText, kind: "copy" },
-  { label: "Скопировать номер", value: contactData.phoneText, kind: "copy" },
   {
-    label: `Перейти в ${contactData.socialLinks.whatsapp.label}`,
+    label: "Позвонить",
+    href: contactData.phoneLink,
+    ariaLabel: `Позвонить по номеру ${contactData.phoneText}`,
+    kind: "link",
+  },
+  {
+    label: `${contactData.socialLinks.whatsapp.label}`,
     href: contactData.socialLinks.whatsapp.href,
     ariaLabel: `Открыть ${contactData.socialLinks.whatsapp.label} BENO`,
     kind: "link",
   },
   {
-    label: `Перейти в ${contactData.socialLinks.instagram.label}`,
+    label: `${contactData.socialLinks.instagram.label}`,
     href: contactData.socialLinks.instagram.href,
     ariaLabel: `Открыть ${contactData.socialLinks.instagram.label} BENO`,
     kind: "link",
