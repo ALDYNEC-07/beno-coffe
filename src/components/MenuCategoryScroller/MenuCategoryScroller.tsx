@@ -31,7 +31,7 @@ export default function MenuCategoryScroller({
   // Этот флаг хранит информацию о том, применялась ли начальная прокрутка.
   const hasInitialScrollRef = useRef(false);
 
-  // Эта функция мягко подводит выбранную категорию к нужному месту в ленте.
+  // Эта функция мягко двигает ленту категорий по горизонтали и не трогает прокрутку страницы.
   const scrollCategoryIntoView = (
     index: number,
     behavior: ScrollBehavior = "smooth",
@@ -50,14 +50,23 @@ export default function MenuCategoryScroller({
       return;
     }
 
-    target.scrollIntoView({
+    const scrollerStyles = window.getComputedStyle(scroller);
+    const paddingLeft = parseFloat(scrollerStyles.paddingLeft) || 0;
+    const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
+    const targetCenter = target.offsetLeft + target.offsetWidth / 2;
+    const nextLeft =
+      inline === "start"
+        ? target.offsetLeft - paddingLeft
+        : targetCenter - scroller.clientWidth / 2;
+    const clampedLeft = Math.max(0, Math.min(maxScrollLeft, nextLeft));
+
+    scroller.scrollTo({
+      left: clampedLeft,
       behavior,
-      block: "nearest",
-      inline,
     });
   };
 
-  // Этот блок выставляет стартовую позицию категорий слева с комфортным отступом.
+  // Этот блок выставляет стартовую позицию категорий слева без прокрутки страницы.
   useEffect(() => {
     if (hasInitialScrollRef.current || categories.length === 0) {
       return;
