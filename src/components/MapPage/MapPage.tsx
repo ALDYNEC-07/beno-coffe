@@ -1,22 +1,21 @@
 /*
  Этот файл определяет страницу с адресом кофейни.
- Он показывает маршрут, ориентиры и блоки с полезной информацией.
- Человек может быстро понять, как добраться до кофейни.
+ Он показывает быстрые действия для связи, маршрут, ориентиры и блоки с полезной информацией.
+ Человек может скопировать контакты, открыть карту и быстро понять, как добраться до кофейни.
 */
 "use client";
 
 import { contactData } from "@/components/shared/contactData";
 import styles from "./MapPage.module.css";
 
-// Эти описания задают варианты действий для блока копирования и ссылок.
-type MapCopyAction = { label: string; value: string; kind: "copy" };
-type MapLinkAction = {
+type MapContactCopyAction = { label: string; value: string; kind: "copy" };
+type MapContactLinkAction = {
   label: string;
   href: string;
   ariaLabel: string;
   kind: "link";
 };
-type MapAction = MapCopyAction | MapLinkAction;
+type MapContactAction = MapContactCopyAction | MapContactLinkAction;
 
 // Этот текст хранит адрес в формате для ссылок на карту.
 const mapAddressQuery = encodeURIComponent(contactData.addressText);
@@ -31,27 +30,8 @@ const mapWidgetBaseUrl = "https://yandex.ru/map-widget/v1/";
 // Этот текст хранит базовый адрес для маршрута в браузере.
 const mapRouteBaseUrl = "https://yandex.ru/maps/";
 
-// Этот список хранит действия для копирования и перехода в соцсети.
-const copyActions: MapAction[] = [
-  { label: "Скопировать адрес", value: contactData.addressText, kind: "copy" },
-  { label: "Скопировать номер", value: contactData.phoneText, kind: "copy" },
-  {
-    label: `Перейти в ${contactData.socialLinks.whatsapp.label}`,
-    href: contactData.socialLinks.whatsapp.href,
-    ariaLabel: `Открыть ${contactData.socialLinks.whatsapp.label} BENO`,
-    kind: "link",
-  },
-  {
-    label: `Перейти в ${contactData.socialLinks.instagram.label}`,
-    href: contactData.socialLinks.instagram.href,
-    ariaLabel: `Открыть ${contactData.socialLinks.instagram.label} BENO`,
-    kind: "link",
-  },
-];
-
 // Этот объект хранит весь текст и данные для страницы адреса.
 const mapPageText = {
-  copyActions,
   map: {
     title: "Кофейня ближе, чем вам кажется.",
     badge: "30 минут от центра",
@@ -61,6 +41,7 @@ const mapPageText = {
     embedTitle: `Карта: ${contactData.addressText}`,
   },
   routesTitle: "Легко добраться",
+  contactActionsLabel: "Быстрые действия для связи",
   routes: [
     {
       title: "Пешком",
@@ -92,6 +73,29 @@ const mapPageText = {
   },
 };
 
+// Этот список хранит быстрые действия для копирования адреса, звонка и перехода в мессенджеры.
+const mapContactActions: MapContactAction[] = [
+  { label: "Скопировать адрес", value: contactData.addressText, kind: "copy" },
+  {
+    label: "Позвонить",
+    href: contactData.phoneLink,
+    ariaLabel: `Позвонить по номеру ${contactData.phoneText}`,
+    kind: "link",
+  },
+  {
+    label: `${contactData.socialLinks.whatsapp.label}`,
+    href: contactData.socialLinks.whatsapp.href,
+    ariaLabel: `Открыть ${contactData.socialLinks.whatsapp.label} BENO`,
+    kind: "link",
+  },
+  {
+    label: `${contactData.socialLinks.instagram.label}`,
+    href: contactData.socialLinks.instagram.href,
+    ariaLabel: `Открыть ${contactData.socialLinks.instagram.label} BENO`,
+    kind: "link",
+  },
+];
+
 // Этот компонент показывает основное содержимое страницы адреса.
 export default function MapPage() {
   // Эта функция копирует выбранный текст и дает запасной способ, если копирование недоступно.
@@ -116,11 +120,13 @@ export default function MapPage() {
     // Этот блок содержит всю страницу адреса и маршрута.
     <section className={styles.mapPage} aria-label="Страница адреса">
       <div className="container">
-        {/* Этот блок показывает верхний экран страницы адреса. */}
-        <div className={styles.hero}>
-          {/* Этот блок показывает кнопки для копирования адреса и контактов. */}
-          <div className={styles.actionRow} aria-label="Копирование контактов">
-            {mapPageText.copyActions.map((action) =>
+        {/* Этот блок показывает быстрые действия для связи и копирования контактов в начале страницы. */}
+        <div className={styles.actionSection}>
+          <div
+            className={styles.actionRow}
+            aria-label={mapPageText.contactActionsLabel}
+          >
+            {mapContactActions.map((action) =>
               action.kind === "link" ? (
                 <a
                   key={action.label}
@@ -144,7 +150,9 @@ export default function MapPage() {
               )
             )}
           </div>
-
+        </div>
+        {/* Этот блок показывает верхний экран страницы адреса. */}
+        <div className={styles.hero}>
           {/* Этот блок показывает встроенную карту и подпись. */}
           <div className={styles.mapColumn}>
             <div className={styles.mapFrame}>

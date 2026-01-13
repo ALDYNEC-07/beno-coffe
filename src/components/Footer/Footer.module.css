@@ -1,8 +1,8 @@
 .footer {
   padding-block: var(--space-6);
   border-top: 1px solid rgba(155, 106, 18, 0.35);
-  font-size: 0.8rem;
-  line-height: 1.5;
+  font-size: var(--text-sm);
+  line-height: var(--line-height-body);
   letter-spacing: 0.2px;
   color: #1b1b1b;
   background-color: #fffaf3;
@@ -104,15 +104,15 @@
 }
 
 .hoursBig {
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: var(--text-sm);
+  font-weight: 600;
   line-height: 1.2;
   margin: 0;
 }
 
 .muted {
-  font-size: 0.75rem;
-  color: rgba(27, 27, 27, 0.75);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -142,7 +142,7 @@
     rgba(255, 255, 255, 0.35)
   );
   color: #5f4308;
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.02em;
   backdrop-filter: blur(12px) saturate(145%);
@@ -167,12 +167,12 @@
   padding-block: 0.45rem;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-size: 0.68rem;
+  font-size: var(--text-sm);
 }
 
 .bottomRow .muted {
   font-size: inherit;
-  color: rgba(27, 27, 27, 0.6);
+  color: var(--text-muted-soft);
 }
 
 .legalLinks {
@@ -184,7 +184,7 @@
 .legalItem + .legalItem::before {
   content: "·";
   margin: 0 0.5rem;
-  color: rgba(27, 27, 27, 0.6);
+  color: var(--text-muted-soft);
 }
 
 @media (min-width: 720px) {

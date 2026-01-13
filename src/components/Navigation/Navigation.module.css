@@ -48,7 +48,7 @@
 }
 
 .brandName {
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.4px;
 }
 
@@ -112,7 +112,7 @@
   padding: clamp(1rem, 3vw, 1.75rem);
   border-radius: 18px;
   background: transparent;
-  text-align: center;
+  text-align: left;
   transform-origin: top center;
 }
 
@@ -138,8 +138,8 @@
   list-style: none;
   display: grid;
   gap: 1.1rem;
-  justify-items: center;
-  text-align: center;
+  justify-items: start;
+  text-align: left;
   width: 100%;
 }
 
@@ -186,12 +186,13 @@
 .navLink {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 0.75rem 1rem;
   text-decoration: none;
   border-radius: 10px;
   color: #000;
   font-size: calc(var(--text-base) * 1.15);
+  width: 100%;
 }
 
 .navLink:focus-visible,
@@ -206,7 +207,6 @@
   position: relative;
   width: 24px;
   height: 20px;
-  transition: width 0.45s ease, height 0.45s ease;
 }
 
 .burgerLine {
@@ -219,33 +219,23 @@
   border: 0 solid transparent;
   box-sizing: border-box;
   border-radius: 999px;
-  transform: translate(-50%, -50%) translateY(var(--line-offset, 0)) translateZ(0);
-  will-change: transform;
+  transform: translate3d(-50%, -50%, 0) translateY(var(--line-offset, 0));
+  transform-origin: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform, opacity;
   transition:
     transform 0.45s ease,
     opacity 0.35s ease,
-    width 0.45s ease,
-    height 0.45s ease,
-    border-color 0.45s ease,
-    border-width 0.45s ease,
     background-color 0.45s ease;
 }
 
 .burgerLine:nth-child(1) {
-  --line-offset: -8px;
+  --line-offset: -5px;
 }
 
 .burgerLine:nth-child(2) {
-  --line-offset: -1px;
-}
-
-.burgerLine:nth-child(3) {
-  --line-offset: 6px;
-}
-
-.menu[data-menu-state="open"] .burgerIcon {
-  width: 28px;
-  height: 28px;
+  --line-offset: 5px;
 }
 
 .menu[data-menu-state="open"] .burgerLine {
@@ -253,26 +243,11 @@
 }
 
 .menu[data-menu-state="open"] .burgerLine:nth-child(1) {
-  width: 26px;
-  height: 26px;
-  background-color: transparent;
-  border-width: 1px;
-  border-color: #000;
-  transform: translate(-50%, -50%) translateZ(0);
+  transform: translate3d(-50%, -50%, 0) rotate(45deg);
 }
 
 .menu[data-menu-state="open"] .burgerLine:nth-child(2) {
-  width: 14px;
-  transform: translate(-50%, -50%) rotate(45deg) translateZ(0);
-}
-
-.menu[data-menu-state="open"] .burgerLine:nth-child(3) {
-  width: 14px;
-  transform: translate(-50%, -50%) rotate(-45deg) translateZ(0);
-}
-
-.menu[data-menu-state="closing"] .burgerIcon {
-  transition-duration: 0.3s;
+  transform: translate3d(-50%, -50%, 0) rotate(-45deg);
 }
 
 .menu[data-menu-state="closing"] .burgerLine {

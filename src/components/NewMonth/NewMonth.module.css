@@ -3,7 +3,7 @@
   padding-top: var(--space-6);
   padding-bottom: 0;
   font-size: var(--text-base);
-  line-height: 1.5;
+  line-height: var(--line-height-body);
   letter-spacing: 0.2px;
   color: #1b1b1b;
   background-color: #fffaf3;
@@ -142,7 +142,7 @@
 .muted {
   margin: 0;
   font-size: var(--text-sm);
-  color: rgba(27, 27, 27, 0.75);
+  color: var(--text-muted);
 }
 
 @media (max-width: 719px) {

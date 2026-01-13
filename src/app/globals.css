@@ -16,6 +16,11 @@
   --radius-sm: 10px;
   --border: 1px solid #1b1b1b;
   --measure: 65ch;
+  --font-body: "Inter";
+  --font-heading: "Spectral";
+  --line-height-body: 1.55;
+  --text-muted: rgba(27, 27, 27, 0.82);
+  --text-muted-soft: rgba(27, 27, 27, 0.74);
 }
 
 html,
@@ -25,7 +30,10 @@ body {
 }
 
 body {
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-body), sans-serif;
+  font-weight: 400;
+  line-height: var(--line-height-body);
+  color: #1b1b1b;
 }
 
 h1,
@@ -34,7 +42,40 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Times New Roman", serif;
+  font-family: var(--font-heading), serif;
+  font-weight: 600;
+}
+
+h1 {
+  font-weight: 700;
+}
+
+h2,
+h3,
+.title {
+  font-family: var(--font-heading), serif;
+  font-weight: 600;
+}
+
+p {
+  font-family: var(--font-body), sans-serif;
+  font-weight: 400;
+  line-height: var(--line-height-body);
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-body), sans-serif;
+  font-weight: 500;
+}
+
+h1 button,
+h2 button,
+h3 button {
+  font-family: inherit;
+  font-weight: inherit;
 }
 
 section[id],
@@ -63,6 +104,8 @@ footer[id] {
   white-space: nowrap;
   color: inherit;
   font-size: var(--text-base);
+  font-family: var(--font-body), sans-serif;
+  font-weight: 500;
 }
 
 .button:focus-visible {
