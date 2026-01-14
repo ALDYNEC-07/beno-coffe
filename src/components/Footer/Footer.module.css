@@ -1,5 +1,6 @@
 .footer {
-  padding-block: var(--space-6);
+  padding-top: 0;
+  padding-bottom: var(--space-6);
   border-top: 1px solid rgba(155, 106, 18, 0.35);
   font-size: var(--text-sm);
   line-height: var(--line-height-body);

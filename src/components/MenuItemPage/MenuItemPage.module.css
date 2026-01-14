@@ -2,6 +2,14 @@
   --container: 960px;
   --h1: clamp(2rem, 2.8vw + 1.3rem, 3rem);
   --h2: clamp(1.25rem, 1.4vw + 1rem, 1.75rem);
+  --border: 1px solid #9b6a1259;
+  background-color: #fffaf3;
+  background-image: radial-gradient(
+      70% 120% at 50% -10%,
+      #ffffffe6,
+      #fff0
+    ),
+    linear-gradient(#fff8ecf2, #fff8ec8c);
   padding-block: var(--space-6);
   font-size: var(--text-base);
   line-height: var(--line-height-body);
