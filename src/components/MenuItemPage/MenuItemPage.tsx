@@ -47,26 +47,6 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
       ← {menuItemText.backLabel}
     </Link>
   );
-  // Этот блок держит кнопки для звонка и связи в WhatsApp, чтобы использовать их в нескольких местах страницы.
-  const orderActions = (
-    <>
-      <a
-        className="button"
-        href={contactData.phoneLink}
-        aria-label={`Позвонить по номеру ${contactData.phoneText}`}
-      >
-        {menuItemText.callLabel}
-      </a>
-      <a
-        className="button"
-        href={contactData.socialLinks.whatsapp.href}
-        aria-label={`Написать в ${menuItemText.whatsappLabel}`}
-      >
-        {menuItemText.whatsappLabel}
-      </a>
-    </>
-  );
-
   if (!item) {
     return (
       // Этот блок показывает сообщение, если позиция не найдена.
@@ -94,6 +74,36 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
   const description = item.description?.trim();
   // Этот блок определяет, есть ли фотография для выбранной позиции.
   const imageSrc = getMenuImageSrc(nameLabel, categoryLabel);
+  // Этот текст заранее подставляется в сообщение WhatsApp для заказа выбранной позиции.
+  const whatsappMessage = `Здравствуйте! ${nameLabel}, пожалуйста.
+(если нужно, уточните какой объем нужен, сахар? сироп? и т.д.)
+Оплата картой
+Навынос
+Буду через 15 минут`;
+  // Эта ссылка отправляет пользователя в WhatsApp с готовым текстом заказа.
+  const whatsappLink = `${contactData.socialLinks.whatsapp.href}?text=${encodeURIComponent(
+    whatsappMessage
+  )}`;
+
+  // Этот блок держит кнопки для звонка и связи в WhatsApp, чтобы использовать их в нескольких местах страницы.
+  const orderActions = (
+    <>
+      <a
+        className="button"
+        href={contactData.phoneLink}
+        aria-label={`Позвонить по номеру ${contactData.phoneText}`}
+      >
+        {menuItemText.callLabel}
+      </a>
+      <a
+        className="button"
+        href={whatsappLink}
+        aria-label={`Написать в ${menuItemText.whatsappLabel}`}
+      >
+        {menuItemText.whatsappLabel}
+      </a>
+    </>
+  );
 
   // Этот блок рассчитывает цену и варианты, чтобы показать их на странице.
   const { priceInfo, priceLabel, priceTitle } = getMenuDetailPriceInfo(
