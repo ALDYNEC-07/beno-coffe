@@ -41,6 +41,25 @@
   margin-bottom: 0;
 }
 
+.categoryList {
+  display: grid;
+  gap: calc(var(--space-6) + var(--space-2));
+  margin-top: var(--space-4);
+}
+
+.categorySection {
+  display: grid;
+  gap: var(--space-3);
+  scroll-margin-top: var(--space-6);
+}
+
+.categoryTitle {
+  margin: 0;
+  font-size: clamp(1.35rem, 1.3vw + 1rem, 1.9rem);
+  letter-spacing: 0.3px;
+  color: #2d1f13;
+}
+
 .empty {
   border: var(--border);
   border-radius: var(--radius);
@@ -68,6 +87,11 @@
   scroll-padding-inline: var(--edge-padding);
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
+}
+
+.gridRow {
+  padding-top: var(--space-3);
+  padding-bottom: calc(var(--space-4) + 0.5rem);
 }
 
 .card {

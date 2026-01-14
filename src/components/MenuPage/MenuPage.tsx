@@ -1,12 +1,10 @@
 /*
  Этот файл определяет секцию полного меню.
- Он показывает скролл категорий и карточки позиций с названием и ценой.
- Человек может выбрать категорию, пролистывать меню, видеть выбранную карточку в центре и открыть подробную страницу позиции.
+ Он показывает скролл категорий и отдельные линии позиций для каждой категории.
+ Человек может выбрать категорию сверху, пролистывать строки карточек и открыть подробную страницу позиции.
 */
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import styles from "./MenuPage.module.css";
 import type { MenuItem } from "@/lib/menuData";
@@ -14,11 +12,10 @@ import { commonMenuText } from "@/lib/menuText";
 import {
   getMenuCategoryKey,
   getMenuCategoryLabel,
-  getMenuListPriceLabel,
   getMenuNameLabel,
-  getMenuImageSrc,
 } from "@/lib/menuView";
 import MenuCategoryScroller from "@/components/MenuCategoryScroller/MenuCategoryScroller";
+import MenuCategoryRow from "@/components/MenuPage/MenuCategoryRow";
 
 type MenuPageProps = {
   items: MenuItem[];
@@ -30,11 +27,16 @@ type MenuItemWithCategory = {
   categoryKey: string;
 };
 
+type MenuCategorySection = {
+  key: string;
+  label: string;
+  entries: MenuItemWithCategory[];
+};
+
 type InitialSelection = {
   categoryKey: string;
   index: number;
-  scrollIndex: number | null;
-};
+} | null;
 
 // Этот набор текста хранит подписи, запасные тексты и служебные ключи для секции меню.
 const menuPageText = {
@@ -56,11 +58,7 @@ const getInitialSelection = (
   requestedItemName: string
 ): InitialSelection => {
   if (!requestedItemName) {
-    return {
-      categoryKey: menuPageText.popularCategoryKey,
-      index: 0,
-      scrollIndex: null,
-    };
+    return null;
   }
 
   const requestedKey = requestedItemName.toLocaleLowerCase();
@@ -70,11 +68,7 @@ const getInitialSelection = (
       .trim() === requestedKey;
   const targetEntry = entries.find(matchesRequested);
   if (!targetEntry) {
-    return {
-      categoryKey: menuPageText.popularCategoryKey,
-      index: 0,
-      scrollIndex: null,
-    };
+    return null;
   }
 
   const categoryKey = targetEntry.categoryKey;
@@ -83,24 +77,17 @@ const getInitialSelection = (
   );
   const targetIndex = filteredEntries.findIndex(matchesRequested);
   if (targetIndex === -1) {
-    return {
-      categoryKey,
-      index: 0,
-      scrollIndex: null,
-    };
+    return null;
   }
 
   return {
     categoryKey,
     index: targetIndex,
-    scrollIndex: targetIndex,
   };
 };
 
-// Этот компонент показывает список позиций меню в виде карточек.
+// Этот компонент показывает меню строками карточек для каждой категории.
 export default function MenuPage({ items }: MenuPageProps) {
-  // Этот объект держит доступ к ленте карточек для вычисления центра.
-  const gridRef = useRef<HTMLDivElement | null>(null);
   // Этот объект читает параметры адресной строки, чтобы найти нужную позицию.
   const searchParams = useSearchParams();
   // Этот текст хранит название позиции из адреса, если оно задано.
@@ -121,27 +108,52 @@ export default function MenuPage({ items }: MenuPageProps) {
     [items]
   );
 
-  // Этот блок собирает список категорий для верхнего скролла.
-  const categories = useMemo(() => {
-    const categoryOptions: { key: string; label: string }[] = [];
-    const categoryKeys = new Set<string>();
+  // Этот блок собирает список секций категорий для вывода строк меню.
+  const categorySections = useMemo<MenuCategorySection[]>(() => {
+    const sections: MenuCategorySection[] = [];
+    const sectionMap = new Map<string, MenuCategorySection>();
+
     itemsWithCategory.forEach((entry) => {
-      const { categoryKey: key, categoryLabel: label } = entry;
-      if (categoryKeys.has(key)) {
-        return;
+      const { categoryKey, categoryLabel } = entry;
+      if (!sectionMap.has(categoryKey)) {
+        const section: MenuCategorySection = {
+          key: categoryKey,
+          label: categoryLabel,
+          entries: [],
+        };
+        sectionMap.set(categoryKey, section);
+        sections.push(section);
       }
-      categoryKeys.add(key);
-      categoryOptions.push({ key, label });
+      sectionMap.get(categoryKey)?.entries.push(entry);
     });
 
-    return [
-      {
-        key: menuPageText.popularCategoryKey,
-        label: menuPageText.popularCategoryLabel,
-      },
-      ...categoryOptions,
-    ];
+    const popularEntries = itemsWithCategory.filter((entry) =>
+      Boolean(entry.item.popular)
+    );
+
+    if (popularEntries.length > 0) {
+      return [
+        {
+          key: menuPageText.popularCategoryKey,
+          label: menuPageText.popularCategoryLabel,
+          entries: popularEntries,
+        },
+        ...sections,
+      ];
+    }
+
+    return sections;
   }, [itemsWithCategory]);
+
+  // Этот блок готовит список категорий для верхнего скролла.
+  const categories = useMemo(
+    () =>
+      categorySections.map((section) => ({
+        key: section.key,
+        label: section.label,
+      })),
+    [categorySections]
+  );
 
   // Этот объект выбирает стартовую категорию и карточку на основе адреса.
   const initialSelection = getInitialSelection(
@@ -149,160 +161,59 @@ export default function MenuPage({ items }: MenuPageProps) {
     requestedItemName
   );
 
+  // Этот ключ выбирает стартовую категорию для верхнего скролла.
+  const defaultCategoryKey = categorySections[0]?.key ?? "";
+
   // Это поле хранит ключ категории, выбранной человеком.
   const [activeCategoryKey, setActiveCategoryKey] = useState(
-    () => initialSelection.categoryKey
+    () => initialSelection?.categoryKey ?? defaultCategoryKey
   );
-  // Это число хранит номер карточки, которая сейчас в центре.
-  const [activeIndex, setActiveIndex] = useState(
-    () => initialSelection.index
-  );
-  // Этот объект хранит индекс карточки из адреса, чтобы один раз прокрутить ее в центр.
-  const initialScrollIndexRef = useRef<number | null>(
-    initialSelection.scrollIndex
-  );
+  // Этот объект хранит ссылки на секции категорий для прокрутки.
+  const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  // Этот объект хранит ключ категории, к которой нужно прокрутить страницу один раз.
+  const initialScrollKeyRef = useRef(initialSelection?.categoryKey ?? null);
 
   // Этот ключ выбирает доступную категорию, если прежняя больше не существует.
   const resolvedCategoryKey = categories.some(
     (category) => category.key === activeCategoryKey
   )
     ? activeCategoryKey
-    : menuPageText.popularCategoryKey;
+    : defaultCategoryKey;
 
-  // Этот блок оставляет только позиции выбранной категории или популярные позиции.
-  const visibleItems =
-    resolvedCategoryKey === menuPageText.popularCategoryKey
-      ? itemsWithCategory.filter((entry) => Boolean(entry.item.popular))
-      : itemsWithCategory.filter(
-          (entry) => entry.categoryKey === resolvedCategoryKey
-        );
-
-  // Этот ключ хранит название записи для позиции прокрутки ленты.
-  const scrollStorageKey = `${menuPageText.scrollStoragePrefix}-${resolvedCategoryKey}`;
-
-  // Эта функция мягко перемещает нужную карточку в центр ленты.
-  const scrollCardToCenter = useCallback(
-    (index: number, behavior: ScrollBehavior = "smooth") => {
-      const grid = gridRef.current;
-      if (!grid) {
-        return;
-      }
-
-      const cards = Array.from(
-        grid.querySelectorAll<HTMLElement>("[data-menu-card='true']")
-      );
-      const target = cards[index];
-      if (!target) {
-        return;
-      }
-
-      target.scrollIntoView({
-        behavior,
-        block: "nearest",
-        inline: "center",
-      });
+  // Эта функция запоминает секцию категории, чтобы потом к ней прокрутиться.
+  const handleCategoryRef = useCallback(
+    (categoryKey: string) => (node: HTMLDivElement | null) => {
+      categoryRefs.current[categoryKey] = node;
     },
     []
   );
 
-  // Этот блок восстанавливает позицию ленты при возвращении и выбирает карточку, которая ближе всего к центру.
+  // Эта функция прокручивает страницу к выбранной категории.
+  const scrollToCategory = useCallback(
+    (categoryKey: string, behavior: ScrollBehavior = "smooth") => {
+      const target = categoryRefs.current[categoryKey];
+      if (!target) {
+        return;
+      }
+      target.scrollIntoView({ behavior, block: "start" });
+    },
+    []
+  );
+
+  // Этот блок один раз прокручивает страницу к категории из адресной строки.
   useEffect(() => {
-    const grid = gridRef.current;
-    if (!grid) {
+    if (!initialScrollKeyRef.current || categorySections.length === 0) {
       return;
     }
+    const targetKey = initialScrollKeyRef.current;
+    initialScrollKeyRef.current = null;
+    scrollToCategory(targetKey, "auto");
+  }, [categorySections.length, scrollToCategory]);
 
-    let frameId = 0;
-    // Эта функция возвращает ленту к сохраненной позиции, если она есть.
-    const restoreScrollPosition = () => {
-      const storedValue = window.sessionStorage.getItem(scrollStorageKey);
-      if (!storedValue) {
-        grid.scrollLeft = 0;
-        return;
-      }
-      const parsedValue = Number(storedValue);
-      if (!Number.isFinite(parsedValue)) {
-        return;
-      }
-      grid.scrollLeft = parsedValue;
-    };
-
-    const updateActiveIndex = () => {
-      const cards = Array.from(
-        grid.querySelectorAll<HTMLElement>("[data-menu-card='true']")
-      );
-      if (cards.length === 0) {
-        return;
-      }
-
-      const gridRect = grid.getBoundingClientRect();
-      const gridCenter = gridRect.left + gridRect.width / 2;
-      let closestIndex = 0;
-      let closestDistance = Number.POSITIVE_INFINITY;
-
-      cards.forEach((card, index) => {
-        const rect = card.getBoundingClientRect();
-        const cardCenter = rect.left + rect.width / 2;
-        const distance = Math.abs(cardCenter - gridCenter);
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = index;
-        }
-      });
-
-      setActiveIndex((previousIndex) =>
-        previousIndex === closestIndex ? previousIndex : closestIndex
-      );
-    };
-
-    const handleScroll = () => {
-      if (frameId) {
-        return;
-      }
-      frameId = window.requestAnimationFrame(() => {
-        frameId = 0;
-        updateActiveIndex();
-        window.sessionStorage.setItem(
-          scrollStorageKey,
-          String(grid.scrollLeft)
-        );
-      });
-    };
-
-    restoreScrollPosition();
-    updateActiveIndex();
-    grid.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll);
-
-    return () => {
-      if (frameId) {
-        window.cancelAnimationFrame(frameId);
-      }
-      grid.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
-    };
-  }, [visibleItems.length, scrollStorageKey]);
-
-  // Этот блок один раз прокручивает ленту к карточке из адресной строки.
-  useEffect(() => {
-    if (initialScrollIndexRef.current === null || visibleItems.length === 0) {
-      return;
-    }
-    const targetIndex = initialScrollIndexRef.current;
-    initialScrollIndexRef.current = null;
-    scrollCardToCenter(targetIndex, "auto");
-  }, [scrollCardToCenter, visibleItems.length]);
-
-  // Эта функция выделяет карточку при выборе и сдвигает ее в центр.
-  const handleCardFocus = (index: number) => {
-    setActiveIndex(index);
-    scrollCardToCenter(index);
-  };
-
-  // Эта функция меняет выбранную категорию в верхнем скролле.
+  // Эта функция меняет выбранную категорию в верхнем скролле и прокручивает к ней.
   const handleCategorySelect = (categoryKey: string) => {
     setActiveCategoryKey(categoryKey);
+    scrollToCategory(categoryKey);
   };
 
   return (
@@ -322,114 +233,41 @@ export default function MenuPage({ items }: MenuPageProps) {
             />
           </div>
         ) : null}
-        {/* Этот блок показывает горизонтальную ленту карточек с выделением центральной позиции или сообщение об отсутствии данных. */}
-        {visibleItems.length === 0 ? (
+        {/* Этот блок показывает линии категорий с карточками или сообщение об отсутствии данных. */}
+        {categorySections.length === 0 ? (
           <p className={styles.empty}>{menuPageText.empty}</p>
         ) : (
-          // Этот блок растягивает ленту на всю ширину и оставляет место для теней.
-          <div className={styles.gridWrap}>
-            <div className={styles.grid} ref={gridRef}>
-              {visibleItems.map((entry, index) => {
-                const { item, categoryLabel } = entry;
-                // Этот блок готовит текст карточки и цену позиции.
-                const nameLabel = getMenuNameLabel(
-                  item,
-                  menuPageText.nameFallback
-                );
-                const priceLabel = getMenuListPriceLabel(item, menuPageText);
-                const isPopular = Boolean(item.popular);
-                // Этот блок определяет, нужна ли фоновая фотография для карточки позиции.
-                const imageSrc = getMenuImageSrc(nameLabel, categoryLabel);
-                const isSelected = index === activeIndex;
-                const cardBaseClassName = imageSrc
-                  ? `${styles.card} ${styles.cardWithImage}`
-                  : styles.card;
-                const cardClassName = isSelected
-                  ? `${cardBaseClassName} ${styles.cardSelected}`
-                  : `${cardBaseClassName} ${styles.cardBlurred}`;
-                const cardLinkClassName = isSelected
-                  ? `${styles.cardLink} ${styles.cardLinkSelected}`
-                  : `${styles.cardLink} ${styles.cardLinkBlurred}`;
-                // Этот блок определяет ссылку на подробную страницу, если у позиции есть идентификатор.
-                const itemHref =
-                  item.id !== undefined && item.id !== null
-                    ? `/menu/${item.id}`
-                    : null;
-                // Этот блок собирает содержимое карточки позиции.
-                const cardContent = (
-                  <article className={cardClassName}>
-                    {/* Этот блок показывает фоновую фотографию для карточки позиции. */}
-                    {imageSrc ? (
-                      <div className={styles.imageWrap} aria-hidden="true">
-                        <Image
-                          className={styles.image}
-                          src={imageSrc}
-                          alt=""
-                          fill
-                          loading={isSelected ? "eager" : "lazy"}
-                          sizes="(max-width: 719px) 67vw, 270px"
-                        />
-                      </div>
-                    ) : null}
-                    {/* Этот блок показывает пометку популярной позиции в правом верхнем углу карточки. */}
-                    {isPopular ? (
-                      <span
-                        className={styles.badge}
-                        aria-label="Популярная позиция"
-                      >
-                        {menuPageText.popularLabel}
-                      </span>
-                    ) : null}
-                    {/* Этот блок показывает минимальную информацию о позиции внизу карточки. */}
-                    <div className={styles.cardHeader}>
-                      <div className={styles.nameBlock}>
-                        <div className={styles.nameRow}>
-                          <h2 className={styles.name}>{nameLabel}</h2>
-                        </div>
-                        {itemHref ? (
-                          <>
-                            {/* Этот блок показывает подпись, что карточка ведет к подробностям. */}
-                            <p className={styles.detailsLabel}>
-                              {menuPageText.detailsLabel}
-                            </p>
-                          </>
-                        ) : null}
-                      </div>
-                      <p className={styles.price}>{priceLabel}</p>
-                    </div>
-                  </article>
-                );
+          // Этот блок собирает строки по категориям и показывает их подряд.
+          <div className={styles.categoryList}>
+            {categorySections.map((section) => {
+              const sectionTitleId = `menu-category-title-${section.key}`;
+              const initialIndex =
+                initialSelection?.categoryKey === section.key
+                  ? initialSelection.index
+                  : null;
 
-                if (itemHref) {
-                  return (
-                    // Этот блок делает карточку кликабельной и ведет к странице позиции.
-                    <Link
-                      key={item.id ?? `${nameLabel}-${index}`}
-                      className={cardLinkClassName}
-                      href={itemHref}
-                      aria-label={`Открыть позицию ${nameLabel}`}
-                      data-menu-card="true"
-                      onFocus={() => handleCardFocus(index)}
-                    >
-                      {cardContent}
-                    </Link>
-                  );
-                }
-
-                return (
-                  // Этот блок показывает карточку без перехода, если отдельной страницы нет.
-                  <div
-                    key={item.id ?? `${nameLabel}-${index}`}
-                    className={cardLinkClassName}
-                    data-menu-card="true"
-                    aria-label={`Позиция ${nameLabel}`}
-                    aria-disabled="true"
-                  >
-                    {cardContent}
-                  </div>
-                );
-              })}
-            </div>
+              return (
+                // Этот блок хранит заголовок категории и ее линию карточек.
+                <section
+                  key={section.key}
+                  id={`menu-category-${section.key}`}
+                  className={styles.categorySection}
+                  aria-labelledby={sectionTitleId}
+                  ref={handleCategoryRef(section.key)}
+                >
+                  <h2 id={sectionTitleId} className={styles.categoryTitle}>
+                    {section.label}
+                  </h2>
+                  <MenuCategoryRow
+                    entries={section.entries}
+                    categoryKey={section.key}
+                    initialFocusIndex={initialIndex}
+                    scrollStoragePrefix={menuPageText.scrollStoragePrefix}
+                    text={menuPageText}
+                  />
+                </section>
+              );
+            })}
           </div>
         )}
       </div>
