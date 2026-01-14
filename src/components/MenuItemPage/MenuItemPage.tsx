@@ -1,6 +1,6 @@
 /*
  Этот файл определяет страницу отдельной позиции меню.
- Он показывает подробное описание, цены и варианты размера выбранной позиции, а для некоторых позиций добавляет фотофон.
+ Он показывает фото выбранной позиции в самом начале страницы, затем описание, цену и варианты размера.
  Человек может посмотреть детали, позвонить или написать в WhatsApp и вернуться обратно к меню на главной странице.
 */
 import Image from "next/image";
@@ -39,7 +39,7 @@ const menuItemText = {
   whatsappLabel: "WhatsApp",
 };
 
-// Этот компонент показывает подробную карточку выбранной позиции меню с возможным фотофоном.
+// Этот компонент показывает подробную карточку выбранной позиции меню с фото сверху, если оно есть.
 export default function MenuItemPage({ item }: MenuItemPageProps) {
   // Этот блок держит ссылку для возврата в меню, чтобы не дублировать разметку.
   const backLink = (
@@ -92,14 +92,8 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
     menuItemText.categoryFallback
   );
   const description = item.description?.trim();
-  // Этот блок определяет, нужна ли фоновая фотография для всей страницы позиции.
+  // Этот блок определяет, есть ли фотография для выбранной позиции.
   const imageSrc = getMenuImageSrc(nameLabel, categoryLabel);
-  const pageClassName = imageSrc
-    ? `${styles.menuItemPage} ${styles.menuItemPageWithImage}`
-    : styles.menuItemPage;
-  const contentClassName = imageSrc
-    ? `${styles.content} ${styles.contentOnImage}`
-    : styles.content;
 
   // Этот блок рассчитывает цену и варианты, чтобы показать их на странице.
   const { priceInfo, priceLabel, priceTitle } = getMenuDetailPriceInfo(
@@ -111,25 +105,21 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
 
   return (
     // Этот блок показывает подробную страницу выбранной позиции меню.
-    <section className={pageClassName} aria-label={nameLabel}>
-      {/* Этот блок показывает фоновую фотографию для всей страницы позиции. */}
-      {imageSrc ? (
-        <>
-          <div className={styles.imageWrap} aria-hidden="true">
+    <section className={styles.menuItemPage} aria-label={nameLabel}>
+      <div className={`container ${styles.content}`}>
+        {/* Этот блок показывает основную фотографию выбранной позиции, если она есть. */}
+        {imageSrc ? (
+          <div className={styles.heroImageWrap}>
             <Image
-              className={styles.image}
+              className={styles.heroImage}
               src={imageSrc}
-              alt=""
+              alt={nameLabel}
               fill
               priority
-              sizes="100vw"
+              sizes="(max-width: 960px) 100vw, 960px"
             />
           </div>
-          {/* Этот блок смягчает фотофон, чтобы текст читался поверх него. */}
-          <div className={styles.imageScrim} aria-hidden="true" />
-        </>
-      ) : null}
-      <div className={`container ${contentClassName}`}>
+        ) : null}
         {/* Этот блок ведет пользователя обратно к меню на главной странице. */}
         {backLink}
 

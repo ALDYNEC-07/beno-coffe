@@ -9,57 +9,25 @@
   color: #1b1b1b;
 }
 
-.menuItemPageWithImage {
-  position: relative;
-  overflow: hidden;
-  background-color: #fffaf3;
-}
-
-.contentOnImage {
-  --border: 1px solid #9b6a1259;
-  position: relative;
-  z-index: 2;
-  padding: clamp(1rem, 2.2vw, 1.5rem);
-  border-radius: calc(var(--radius) + 6px);
-  background: rgba(255, 255, 255, 0.62);
-  border: none;
-  box-shadow: 0 18px 40px rgba(27, 27, 27, 0.12);
-  backdrop-filter: blur(52px) saturate(105%);
-  -webkit-backdrop-filter: blur(52px) saturate(105%);
-  box-sizing: border-box;
-  width: min(calc(100% - 2 * var(--space-3)), 720px);
-  margin-inline: auto;
-}
-
-.imageWrap {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.imageScrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 250, 243, 0.38),
-    rgba(255, 250, 243, 0.22) 45%,
-    rgba(255, 250, 243, 0.4)
-  );
-}
-
 .content {
   display: grid;
   gap: var(--space-4);
+}
+
+.heroImageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: calc(var(--radius) + 6px);
+  overflow: hidden;
+  background: #f6efe4;
+  box-shadow: 0 16px 32px rgba(27, 27, 27, 0.12);
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .backLink {
