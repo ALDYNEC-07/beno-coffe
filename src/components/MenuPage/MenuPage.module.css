@@ -22,8 +22,18 @@
     linear-gradient(
       180deg,
       rgba(255, 248, 236, 0.95),
-      rgba(255, 248, 236, 0.55)
+    rgba(255, 248, 236, 0.55)
     );
+}
+
+.intro {
+  margin: 0 auto;
+  padding-top: var(--space-2);
+  font-size: var(--text-lg);
+  line-height: 1.35;
+  color: var(--text-muted);
+  max-width: var(--measure);
+  text-align: center;
 }
 
 .header {

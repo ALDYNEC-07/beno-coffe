@@ -38,6 +38,7 @@ type InitialSelection = {
 
 // Этот набор текста хранит подписи, запасные тексты и служебные ключи для секции меню.
 const menuPageText = {
+  intro: "Выберите из меню и закажите поскорее",
   empty: "Пока нет данных о меню. Загляните чуть позже!",
   priceFromPrefix: "от",
   popularCategoryKey: "popular",
@@ -308,6 +309,8 @@ export default function MenuPage({ items }: MenuPageProps) {
     // Этот блок содержит всю секцию меню и верхний выбор категорий.
     <section id="menu" className={styles.menuPage} aria-label="Полное меню">
       <div className="container">
+        {/* Этот текст кратко подсказывает, что можно сделать в меню. */}
+        <p className={styles.intro}>{menuPageText.intro}</p>
         {/* Этот блок показывает верхний скролл категорий, если есть позиции меню. */}
         {items.length > 0 ? (
           <div className={styles.header}>
