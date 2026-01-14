@@ -1,12 +1,14 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает видео, заголовок внизу поверх видео и статус работы на больших экранах.
- Человек может увидеть атмосферу, прочитать заголовок и узнать время работы.
+ Он показывает видео, статус работы и быстрые кнопки действий.
+ Человек может увидеть атмосферу, узнать время работы и перейти к заказу или меню.
 */
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
+import { contactData } from "@/components/shared/contactData";
 
 // Этот объект хранит время работы кофейни для блока на первом экране.
 const heroWorkingHours = {
@@ -15,6 +17,15 @@ const heroWorkingHours = {
   label: "с 7:00 до 00:00",
   openLabel: "Открыто сейчас",
   closedLabel: "Закрыто сейчас",
+};
+
+// Этот объект хранит подписи и ссылки для быстрых кнопок на первом экране.
+const heroActionText = {
+  primaryLabel: "Быстрый заказ",
+  primaryHref: contactData.socialLinks.whatsapp.href,
+  primaryAriaLabel: "Открыть WhatsApp для быстрого заказа",
+  secondaryLabel: "Смотреть меню",
+  secondaryHref: "/#menu",
 };
 
 export default function Hero() {
@@ -101,7 +112,7 @@ export default function Hero() {
     // Этот блок показывает главный экран приветствия кофейни.
     <section className={styles.hero}>
       <div className="container">
-        {/* Этот блок размещает видео, заголовок и статус в сетке секции. */}
+        {/* Этот блок размещает видео, статус и кнопки в сетке секции. */}
         <div className={styles.layout}>
           {/* Этот блок показывает видео кофейни. */}
           <div className={styles.media}>
@@ -118,12 +129,12 @@ export default function Hero() {
               <source src="/benocoffee.mp4" type="video/mp4" />
               Ваш браузер не поддерживает видео.
             </video>
-            {/* Этот блок размещает статус и заголовок поверх видео внизу. */}
+            {/* Этот блок размещает статус и кнопки поверх видео внизу. */}
             <div className={styles.mediaOverlay}>
-              {/* Этот блок объединяет статус работы и главный заголовок в одном фоне. */}
+              {/* Этот блок объединяет статус работы и кнопки на одном фоне. */}
               <div className={styles.mediaTitle}>
                 <div className={styles.mediaHeading}>
-                  {/* Этот блок показывает статус работы поверх видео, но на маленьких экранах скрывается, чтобы оставить только заголовок. */}
+                  {/* Этот блок показывает статус работы поверх видео, но на маленьких экранах скрывается. */}
                   <div className={styles.mediaBadge} aria-label="Время работы">
                     {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
                     <span
@@ -141,10 +152,26 @@ export default function Hero() {
                       <span>{heroWorkingHours.label}</span>
                     </span>
                   </div>
-                  {/* Этот блок показывает главный заголовок поверх видео под статусом. */}
-                  <h1 className={styles.mediaHeadingTitle}>
-                    Зайди на минуту — останься на час
-                  </h1>
+                  {/* Этот блок показывает быстрые кнопки для заказа и перехода к меню. */}
+                  <div className={styles.mediaActions}>
+                    {/* Эта кнопка ведет в WhatsApp для быстрого заказа. */}
+                    <a
+                      className={`button ${styles.mediaActionButton} ${styles.mediaActionPrimary}`}
+                      href={heroActionText.primaryHref}
+                      aria-label={heroActionText.primaryAriaLabel}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      {heroActionText.primaryLabel}
+                    </a>
+                    {/* Эта кнопка прокручивает страницу к меню на главной. */}
+                    <Link
+                      className={`button ${styles.mediaActionButton}`}
+                      href={heroActionText.secondaryHref}
+                    >
+                      {heroActionText.secondaryLabel}
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
