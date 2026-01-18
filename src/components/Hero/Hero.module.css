@@ -118,19 +118,19 @@
 
 .mediaActionButton {
   border: none;
-  color: #2d1f13;
-  background: rgba(255, 250, 243, 0.9);
+  background-color: #9b6b12c1;
+  color: #fffaf3;
   box-shadow: none;
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  transition: none;
+}
+
+.mediaActionButton:hover,
+.mediaActionButton:focus-visible {
+  transform: none;
 }
 
 .mediaActionPrimary {
-  background: linear-gradient(
-    135deg,
-    rgba(233, 217, 197, 0.95),
-    rgba(210, 186, 154, 0.85)
-  );
+  background-color: #9b6b1288;
 }
 
 .mediaBadge {

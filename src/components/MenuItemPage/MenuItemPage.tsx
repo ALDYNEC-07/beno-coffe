@@ -117,6 +117,8 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
     // Этот блок показывает подробную страницу выбранной позиции меню.
     <section className={styles.menuItemPage} aria-label={nameLabel}>
       <div className={`container ${styles.content}`}>
+        {/* Этот блок ведет пользователя обратно к меню на главной странице. */}
+        {backLink}
         {/* Этот блок показывает основную фотографию выбранной позиции, если она есть. */}
         {imageSrc ? (
           <div className={styles.heroImageWrap}>
@@ -130,8 +132,6 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
             />
           </div>
         ) : null}
-        {/* Этот блок ведет пользователя обратно к меню на главной странице. */}
-        {backLink}
 
         {/* Этот блок показывает название, категорию и статус популярности. */}
         <div className={styles.header}>
@@ -146,12 +146,7 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
           <p className={styles.category}>{categoryLabel}</p>
         </div>
 
-        {hasVariants ? (
-          <>
-            {/* Этот блок показывает кнопки для связи вместо общей цены, когда все цены указаны по размерам. */}
-            <div className={styles.orderRow}>{orderActions}</div>
-          </>
-        ) : (
+        {!hasVariants ? (
           <>
             {/* Этот блок показывает цену выбранной позиции, когда вариантов размера нет. */}
             <div className={styles.priceRow}>
@@ -159,7 +154,7 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
               <span className={styles.priceValue}>{priceLabel}</span>
             </div>
           </>
-        )}
+        ) : null}
 
         {/* Этот блок показывает описание позиции, если оно есть. */}
         {description ? (
@@ -207,12 +202,8 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
           </div>
         ) : null}
 
-        {!hasVariants ? (
-          <>
-            {/* Этот блок показывает кнопки для связи по выбранной позиции. */}
-            <div className={styles.orderRow}>{orderActions}</div>
-          </>
-        ) : null}
+        {/* Этот блок показывает кнопки связи в конце страницы, чтобы их было легко найти. */}
+        <div className={styles.orderRow}>{orderActions}</div>
       </div>
     </section>
   );
