@@ -226,9 +226,7 @@ export default function MenuCategoryRow({
                 {/* Этот блок показывает заголовок «Популярно», если позиция отмечена. */}
                 {isPopular ? (
                   <p className={styles.popularText}>{text.popularLabel}</p>
-                ) : (
-                  <div className={styles.popularSpacer} aria-hidden="true" />
-                )}
+                ) : null}
                 {/* Этот блок выводит название и цену на одной линии. */}
                 <div className={styles.namePriceRow}>
                   <h3 className={styles.name}>{nameLabel}</h3>
