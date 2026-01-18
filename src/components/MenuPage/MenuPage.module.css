@@ -63,19 +63,6 @@
   color: #2d1f13;
 }
 
-.categoryTitle::after {
-  content: "";
-  flex: 1;
-  min-width: 96px;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    rgba(45, 31, 19, 0.45),
-    rgba(45, 31, 19, 0)
-  );
-  clip-path: polygon(0 0, 100% 50%, 0 100%);
-}
-
 .empty {
   border: var(--border);
   border-radius: var(--radius);
