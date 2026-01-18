@@ -1,7 +1,7 @@
 .menuPage {
   --h2: clamp(1.25rem, 1.4vw + 1rem, 1.75rem);
-  --card-min-height: clamp(340px, 72vw, 560px);
-  --card-width: min(67vw, 270px);
+  --card-min-height: clamp(400px, 80vw, 660px);
+  --card-width: min(72vw, 300px);
   --card-scale: 1.06;
   --card-blur: 3px;
   --card-dim: 0.7;
@@ -153,11 +153,21 @@
 .cardVisual {
   position: relative;
   width: 100%;
-  min-height: clamp(220px, 35vw, 320px);
+  min-height: clamp(300px, 45vw, 420px);
   flex: 1;
   overflow: hidden;
   background: #f2ede5;
   border-radius: var(--radius);
+}
+
+@media (min-width: 1200px) {
+  .menuPage {
+    --card-min-height: clamp(360px, 60vw, 600px);
+  }
+
+  .cardVisual {
+    min-height: clamp(260px, 32vw, 360px);
+  }
 }
 
 .cardDetails {
