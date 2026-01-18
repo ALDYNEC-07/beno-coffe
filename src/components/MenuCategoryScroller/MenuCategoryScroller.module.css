@@ -43,8 +43,8 @@
   text-overflow: ellipsis;
   cursor: pointer;
   scroll-snap-align: center;
-  transition: transform 180ms ease, box-shadow 180ms ease,
-    background-color 180ms ease, color 180ms ease;
+  transition: transform 180ms ease, background-color 180ms ease,
+    color 180ms ease;
   backdrop-filter: blur(12px) saturate(145%);
   -webkit-backdrop-filter: blur(12px) saturate(145%);
 }
@@ -62,5 +62,4 @@
   );
   color: #3f2c05;
   transform: scale(1.02);
-  box-shadow: 0 6px 18px rgba(60, 40, 20, 0.18);
 }
