@@ -47,7 +47,7 @@
   min-height: clamp(200px, 28vw, 360px);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 26px rgba(60, 40, 20, 0.14);
+  box-shadow: none;
 }
 
 .mediaImage {
