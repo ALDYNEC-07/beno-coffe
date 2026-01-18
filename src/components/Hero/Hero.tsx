@@ -22,7 +22,7 @@ const heroWorkingHours = {
 // Этот объект хранит подписи и ссылки для быстрых кнопок на первом экране.
 const heroActionText = {
   primaryLabel: "Смотреть меню",
-  primaryHref: "/#menu",
+  primaryHref: "#menu",
   primaryAriaLabel: "Прокрутить к меню",
   secondaryLabel: "Быстрый заказ",
   secondaryHref: contactData.phoneLink,

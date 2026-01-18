@@ -26,6 +26,11 @@
     );
 }
 
+.menuPage,
+:global(#menu) {
+  scroll-margin-top: clamp(65px, 9vw, 92px);
+}
+
 .intro {
   margin: 0 auto;
   padding-top: var(--space-2);
@@ -39,12 +44,13 @@
 .header {
   display: block;
   margin-bottom: 0;
+  padding-block-start: var(--space-3);
 }
 
 .categoryList {
   display: grid;
-  gap: calc(var(--space-6) + var(--space-2));
-  margin-top: var(--space-4);
+  gap: var(--space-3);
+  margin-top: 0;
 }
 
 .categorySection {
