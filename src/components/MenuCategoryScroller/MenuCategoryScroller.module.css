@@ -25,14 +25,10 @@
 
 .chip {
   flex: 0 0 var(--chip-width);
-  border: 1px solid rgba(155, 106, 18, 0.35);
+  border: none;
   border-radius: 999px;
   padding: 0.65rem 1rem;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.75),
-    rgba(255, 255, 255, 0.35)
-  );
+  background: none;
   color: #5f4308;
   font-size: var(--text-sm, 0.9rem);
   font-weight: 600;
@@ -55,11 +51,11 @@
 }
 
 .chipSelected {
-  background: linear-gradient(
-    135deg,
-    rgba(233, 217, 197, 0.9),
-    rgba(210, 186, 154, 0.75)
-  );
+  background: none;
   color: #3f2c05;
   transform: scale(1.02);
+  text-decoration: underline;
+  text-decoration-color: #111;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35rem;
 }
