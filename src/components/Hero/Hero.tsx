@@ -21,11 +21,12 @@ const heroWorkingHours = {
 
 // Этот объект хранит подписи и ссылки для быстрых кнопок на первом экране.
 const heroActionText = {
-  primaryLabel: "Быстрый заказ",
-  primaryHref: contactData.socialLinks.whatsapp.href,
-  primaryAriaLabel: "Открыть WhatsApp для быстрого заказа",
-  secondaryLabel: "Смотреть меню",
-  secondaryHref: "/#menu",
+  primaryLabel: "Смотреть меню",
+  primaryHref: "/#menu",
+  primaryAriaLabel: "Прокрутить к меню",
+  secondaryLabel: "Быстрый заказ",
+  secondaryHref: contactData.phoneLink,
+  secondaryAriaLabel: `Позвонить по номеру ${contactData.phoneText}`,
 };
 
 type HeroStyle = CSSProperties & {
@@ -197,25 +198,24 @@ export default function Hero() {
                       <span>{heroWorkingHours.label}</span>
                     </span>
                   </div>
-                  {/* Этот блок показывает быстрые кнопки для заказа и перехода к меню. */}
+                  {/* Этот блок показывает быстрые кнопки для перехода к меню и заказу. */}
                   <div className={styles.mediaActions}>
-                    {/* Эта кнопка ведет в WhatsApp для быстрого заказа. */}
-                    <a
+                    {/* Эта кнопка прокручивает страницу к меню. */}
+                    <Link
                       className={`button ${styles.mediaActionButton} ${styles.mediaActionPrimary}`}
                       href={heroActionText.primaryHref}
                       aria-label={heroActionText.primaryAriaLabel}
-                      target="_blank"
-                      rel="noreferrer noopener"
                     >
                       {heroActionText.primaryLabel}
-                    </a>
-                    {/* Эта кнопка прокручивает страницу к меню на главной. */}
-                    <Link
+                    </Link>
+                    {/* Эта кнопка собирается вызвать номер для быстрого заказа. */}
+                    <a
                       className={`button ${styles.mediaActionButton}`}
                       href={heroActionText.secondaryHref}
+                      aria-label={heroActionText.secondaryAriaLabel}
                     >
                       {heroActionText.secondaryLabel}
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>
