@@ -190,7 +190,7 @@ export default function MenuCategoryRow({
           const nameLabel = getMenuNameLabel(item, text.nameFallback);
           const priceLabel = getMenuListPriceLabel(item, text);
           const isPopular = Boolean(item.popular);
-          // Этот блок определяет, нужна ли фоновая фотография для карточки позиции.
+          // Этот блок определяет, нужна ли фотография для карточки позиции.
           const imageSrc = getMenuImageSrc(nameLabel, categoryLabel);
           const isSelected = index === activeIndex;
           const cardBaseClassName = imageSrc
@@ -208,9 +208,9 @@ export default function MenuCategoryRow({
           // Этот блок собирает содержимое карточки позиции.
           const cardContent = (
             <article className={cardClassName}>
-              {/* Этот блок показывает фоновую фотографию для карточки позиции. */}
+              {/* Этот блок показывает фотографию позиции отдельно от текста. */}
               {imageSrc ? (
-                <div className={styles.imageWrap} aria-hidden="true">
+                <div className={styles.cardVisual} aria-hidden="true">
                   <Image
                     className={styles.image}
                     src={imageSrc}
@@ -227,8 +227,8 @@ export default function MenuCategoryRow({
                   {text.popularLabel}
                 </span>
               ) : null}
-              {/* Этот блок показывает минимальную информацию о позиции внизу карточки. */}
-              <div className={styles.cardHeader}>
+              {/* Этот блок показывает название, ссылку и цену без фоновых вставок. */}
+              <div className={styles.cardDetails}>
                 <div className={styles.nameBlock}>
                   <div className={styles.nameRow}>
                     <h3 className={styles.name}>{nameLabel}</h3>
