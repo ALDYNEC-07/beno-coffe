@@ -157,47 +157,35 @@
   flex: 1;
   overflow: hidden;
   background: #f2ede5;
+  border-radius: var(--radius);
 }
 
 .cardDetails {
   padding: var(--space-3);
+  padding-bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  border-top: 1px solid rgba(27, 27, 27, 0.07);
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0.65rem;
-  border: none;
-  border-radius: 999px;
-  font-size: var(--text-sm);
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
-  z-index: 2;
-  color: #b07a1a;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 6px 18px rgba(60, 40, 20, 0.18);
-}
-.nameBlock {
-  display: grid;
-  gap: 0.35rem;
-  min-width: 0;
-}
-
-.nameRow {
-  display: flex;
-  align-items: center;
   gap: 0.5rem;
-  flex-wrap: wrap;
+}
+
+.popularText {
+  margin: 0;
+  font-size: clamp(0.9rem, calc(var(--h2) / 2), 1.1rem);
+  font-weight: 600;
+  color: #8a5a2d;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.popularSpacer {
+  height: 1rem;
+}
+
+.namePriceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .name {
@@ -210,12 +198,29 @@
   margin: 0;
   font-weight: 600;
   white-space: nowrap;
+  color: #8a5a2d;
 }
 
 .detailsLabel {
   margin: 0;
-  font-size: var(--text-sm);
-  color: #b07a1ac2;
+  font-size: clamp(0.9rem, calc(var(--h2) / 2.2), 1rem);
+  color: #1b1b1b;
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+.cardLink:focus-visible .detailsLabel {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.2em;
+}
+
+.detailsLabel:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.2em;
 }
 
 .image {
@@ -224,6 +229,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: inherit;
 }
 
 @media (min-width: 720px) {

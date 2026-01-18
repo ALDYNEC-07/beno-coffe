@@ -221,26 +221,27 @@ export default function MenuCategoryRow({
                   />
                 </div>
               ) : null}
-              {/* Этот блок показывает пометку популярной позиции в правом верхнем углу карточки. */}
-              {isPopular ? (
-                <span className={styles.badge} aria-label="Популярная позиция">
-                  {text.popularLabel}
-                </span>
-              ) : null}
               {/* Этот блок показывает название, ссылку и цену без фоновых вставок. */}
               <div className={styles.cardDetails}>
-                <div className={styles.nameBlock}>
-                  <div className={styles.nameRow}>
-                    <h3 className={styles.name}>{nameLabel}</h3>
-                  </div>
-                  {itemHref ? (
-                    <>
-                      {/* Этот блок показывает подпись, что карточка ведет к подробностям. */}
-                      <p className={styles.detailsLabel}>{text.detailsLabel}</p>
-                    </>
-                  ) : null}
+                {/* Этот блок показывает заголовок «Популярно», если позиция отмечена. */}
+                {isPopular ? (
+                  <p className={styles.popularText}>{text.popularLabel}</p>
+                ) : (
+                  <div className={styles.popularSpacer} aria-hidden="true" />
+                )}
+                {/* Этот блок выводит название и цену на одной линии. */}
+                <div className={styles.namePriceRow}>
+                  <h3 className={styles.name}>{nameLabel}</h3>
+                  <p className={styles.price}>{priceLabel}</p>
                 </div>
-                <p className={styles.price}>{priceLabel}</p>
+                {/* Этот блок показывает подпись «Подробнее», если карточка ведёт дальше. */}
+                {itemHref ? (
+                  <p className={styles.detailsLabel}>{text.detailsLabel}</p>
+                ) : (
+                  <p className={styles.detailsLabel} aria-hidden="true">
+                    &nbsp;
+                  </p>
+                )}
               </div>
             </article>
           );
