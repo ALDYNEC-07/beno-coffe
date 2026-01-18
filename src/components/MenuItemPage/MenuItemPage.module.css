@@ -1,4 +1,4 @@
- .menuItemPage {
+.menuItemPage {
   --container: 960px;
   --h1: clamp(2rem, 2.8vw + 1.3rem, 3rem);
   --h2: clamp(1.25rem, 1.4vw + 1rem, 1.75rem);
@@ -24,9 +24,10 @@
 
 .heroImageWrap {
   position: relative;
-  width: 100%;
+  width: calc(100% + 2 * var(--space-3));
   aspect-ratio: 4 / 3;
-  border-radius: calc(var(--radius) + 6px);
+  border-radius: 0;
+  margin-inline: calc(var(--space-3) * -1);
   overflow: hidden;
   background: #f6efe4;
   box-shadow: none;
@@ -36,23 +37,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.backLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.9rem;
-  border: none;
-  border-radius: 999px;
-  text-decoration: none;
-  color: #9b6a1259;
-  width: fit-content;
-}
-
-.backLink:focus-visible {
-  outline: 2px solid #1b1b1b;
-  outline-offset: 3px;
 }
 
 .header {

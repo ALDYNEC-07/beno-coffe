@@ -1,10 +1,9 @@
 /*
  Этот файл определяет страницу отдельной позиции меню.
  Он показывает фото выбранной позиции в самом начале страницы, затем описание, цену и варианты размера.
- Человек может посмотреть детали, позвонить или написать в WhatsApp и вернуться обратно к меню на главной странице.
+ Человек может посмотреть детали, позвонить или написать в WhatsApp.
 */
 import Image from "next/image";
-import Link from "next/link";
 import styles from "./MenuItemPage.module.css";
 import {
   formatMenuPrice,
@@ -27,7 +26,6 @@ type MenuItemPageProps = {
 // Этот набор текста хранит заголовки, подписи и запасные значения.
 const menuItemText = {
   ...commonMenuText,
-  backLabel: "Вернуться к меню",
   notFoundTitle: "Такой позиции пока нет",
   notFoundLead: "Возможно, она появится чуть позже. Проверьте меню на главной странице.",
   priceLabel: "Цена",
@@ -41,12 +39,6 @@ const menuItemText = {
 
 // Этот компонент показывает подробную карточку выбранной позиции меню с фото сверху, если оно есть.
 export default function MenuItemPage({ item }: MenuItemPageProps) {
-  // Этот блок держит ссылку для возврата в меню, чтобы не дублировать разметку.
-  const backLink = (
-    <Link className={styles.backLink} href="/#menu">
-      ← {menuItemText.backLabel}
-    </Link>
-  );
   if (!item) {
     return (
       // Этот блок показывает сообщение, если позиция не найдена.
@@ -58,11 +50,9 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
             <p className={styles.lead}>{menuItemText.notFoundLead}</p>
           </div>
 
-          {/* Этот блок ведет пользователя обратно к меню на главной странице. */}
-          {backLink}
-        </div>
-      </section>
-    );
+      </div>
+    </section>
+  );
   }
 
   // Этот блок готовит основные данные позиции для отображения.
@@ -117,8 +107,6 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
     // Этот блок показывает подробную страницу выбранной позиции меню.
     <section className={styles.menuItemPage} aria-label={nameLabel}>
       <div className={`container ${styles.content}`}>
-        {/* Этот блок ведет пользователя обратно к меню на главной странице. */}
-        {backLink}
         {/* Этот блок показывает основную фотографию выбранной позиции, если она есть. */}
         {imageSrc ? (
           <div className={styles.heroImageWrap}>
