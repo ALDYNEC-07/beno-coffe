@@ -202,7 +202,7 @@ export default function Hero() {
                   <div className={styles.mediaActions}>
                     {/* Эта кнопка прокручивает страницу к меню. */}
                     <Link
-                      className={`button ${styles.mediaActionButton} ${styles.mediaActionPrimary}`}
+                      className={`button ${styles.mediaActionButton}`}
                       href={heroActionText.primaryHref}
                       aria-label={heroActionText.primaryAriaLabel}
                     >
@@ -210,7 +210,7 @@ export default function Hero() {
                     </Link>
                     {/* Эта кнопка собирается вызвать номер для быстрого заказа. */}
                     <a
-                      className={`button ${styles.mediaActionButton}`}
+                      className={`button ${styles.mediaActionButton} ${styles.mediaActionSecondary}`}
                       href={heroActionText.secondaryHref}
                       aria-label={heroActionText.secondaryAriaLabel}
                     >

@@ -62,6 +62,19 @@
   .mediaBadge {
     display: none;
   }
+
+  .mediaActions {
+    gap: 0.5rem;
+  }
+
+  .mediaActionButton {
+    padding: 0.55rem 0.95rem;
+    font-size: var(--text-sm);
+  }
+
+  .mediaActionSecondary {
+    padding: 0.5rem 0.9rem;
+  }
 }
 
 .mediaImage {
@@ -118,19 +131,23 @@
 
 .mediaActionButton {
   border: none;
-  background-color: #9b6b12c1;
-  color: #fffaf3;
-  box-shadow: none;
-  transition: none;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #1b1b1b;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(18px);
+  padding-inline: 1.3rem;
 }
 
 .mediaActionButton:hover,
 .mediaActionButton:focus-visible {
-  transform: none;
+  transform: translateY(-1px);
 }
 
-.mediaActionPrimary {
-  background-color: #9b6b1288;
+.mediaActionSecondary {
+  background: linear-gradient(140deg, #f08a41 0%, #be4e1f 55%, #a93d1c 100%);
+  color: #fffaf3;
+  backdrop-filter: blur(18px);
+  padding-inline: 1.5rem;
 }
 
 .mediaBadge {
