@@ -15,6 +15,7 @@
       rgba(255, 248, 236, 0.95),
       rgba(255, 248, 236, 0.55)
     );
+  border: none;
 }
 
 .layout {
@@ -38,6 +39,7 @@
 
 .media {
   border-radius: var(--radius);
+  border: none;
   background: linear-gradient(
       135deg,
       rgba(255, 248, 236, 0.9),

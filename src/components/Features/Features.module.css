@@ -53,7 +53,7 @@
 }
 
 .featureCard {
-  border: 1px solid rgba(155, 106, 18, 0.35);
+  border: none;
   border-radius: var(--radius);
   padding: var(--space-3);
   display: grid;

@@ -45,7 +45,6 @@
 .mapFrame {
   padding: var(--space-3);
   border-radius: var(--radius);
-  border: 1px solid rgba(27, 27, 27, 0.12);
   background: linear-gradient(140deg, #fffaf2 0%, #f4e8d8 100%);
   box-shadow: none;
 }
