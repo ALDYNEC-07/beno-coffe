@@ -1,6 +1,7 @@
 .hero {
-  padding-top: var(--space-5);
-  padding-bottom: 0;
+  height: calc(100svh - var(--hero-nav-offset, 0px));
+  min-height: calc(100svh - var(--hero-nav-offset, 0px));
+  padding: 0;
   font-size: var(--text-base);
   line-height: var(--line-height-body);
   letter-spacing: 0.2px;
@@ -16,18 +17,30 @@
       rgba(255, 248, 236, 0.95),
       rgba(255, 248, 236, 0.55)
     );
+  display: flex;
+  align-items: stretch;
+}
+
+.hero :global(.container) {
+  height: 100%;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
 
 .layout {
   display: grid;
   gap: var(--space-4);
   align-items: stretch;
+  height: 100%;
 }
 
 .media {
   border-radius: 0;
   overflow: hidden;
-  min-height: clamp(320px, 45vw, 520px);
+  min-height: 100%;
+  height: 100%;
   display: grid;
   place-items: center;
   background: #fff;
@@ -36,12 +49,10 @@
 }
 
 @media (max-width: 719px) {
-  .hero {
-    padding-top: 0;
-  }
 
   .media {
-    min-height: clamp(320px, 88svh, 560px);
+    min-height: 100%;
+    height: 100%;
     width: 100vw;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
@@ -50,6 +61,19 @@
 
   .mediaBadge {
     display: none;
+  }
+
+  .mediaActions {
+    gap: 0.5rem;
+  }
+
+  .mediaActionButton {
+    padding: 0.55rem 0.95rem;
+    font-size: var(--text-sm);
+  }
+
+  .mediaActionSecondary {
+    padding: 0.5rem 0.9rem;
   }
 }
 
@@ -89,6 +113,7 @@
   flex-direction: column;
   gap: 0.55rem;
   color: #1b1b1b;
+  text-align: center;
 }
 
 .mediaHeading > * {
@@ -101,23 +126,28 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
+  justify-content: center;
 }
 
 .mediaActionButton {
   border: none;
-  color: #2d1f13;
-  background: rgba(255, 250, 243, 0.9);
-  box-shadow: 0 10px 22px rgba(27, 27, 27, 0.16);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #1b1b1b;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(18px);
+  padding-inline: 1.3rem;
 }
 
-.mediaActionPrimary {
-  background: linear-gradient(
-    135deg,
-    rgba(233, 217, 197, 0.95),
-    rgba(210, 186, 154, 0.85)
-  );
+.mediaActionButton:hover,
+.mediaActionButton:focus-visible {
+  transform: translateY(-1px);
+}
+
+.mediaActionSecondary {
+  background: linear-gradient(140deg, #f08a41 0%, #be4e1f 55%, #a93d1c 100%);
+  color: #fffaf3;
+  backdrop-filter: blur(18px);
+  padding-inline: 1.5rem;
 }
 
 .mediaBadge {
@@ -132,29 +162,21 @@
   border: none;
   --pill-bg-start: rgba(233, 217, 197, 0.92);
   --pill-bg-end: rgba(210, 186, 154, 0.7);
-  --pill-shadow: rgba(60, 40, 20, 0.22);
-  --pill-text-shadow: rgba(60, 40, 20, 0.35);
   --pill-sheen-top: rgba(255, 255, 255, 0.95);
   --pill-sheen-bottom: rgba(255, 255, 255, 0.2);
   background: linear-gradient(135deg, var(--pill-bg-start), var(--pill-bg-end));
-  box-shadow: 0 10px 28px var(--pill-shadow);
   backdrop-filter: blur(16px) saturate(165%);
   -webkit-backdrop-filter: blur(16px) saturate(165%);
-  text-shadow: 0 1px 2px var(--pill-text-shadow);
 }
 
 .mediaPillOpen {
   --pill-bg-start: rgba(194, 230, 194, 0.9);
   --pill-bg-end: rgba(120, 175, 120, 0.7);
-  --pill-shadow: rgba(30, 70, 40, 0.22);
-  --pill-text-shadow: rgba(30, 70, 40, 0.35);
 }
 
 .mediaPillClosed {
   --pill-bg-start: rgba(245, 188, 175, 0.92);
   --pill-bg-end: rgba(205, 110, 95, 0.75);
-  --pill-shadow: rgba(110, 35, 25, 0.22);
-  --pill-text-shadow: rgba(110, 35, 25, 0.35);
 }
 
 .mediaPill::before {
@@ -211,12 +233,25 @@
 }
 
 @media (min-width: 1024px) {
-  .hero {
-    padding-block: var(--space-6);
-  }
-
   .layout {
     grid-template-columns: 1.35fr 0.95fr;
     gap: var(--space-5);
+  }
+
+  /* На широких экранах выравниваем статус и кнопки по центру строки. */
+  .mediaOverlay {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mediaHeading {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(1rem, 2vw, 1.75rem);
+  }
+
+  .mediaActions {
+    flex-wrap: nowrap;
   }
 }

@@ -4,7 +4,7 @@
  Человек может выбрать нужную категорию и быстро перейти к ее линии позиций.
 */
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./MenuCategoryScroller.module.css";
 
 type MenuCategoryOption = {
@@ -30,6 +30,8 @@ export default function MenuCategoryScroller({
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   // Этот флаг хранит информацию о том, применялась ли начальная прокрутка.
   const hasInitialScrollRef = useRef(false);
+  // Эта переменная хранит состояние, раскрыт ли список категорий.
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Эта функция мягко двигает ленту категорий по горизонтали и не трогает прокрутку страницы.
   const scrollCategoryIntoView = (
@@ -87,33 +89,62 @@ export default function MenuCategoryScroller({
     scrollCategoryIntoView(index);
   };
 
-  return (
-    // Этот блок показывает горизонтальный список категорий.
-    <div
-      className={styles.scroller}
-      ref={scrollerRef}
-      role="group"
-      aria-label={ariaLabel}
-    >
-      {categories.map((category, index) => {
-        const isSelected = category.key === activeKey;
-        const chipClassName = isSelected
-          ? `${styles.chip} ${styles.chipSelected}`
-          : styles.chip;
+  // Эта функция переключает панель категорий между свернутым и раскрытым состоянием.
+  const toggleExpanded = () => {
+    setIsExpanded((prev) => !prev);
+  };
 
-        return (
-          <button
-            key={category.key}
-            type="button"
-            className={chipClassName}
-            aria-pressed={isSelected}
-            data-category-chip="true"
-            onClick={() => handleCategoryClick(category.key, index)}
-          >
-            {category.label}
-          </button>
-        );
-      })}
-    </div>
+  return (
+    <>
+      {/* Этот контейнер управляет шириной и анимацией списка категорий вместе с кнопкой стрелки. */}
+      <div
+        className={styles.scrollerContainer}
+        data-expanded={isExpanded ? "true" : "false"}
+      >
+        {/* Этот блок показывает горизонтальный список категорий. */}
+        <div
+          className={styles.scroller}
+          data-expanded={isExpanded ? "true" : "false"}
+          ref={scrollerRef}
+          role="group"
+          aria-label={ariaLabel}
+        >
+          {categories.map((category, index) => {
+            const isSelected = category.key === activeKey;
+            const chipClassName = isSelected
+              ? `${styles.chip} ${styles.chipSelected}`
+              : styles.chip;
+
+            return (
+              <button
+                key={category.key}
+                type="button"
+                className={chipClassName}
+                aria-pressed={isSelected}
+                data-category-chip="true"
+                onClick={() => handleCategoryClick(category.key, index)}
+              >
+                {category.label}
+              </button>
+            );
+          })}
+        </div>
+        {/* Эта кнопка с стрелкой раскрывает или закрывает весь список категорий. */}
+        <button
+          type="button"
+          className={styles.toggleButton}
+          data-expanded={isExpanded ? "true" : "false"}
+          onClick={toggleExpanded}
+          aria-pressed={isExpanded}
+          aria-label={
+            isExpanded ? "Свернуть категории" : "Показать все категории"
+          }
+        >
+          <span className={styles.arrowChar} aria-hidden="true">
+            ➤
+          </span>
+        </button>
+      </div>
+    </>
   );
 }

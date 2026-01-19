@@ -53,12 +53,13 @@
 }
 
 .featureCard {
-  border: 1px solid rgba(155, 106, 18, 0.35);
-  border-radius: var(--radius);
+  border: none;
+  border-radius: 10px;
   padding: var(--space-3);
   display: grid;
   gap: var(--space-2);
-  box-shadow: 0 3px 10px rgba(60, 40, 20, 0.12);
+  box-shadow: none;
+  border-bottom: 1px solid #1b1b1b38;
 }
 
 .featureTop {

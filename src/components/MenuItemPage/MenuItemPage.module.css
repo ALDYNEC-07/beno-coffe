@@ -10,7 +10,7 @@
       #fff0
     ),
     linear-gradient(#fff8ecf2, #fff8ec8c);
-  padding-block: var(--space-6);
+  padding-block: var(--space-2) var(--space-6);
   font-size: var(--text-base);
   line-height: var(--line-height-body);
   letter-spacing: 0.2px;
@@ -24,35 +24,19 @@
 
 .heroImageWrap {
   position: relative;
-  width: 100%;
+  width: calc(100% + 2 * var(--space-3));
   aspect-ratio: 4 / 3;
-  border-radius: calc(var(--radius) + 6px);
+  border-radius: 0;
+  margin-inline: calc(var(--space-3) * -1);
   overflow: hidden;
   background: #f6efe4;
-  box-shadow: 0 16px 32px rgba(27, 27, 27, 0.12);
+  box-shadow: none;
 }
 
 .heroImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.backLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.9rem;
-  border: none;
-  border-radius: 999px;
-  text-decoration: none;
-  color: #9b6a1259;
-  width: fit-content;
-}
-
-.backLink:focus-visible {
-  outline: 2px solid #1b1b1b;
-  outline-offset: 3px;
 }
 
 .header {
@@ -93,7 +77,6 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.25rem 0.65rem;
-  border: var(--border);
   border-radius: 999px;
   font-size: var(--text-sm);
   color: #9b6a1259;
@@ -149,7 +132,19 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  justify-content: flex-end;
+  gap: var(--space-4);
+}
+
+.orderRow :global(.button) {
+  border: none;
+  background-color: #9b6a1259;
+  color: #fffaf3;
+}
+
+.orderRow :global(.button):hover,
+.orderRow :global(.button):focus-visible {
+  transform: none;
 }
 
 .variantItem {
@@ -157,9 +152,9 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-2);
-  padding: 0.4rem 0.6rem;
-  border: var(--border);
+  padding: 0.4rem 0.6rem 0.35rem;
   border-radius: 10px;
+  border-bottom: 1px solid rgba(27, 27, 27, 0.22);
   font-size: var(--text-sm);
 }
 

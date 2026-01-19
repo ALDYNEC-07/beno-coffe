@@ -1,10 +1,9 @@
 /*
  Этот файл определяет страницу отдельной позиции меню.
  Он показывает фото выбранной позиции в самом начале страницы, затем описание, цену и варианты размера.
- Человек может посмотреть детали, позвонить или написать в WhatsApp и вернуться обратно к меню на главной странице.
+ Человек может посмотреть детали, позвонить или написать в WhatsApp.
 */
 import Image from "next/image";
-import Link from "next/link";
 import styles from "./MenuItemPage.module.css";
 import {
   formatMenuPrice,
@@ -27,7 +26,6 @@ type MenuItemPageProps = {
 // Этот набор текста хранит заголовки, подписи и запасные значения.
 const menuItemText = {
   ...commonMenuText,
-  backLabel: "Вернуться к меню",
   notFoundTitle: "Такой позиции пока нет",
   notFoundLead: "Возможно, она появится чуть позже. Проверьте меню на главной странице.",
   priceLabel: "Цена",
@@ -41,12 +39,6 @@ const menuItemText = {
 
 // Этот компонент показывает подробную карточку выбранной позиции меню с фото сверху, если оно есть.
 export default function MenuItemPage({ item }: MenuItemPageProps) {
-  // Этот блок держит ссылку для возврата в меню, чтобы не дублировать разметку.
-  const backLink = (
-    <Link className={styles.backLink} href="/#menu">
-      ← {menuItemText.backLabel}
-    </Link>
-  );
   if (!item) {
     return (
       // Этот блок показывает сообщение, если позиция не найдена.
@@ -58,11 +50,9 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
             <p className={styles.lead}>{menuItemText.notFoundLead}</p>
           </div>
 
-          {/* Этот блок ведет пользователя обратно к меню на главной странице. */}
-          {backLink}
-        </div>
-      </section>
-    );
+      </div>
+    </section>
+  );
   }
 
   // Этот блок готовит основные данные позиции для отображения.
@@ -130,8 +120,6 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
             />
           </div>
         ) : null}
-        {/* Этот блок ведет пользователя обратно к меню на главной странице. */}
-        {backLink}
 
         {/* Этот блок показывает название, категорию и статус популярности. */}
         <div className={styles.header}>
@@ -146,12 +134,7 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
           <p className={styles.category}>{categoryLabel}</p>
         </div>
 
-        {hasVariants ? (
-          <>
-            {/* Этот блок показывает кнопки для связи вместо общей цены, когда все цены указаны по размерам. */}
-            <div className={styles.orderRow}>{orderActions}</div>
-          </>
-        ) : (
+        {!hasVariants ? (
           <>
             {/* Этот блок показывает цену выбранной позиции, когда вариантов размера нет. */}
             <div className={styles.priceRow}>
@@ -159,7 +142,7 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
               <span className={styles.priceValue}>{priceLabel}</span>
             </div>
           </>
-        )}
+        ) : null}
 
         {/* Этот блок показывает описание позиции, если оно есть. */}
         {description ? (
@@ -207,12 +190,8 @@ export default function MenuItemPage({ item }: MenuItemPageProps) {
           </div>
         ) : null}
 
-        {!hasVariants ? (
-          <>
-            {/* Этот блок показывает кнопки для связи по выбранной позиции. */}
-            <div className={styles.orderRow}>{orderActions}</div>
-          </>
-        ) : null}
+        {/* Этот блок показывает кнопки связи в конце страницы, чтобы их было легко найти. */}
+        <div className={styles.orderRow}>{orderActions}</div>
       </div>
     </section>
   );
