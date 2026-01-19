@@ -17,14 +17,19 @@
 }
 
 .actionButton {
-  border: 1px solid #9b6a1259;
+  border: none;
   background: transparent;
   color: #3f2c05;
   font-weight: 600;
 }
 
-.actionButton:active {
-  background: linear-gradient(135deg, #e9d9c5e6, #d2ba9abf);
+.actionButton:hover,
+.actionButton:focus-visible {
+  background: transparent;
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.2rem;
 }
 
 .hero {
@@ -119,7 +124,6 @@
 .routeCard {
   padding: var(--space-3);
   border-radius: var(--radius);
-  border: 1px solid #9b6a1259;
   background: linear-gradient(135deg, #ffffffbf, #ffffff59);
   box-shadow: none;
 }
@@ -171,10 +175,18 @@
 }
 
 .ctaButton {
-  border: 1px solid #9b6a1259;
+  border: none;
   background: linear-gradient(135deg, #e9d9c5e6, #d2ba9abf);
   color: #3f2c05;
   font-weight: 600;
+}
+
+.ctaButton:hover,
+.ctaButton:focus-visible {
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.2rem;
 }
 
 @media (min-width: 900px) {
