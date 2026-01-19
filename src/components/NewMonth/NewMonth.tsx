@@ -55,15 +55,21 @@ export default function NewMonth() {
                     sizes="(max-width: 719px) 90vw, (max-width: 900px) 70vw, 540px"
                     className={styles.mediaImage}
                   />
-                  {/* Этот блок показывает название напитка прямо на фото. */}
-                  <h3 className={styles.mediaTitle}>{monthlySpecial.title}</h3>
                 </div>
-                <p className={styles.note}>{monthlySpecial.description}</p>
-                {/* Этот блок показывает кнопку для перехода к меню. */}
-                <div className={styles.metaRow}>
-                  <Link className="button" href={monthlySpecial.menuLink}>
-                    {monthlySpecial.menuLabel}
-                  </Link>
+                {/* Этот блок объединяет заголовок, описание и кнопку в отдельном блоке под фотографией. */}
+                <div className={styles.textBlock}>
+                  <div className="stack">
+                    {/* Этот блок показывает название напитка под фотографией. */}
+                    <h3 className={styles.mediaTitle}>{monthlySpecial.title}</h3>
+                    {/* Этот блок описывает напиток. */}
+                    <p className={styles.note}>{monthlySpecial.description}</p>
+                  </div>
+                  {/* Этот блок показывает кнопку для перехода к меню. */}
+                  <div className={styles.metaRow}>
+                    <Link className="button" href={monthlySpecial.menuLink}>
+                      {monthlySpecial.menuLabel}
+                    </Link>
+                  </div>
                 </div>
               </div>
             </article>

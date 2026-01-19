@@ -44,9 +44,10 @@
 
 .mapFrame {
   padding: var(--space-3);
-  border-radius: var(--radius);
+  border-radius: 10px;
   background: linear-gradient(140deg, #fffaf2 0%, #f4e8d8 100%);
   box-shadow: none;
+  border-bottom: 1px solid #1b1b1b38;
 }
 
 .mapHeader {
@@ -122,9 +123,10 @@
 
 .routeCard {
   padding: var(--space-3);
-  border-radius: var(--radius);
+  border-radius: 10px;
   background: linear-gradient(135deg, #ffffffbf, #ffffff59);
   box-shadow: none;
+  border-bottom: 1px solid #1b1b1b38;
 }
 
 .routeTitle {
@@ -146,7 +148,7 @@
 .cta {
   margin-top: var(--space-6);
   padding: var(--space-4);
-  border-radius: var(--radius);
+  border-radius: 10px;
   background: linear-gradient(
     140deg,
     rgba(255, 255, 255, 0.9),
@@ -155,6 +157,7 @@
   display: grid;
   gap: var(--space-3);
   align-items: center;
+  border-bottom: 1px solid #1b1b1b38;
 }
 
 .ctaTitle {
