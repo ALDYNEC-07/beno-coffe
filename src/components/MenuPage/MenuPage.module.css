@@ -6,7 +6,10 @@
   --card-blur: 3px;
   --card-dim: 0.7;
   --card-transition: 220ms ease;
-  --edge-padding: max(var(--space-4), calc(50vw - var(--card-width) / 2));
+  --edge-padding: max(
+    var(--space-4),
+    calc((var(--viewport-inline-size) - var(--card-width)) / 2)
+  );
 
   padding-bottom: var(--space-6);
   font-size: var(--text-base);
@@ -78,9 +81,9 @@
 }
 
 .gridWrap {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
+  width: var(--viewport-inline-size);
+  margin-left: calc(50% - var(--viewport-inline-size) / 2);
+  margin-right: calc(50% - var(--viewport-inline-size) / 2);
   overflow: visible;
 }
 
