@@ -1,7 +1,10 @@
+:global(html),
 :global(body) {
   scrollbar-gutter: stable;
 }
 
+:global(html:has([data-nav-menu][data-menu-state="open"])),
+:global(html:has([data-nav-menu][data-menu-state="closing"])),
 :global(body:has([data-nav-menu][data-menu-state="open"])),
 :global(body:has([data-nav-menu][data-menu-state="closing"])) {
   overflow: hidden;
@@ -224,6 +227,9 @@
 
 .menu {
   position: relative;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
 }
 
 .menuToggle {
@@ -242,6 +248,14 @@
   gap: 0.35rem;
   position: relative;
   z-index: 70;
+}
+
+.menu[data-menu-state="open"] .menuToggle,
+.menu[data-menu-state="closing"] .menuToggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + var(--space-3));
+  right: var(--space-3);
+  z-index: 90;
 }
 
 .navPanel {
@@ -266,7 +280,7 @@
   backdrop-filter: blur(12px);
   display: grid;
   place-items: center;
-  z-index: 60;
+  z-index: 40;
 }
 
 .menu[data-menu-state="closed"] .navPanel {

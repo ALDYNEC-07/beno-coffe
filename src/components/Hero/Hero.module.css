@@ -99,8 +99,8 @@
   pointer-events: auto;
   justify-content: center;
   text-decoration: none;
-  color: #fffbf8;
-  border: 1px solid rgba(255, 251, 248, 0.95);
+  color: #ffffff;
+  border: 1px solid #858585eb;
   background: rgba(0, 0, 0, 0.14);
   transition: transform 0.2s ease, box-shadow 0.2s ease,
     background-color 0.2s ease;
@@ -122,10 +122,10 @@
   pointer-events: auto;
   margin-top: clamp(0.5rem, 1.6vw, 1rem);
   min-width: clamp(12rem, 30vw, 18rem);
-  border: 1px solid #fffbf8;
+  border: 1px solid #d3d3d3eb;
   border-radius: 999px;
   background: transparent;
-  color: #fffbf8;
+  color: #fefefe;
   font-size: clamp(1.12rem, 2.45vw, 1.34rem);
   font-weight: 600;
   letter-spacing: 0.02em;
