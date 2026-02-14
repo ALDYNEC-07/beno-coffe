@@ -10,6 +10,7 @@ import "@fontsource/inter/600.css";
 import "@fontsource/spectral/600.css";
 import "@fontsource/spectral/700.css";
 import "./globals.css";
+import CartProvider from "@/components/Cart/CartProvider";
 
 // Здесь хранится заголовок страницы и короткое описание для браузера.
 export const metadata: Metadata = {
@@ -26,8 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* Здесь показывается каждая страница внутри общего каркаса. */}
-        {children}
+        {/* Этот блок включает общий источник данных корзины для всех страниц. */}
+        <CartProvider>
+          {/* Здесь показывается каждая страница внутри общего каркаса. */}
+          {children}
+        </CartProvider>
       </body>
     </html>
   );

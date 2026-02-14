@@ -47,6 +47,7 @@ const menuPageText = {
   categoriesLabel: "Категории меню",
   detailsLabel: "Подробнее",
   hideDetailsLabel: "Скрыть",
+  addLabel: "Добавить",
   descriptionTitle: "Описание",
   variantsTitle: "Размеры стаканов",
   sizeFallback: "Размер не указан",

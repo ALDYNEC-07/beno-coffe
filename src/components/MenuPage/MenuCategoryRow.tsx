@@ -5,7 +5,7 @@
 */
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./MenuPage.module.css";
 import {
@@ -19,6 +19,7 @@ import {
   getMenuNameLabel,
   getMenuImageSrc,
 } from "@/lib/menuView";
+import { CartContext } from "@/components/Cart/CartProvider";
 
 type MenuCategoryRowEntry = {
   item: MenuItem;
@@ -33,6 +34,7 @@ type MenuCategoryRowText = {
   popularLabel: string;
   detailsLabel: string;
   hideDetailsLabel: string;
+  addLabel: string;
   descriptionTitle: string;
   variantsTitle: string;
   sizeFallback: string;
@@ -54,6 +56,8 @@ export default function MenuCategoryRow({
   scrollStoragePrefix,
   text,
 }: MenuCategoryRowProps) {
+  // Этот объект дает доступ к корзине, чтобы добавлять выбранные напитки.
+  const cart = useContext(CartContext);
   // Этот объект держит доступ к ленте карточек для вычисления центра.
   const gridRef = useRef<HTMLDivElement | null>(null);
   // Это число хранит номер карточки, которая сейчас в центре линии.
@@ -198,6 +202,21 @@ export default function MenuCategoryRow({
     );
   };
 
+  // Эта функция срабатывает по кнопке «Добавить» и кладет выбранный напиток в корзину.
+  const handleAddItemClick = (params: {
+    id: string;
+    name: string;
+    price: number | null;
+    index: number;
+  }) => {
+    handleCardFocus(params.index);
+    cart.addItem({
+      id: params.id,
+      name: params.name,
+      price: params.price,
+    });
+  };
+
   return (
     // Этот блок растягивает ленту на всю ширину и оставляет место для теней.
     <div className={styles.gridWrap}>
@@ -212,10 +231,16 @@ export default function MenuCategoryRow({
           const detailsPanelId = `menu-card-details-${categoryKey}-${index}`;
           const description = item.description?.trim() ?? "";
           const priceInfo = getMenuPriceInfo(item);
+          const rawPrice = priceInfo.rawPrice;
           const hasDescription = description.length > 0;
           const hasVariants = priceInfo.variants.length > 0;
           const hasExtraDetails = hasDescription || hasVariants;
           const isExpanded = hasExtraDetails && expandedCardKey === cardKey;
+          const addPrice = Number.isFinite(rawPrice)
+            ? rawPrice
+            : Number.isFinite(priceInfo.minVariantPrice)
+              ? priceInfo.minVariantPrice
+              : null;
           // Этот блок определяет, нужна ли фотография для карточки позиции.
           const imageSrc = getMenuImageSrc(nameLabel, categoryLabel);
           const isSelected = index === activeIndex;
@@ -269,24 +294,41 @@ export default function MenuCategoryRow({
                     <h3 className={styles.name}>{nameLabel}</h3>
                     <p className={styles.price}>{priceLabel}</p>
                   </div>
-                  {/* Этот блок позволяет раскрыть подробности о напитке прямо внутри карточки. */}
-                  {hasExtraDetails ? (
+                  {/* Этот блок показывает действия для карточки: раскрыть подробности и добавить позицию. */}
+                  <div className={styles.cardActions}>
+                    {hasExtraDetails ? (
+                      <button
+                        type="button"
+                        className={styles.detailsButton}
+                        aria-expanded={isExpanded}
+                        aria-controls={detailsPanelId}
+                        onClick={() => handleDetailsToggle(cardKey, index)}
+                      >
+                        <span className={styles.detailsLabel}>
+                          {isExpanded ? text.hideDetailsLabel : text.detailsLabel}
+                        </span>
+                      </button>
+                    ) : (
+                      <p className={styles.detailsLabel} aria-hidden="true">
+                        &nbsp;
+                      </p>
+                    )}
                     <button
                       type="button"
-                      className={styles.detailsButton}
-                      aria-expanded={isExpanded}
-                      aria-controls={detailsPanelId}
-                      onClick={() => handleDetailsToggle(cardKey, index)}
+                      className={styles.addButton}
+                      aria-label={`Добавить в корзину: ${nameLabel}`}
+                      onClick={() =>
+                        handleAddItemClick({
+                          id: cardKey,
+                          name: nameLabel,
+                          price: addPrice,
+                          index,
+                        })
+                      }
                     >
-                      <span className={styles.detailsLabel}>
-                        {isExpanded ? text.hideDetailsLabel : text.detailsLabel}
-                      </span>
+                      <span className={styles.addButtonLabel}>{text.addLabel}</span>
                     </button>
-                  ) : (
-                    <p className={styles.detailsLabel} aria-hidden="true">
-                      &nbsp;
-                    </p>
-                  )}
+                  </div>
                   {/* Этот блок показывает описание и размеры стаканов после нажатия «Подробнее». */}
                   {hasExtraDetails ? (
                     <div

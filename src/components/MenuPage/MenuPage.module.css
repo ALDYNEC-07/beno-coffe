@@ -252,6 +252,12 @@
   letter-spacing: 0.04em;
 }
 
+.cardActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .detailsButton {
   display: inline-flex;
   align-self: flex-start;
@@ -280,6 +286,33 @@
   text-decoration-thickness: 1px;
   text-decoration-color: currentColor;
   text-underline-offset: 0.2em;
+}
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: #8a5a2d;
+  cursor: pointer;
+}
+
+.addButtonLabel {
+  margin: 0;
+  font-size: clamp(0.82rem, calc(var(--h2) / 2.35), 0.92rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.addButton:hover .addButtonLabel {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.addButton:focus-visible {
+  outline: 2px solid #1b1b1b;
+  outline-offset: 3px;
 }
 
 .detailsContent {

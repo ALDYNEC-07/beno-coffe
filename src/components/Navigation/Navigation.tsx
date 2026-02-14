@@ -1,13 +1,20 @@
 /*
  Этот файл задает верхнюю навигацию сайта.
- Он показывает название кофейни и кнопку меню с основными разделами.
- Человек может открыть меню и перейти по нужной ссылке.
+ Он показывает название кофейни, кнопку корзины и кнопку меню с основными разделами.
+ Человек может открыть корзину, открыть меню и перейти по нужной ссылке.
 */
 "use client";
 
 import Link from "next/link";
-import { useState, type AnimationEvent } from "react";
+import Image from "next/image";
+import {
+  useContext,
+  useState,
+  useSyncExternalStore,
+  type AnimationEvent,
+} from "react";
 import styles from "./Navigation.module.css";
+import { CartContext } from "@/components/Cart/CartProvider";
 
 // Этот список хранит подписи и адреса для пунктов меню.
 const navLinks: { href: string; label: string }[] = [
@@ -49,6 +56,18 @@ function NavigationLinksList({
 }
 
 export default function Navigation() {
+  // Эти данные показывают, сколько напитков в корзине и какие позиции уже добавлены.
+  const { totalCount, items } = useContext(CartContext);
+  // Этот признак показывает, что страница уже прошла гидратацию и можно показывать данные из браузера.
+  const isHydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+  // Этот счетчик держит стабильный вывод до конца гидратации, чтобы избежать расхождения с сервером.
+  const visibleCartCount = isHydrated ? totalCount : 0;
+  // Этот признак хранит, открыта ли панель корзины.
+  const [isCartOpen, setIsCartOpen] = useState(false);
   // Этот признак хранит, открыто ли меню прямо сейчас.
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // Этот признак хранит, что меню уже закрывается и ждет конца анимации.
@@ -60,6 +79,7 @@ export default function Navigation() {
 
   // Этот обработчик срабатывает при клике по кнопке меню.
   const handleMenuButtonClick = () => {
+    setIsCartOpen(false);
     if (isMenuOpen && !isMenuClosing) {
       setIsMenuClosing(true);
       return;
@@ -84,6 +104,16 @@ export default function Navigation() {
     setIsMenuClosing(false);
   };
 
+  // Этот обработчик открывает и закрывает панель корзины по клику на иконку.
+  const handleCartButtonClick = () => {
+    setIsCartOpen((previousValue) => !previousValue);
+  };
+
+  // Этот обработчик закрывает панель корзины по кнопке «Закрыть».
+  const handleCartCloseClick = () => {
+    setIsCartOpen(false);
+  };
+
   return (
     <>
       {/* Этот блок показывает шапку с названием и меню. */}
@@ -95,37 +125,99 @@ export default function Navigation() {
           </Link>
           {/* Этот блок открывает основную навигацию по разделам. */}
           <nav className={styles.nav} aria-label="Основная навигация">
-            {/* Этот элемент раскрывает список ссылок и удерживает страницу на месте при открытом меню. */}
-            <div className={styles.menu} data-nav-menu data-menu-state={menuState}>
-              {/* Этот элемент выглядит как иконка и открывает список ссылок. */}
+            {/* Этот блок показывает иконку корзины и кнопку мобильного меню рядом друг с другом. */}
+            <div className={styles.primaryActions}>
+              {/* Этот элемент показывает иконку корзины и счетчик выбранных напитков. */}
               <button
                 type="button"
-                className={styles.menuToggle}
-                onClick={handleMenuButtonClick}
-                aria-expanded={isMenuOpen}
-                aria-controls="nav-panel"
+                className={styles.cartButton}
+                aria-label={`Корзина: ${visibleCartCount}`}
+                aria-expanded={isCartOpen}
+                aria-controls="nav-cart-panel"
+                onClick={handleCartButtonClick}
               >
-                <span className={styles.burgerIcon} aria-hidden="true">
-                  <span className={styles.burgerLine} />
-                  <span className={styles.burgerLine} />
-                </span>
-                <span className={styles.srOnly}>Меню</span>
+                <Image
+                  className={styles.cartIcon}
+                  src="/bag-icon.svg"
+                  alt=""
+                  width={21}
+                  height={21}
+                  aria-hidden="true"
+                />
+                {visibleCartCount > 0 ? (
+                  <span className={styles.cartBadge} aria-hidden="true">
+                    {visibleCartCount}
+                  </span>
+                ) : null}
+                <span className={styles.srOnly}>Корзина</span>
               </button>
-              {/* Этот блок содержит список разделов, доступных в меню. */}
-              <div
-                className={styles.navPanel}
-                id="nav-panel"
-                aria-hidden={!isPanelVisible}
-                onAnimationEnd={handleMenuAnimationEnd}
-              >
-                {/* Этот блок держит список ссылок по центру экрана. */}
-                <div className={styles.navSheet}>
-                  {/* Этот блок показывает ссылки внутри мобильного меню. */}
-                  <NavigationLinksList
-                    listClassName={styles.navList}
-                    linkClassName={styles.navLink}
-                    onLinkClick={handleMenuLinkClick}
-                  />
+              {/* Этот блок показывает мини-панель корзины с выбранными позициями. */}
+              {isCartOpen ? (
+                <section
+                  className={styles.cartPanel}
+                  id="nav-cart-panel"
+                  aria-label="Корзина"
+                >
+                  <div className={styles.cartPanelHeader}>
+                    <p className={styles.cartPanelTitle}>Корзина</p>
+                    <button
+                      type="button"
+                      className={styles.cartCloseButton}
+                      onClick={handleCartCloseClick}
+                    >
+                      Закрыть
+                    </button>
+                  </div>
+                  {items.length === 0 ? (
+                    <p className={styles.cartEmptyText}>
+                      В корзине пока ничего нет.
+                    </p>
+                  ) : (
+                    <ul className={styles.cartItemsList}>
+                      {items.map((item) => (
+                        <li key={item.id} className={styles.cartItemRow}>
+                          <span className={styles.cartItemName}>{item.name}</span>
+                          <span className={styles.cartItemQuantity}>
+                            {item.quantity} шт
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              ) : null}
+              {/* Этот элемент раскрывает список ссылок и удерживает страницу на месте при открытом меню. */}
+              <div className={styles.menu} data-nav-menu data-menu-state={menuState}>
+                {/* Этот элемент выглядит как иконка и открывает список ссылок. */}
+                <button
+                  type="button"
+                  className={styles.menuToggle}
+                  onClick={handleMenuButtonClick}
+                  aria-expanded={isMenuOpen}
+                  aria-controls="nav-panel"
+                >
+                  <span className={styles.burgerIcon} aria-hidden="true">
+                    <span className={styles.burgerLine} />
+                    <span className={styles.burgerLine} />
+                  </span>
+                  <span className={styles.srOnly}>Меню</span>
+                </button>
+                {/* Этот блок содержит список разделов, доступных в меню. */}
+                <div
+                  className={styles.navPanel}
+                  id="nav-panel"
+                  aria-hidden={!isPanelVisible}
+                  onAnimationEnd={handleMenuAnimationEnd}
+                >
+                  {/* Этот блок держит список ссылок по центру экрана. */}
+                  <div className={styles.navSheet}>
+                    {/* Этот блок показывает ссылки внутри мобильного меню. */}
+                    <NavigationLinksList
+                      listClassName={styles.navList}
+                      linkClassName={styles.navLink}
+                      onLinkClick={handleMenuLinkClick}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
