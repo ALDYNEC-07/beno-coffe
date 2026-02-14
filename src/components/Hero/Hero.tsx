@@ -13,9 +13,7 @@ import styles from "./Hero.module.css";
 const heroWorkingHours = {
   startMinutes: 7 * 60,
   endMinutes: 24 * 60,
-  label: "с 7:00 до 00:00",
-  openLabel: "Открыто сейчас",
-  closedLabel: "Закрыто сейчас",
+  label: "до 7:00",
 };
 
 // Этот объект хранит две картинки для главного экрана: когда кофейня открыта и когда закрыта.
@@ -142,8 +140,19 @@ export default function Hero() {
             </div>
             {/* Этот слой делает фон чуть темнее, чтобы статус читался лучше. */}
             <div className={styles.mediaShade} aria-hidden="true" />
-            {/* Этот блок размещает большую кнопку заказа чуть ниже центра экрана. */}
+            {/* Этот блок размещает статус и кнопку заказа в центре экрана. */}
             <div className={styles.orderButtonWrap}>
+              {/* Этот элемент показывает текст с временем для заказа. */}
+              <div className={styles.orderStatus} aria-label="Время работы">
+                <span
+                  className={`${styles.pill} ${styles.mediaPill} ${
+                    isOpenNow ? styles.mediaPillOpen : styles.mediaPillClosed
+                  }`}
+                  aria-live="polite"
+                >
+                  <span>{heroWorkingHours.label}</span>
+                </span>
+              </div>
               {/* Эта кнопка плавно ведёт пользователя к блоку меню. */}
               <button
                 type="button"
@@ -153,32 +162,6 @@ export default function Hero() {
               >
                 {heroOrderButtonText.label}
               </button>
-            </div>
-            {/* Этот блок размещает статус в нижней части первого экрана. */}
-            <div className={styles.mediaOverlay}>
-              {/* Этот блок объединяет элементы статуса работы на одном фоне. */}
-              <div className={styles.mediaTitle}>
-                <div className={styles.mediaHeading}>
-                  {/* Этот блок показывает статус работы, но на маленьких экранах скрывается. */}
-                  <div className={styles.mediaBadge} aria-label="Время работы">
-                    {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
-                    <span
-                      className={`${styles.pill} ${styles.mediaPill} ${
-                        isOpenNow ? styles.mediaPillOpen : styles.mediaPillClosed
-                      }`}
-                      aria-live="polite"
-                    >
-                      <span>
-                        {isOpenNow
-                          ? heroWorkingHours.openLabel
-                          : heroWorkingHours.closedLabel}
-                      </span>
-                      <span aria-hidden="true">•</span>
-                      <span>{heroWorkingHours.label}</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
