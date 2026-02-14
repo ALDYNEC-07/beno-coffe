@@ -1,12 +1,12 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает видео, статус работы и быстрые кнопки действий.
- Человек может увидеть атмосферу, узнать время работы и перейти к заказу или меню.
+ Он показывает статус работы и быстрые кнопки действий.
+ Человек может узнать время работы и сразу перейти к заказу или меню.
 */
 "use client";
 
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useState, type CSSProperties } from "react";
 import styles from "./Hero.module.css";
 import { contactData } from "@/components/shared/contactData";
 
@@ -34,8 +34,6 @@ type HeroStyle = CSSProperties & {
 };
 
 export default function Hero() {
-  // Эта ссылка хранит доступ к видео, чтобы включать и останавливать его.
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [heroNavOffset, setHeroNavOffset] = useState(0);
 
   // Этот элемент хранит, открыта ли кофейня прямо сейчас.
@@ -48,53 +46,7 @@ export default function Hero() {
     );
   });
 
-  // Этот код запускается сразу после появления секции, чтобы видео играло только в поле зрения.
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) {
-      return;
-    }
-
-    // Эта функция пытается запустить видео, когда его видно.
-    const startVideo = async () => {
-      try {
-        await video.play();
-      } catch {
-        // Если браузер блокирует запуск, просто оставляем видео на паузе.
-      }
-    };
-
-    // Эта функция останавливает видео, когда его не видно.
-    const stopVideo = () => {
-      video.pause();
-    };
-
-    if (!("IntersectionObserver" in window)) {
-      startVideo();
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            startVideo();
-          } else {
-            stopVideo();
-          }
-        });
-      },
-      { threshold: 0.4 }
-    );
-
-    observer.observe(video);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  // Этот код определяет высоту шапки, чтобы оставить видео ровно между ней и нижней границей экрана.
+  // Этот код определяет высоту шапки, чтобы главный блок занимал оставшийся видимый экран.
   useLayoutEffect(() => {
     const header = document.querySelector("header");
     if (!header) {
@@ -148,39 +100,16 @@ export default function Hero() {
     // Этот блок показывает главный экран приветствия кофейни.
     <section className={styles.hero} style={heroStyle}>
       <div className="container">
-        {/* Этот блок размещает видео, статус и кнопки в сетке секции. */}
+        {/* Этот блок размещает главный фон, статус и кнопки в сетке секции. */}
         <div className={styles.layout}>
-          {/* Этот блок показывает видео кофейни. */}
+          {/* Этот блок показывает главный фон и действия на первом экране. */}
           <div className={styles.media}>
-            {/* Это видео само запускается, когда пользователь видит первый экран. */}
-            <video
-              className={styles.mediaImage}
-              ref={videoRef}
-              autoPlay
-              muted
-              loop
-              playsInline
-              aria-label="Видео интерьера кофейни BENO"
-            >
-              {/* Этот источник отдаёт мобильную заставку для узких экранов. */}
-              <source
-                src="/beno-video-hero-mobile.mp4"
-                type="video/mp4"
-                media="(max-width: 719px)"
-              />
-              {/* Этот источник показывает видео для остальных размеров экрана. */}
-              <source
-                src="/beno-video-hero-decktop.mp4"
-                type="video/mp4"
-              />
-              Ваш браузер не поддерживает видео.
-            </video>
-            {/* Этот блок размещает статус и кнопки поверх видео внизу. */}
+            {/* Этот блок размещает статус и кнопки в нижней части первого экрана. */}
             <div className={styles.mediaOverlay}>
               {/* Этот блок объединяет статус работы и кнопки на одном фоне. */}
               <div className={styles.mediaTitle}>
                 <div className={styles.mediaHeading}>
-                  {/* Этот блок показывает статус работы поверх видео, но на маленьких экранах скрывается. */}
+                  {/* Этот блок показывает статус работы, но на маленьких экранах скрывается. */}
                   <div className={styles.mediaBadge} aria-label="Время работы">
                     {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
                     <span
