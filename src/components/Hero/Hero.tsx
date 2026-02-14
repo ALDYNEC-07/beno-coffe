@@ -1,13 +1,14 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает фоновую картинку, статус работы и кнопку заказа.
- Человек может увидеть текущее состояние кофейни и плавно перейти к меню.
+ Он показывает фоновую картинку, статус работы и кнопки действий.
+ Человек может увидеть текущее состояние кофейни, позвонить или перейти к меню.
 */
 "use client";
 
 import Image from "next/image";
 import { useEffect, useLayoutEffect, useState, type CSSProperties } from "react";
 import styles from "./Hero.module.css";
+import { contactData } from "@/components/shared/contactData";
 
 // Этот объект хранит время работы кофейни для блока на первом экране.
 const heroWorkingHours = {
@@ -30,6 +31,13 @@ const heroOrderButtonText = {
   label: "Заказать",
   ariaLabel: "Плавно перейти к меню для заказа",
   menuSelector: "#menu",
+};
+
+// Этот объект хранит текст и ссылку для кнопки звонка рядом со статусом.
+const heroCallButtonText = {
+  label: "Позвонить",
+  href: contactData.phoneLink,
+  ariaLabel: `Позвонить по номеру ${contactData.phoneText}`,
 };
 
 type HeroStyle = CSSProperties & {
@@ -148,16 +156,25 @@ export default function Hero() {
             <div className={styles.mediaShade} aria-hidden="true" />
             {/* Этот блок размещает статус, кнопку и стрелки в нижней части экрана. */}
             <div className={styles.orderButtonWrap}>
-              {/* Этот элемент показывает текст с временем для заказа. */}
-              <div className={styles.orderStatus} aria-label="Время работы">
-                <span
-                  className={`${styles.pill} ${styles.mediaPill} ${
-                    isOpenNow ? styles.mediaPillOpen : styles.mediaPillClosed
-                  }`}
-                  aria-live="polite"
+              {/* Этот блок ставит рядом статус времени и кнопку звонка одинакового визуального размера. */}
+              <div className={styles.orderTopRow}>
+                {/* Этот элемент показывает текст с временем для заказа. */}
+                <div className={styles.orderStatus} aria-label="Время работы">
+                  <span
+                    className={`${styles.pill} ${styles.orderCallButton}`}
+                    aria-live="polite"
+                  >
+                    <span>{currentWorkingHoursLabel}</span>
+                  </span>
+                </div>
+                {/* Эта кнопка рядом со статусом позволяет быстро позвонить в кофейню. */}
+                <a
+                  className={`${styles.pill} ${styles.orderCallButton}`}
+                  href={heroCallButtonText.href}
+                  aria-label={heroCallButtonText.ariaLabel}
                 >
-                  <span>{currentWorkingHoursLabel}</span>
-                </span>
+                  {heroCallButtonText.label}
+                </a>
               </div>
               {/* Эта кнопка плавно ведёт пользователя к блоку меню. */}
               <button
