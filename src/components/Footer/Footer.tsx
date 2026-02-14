@@ -8,6 +8,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { contactData } from "@/components/shared/contactData";
+import { businessData } from "@/components/shared/businessData";
 import styles from "./Footer.module.css";
 
 // Этот объект хранит заголовок и слоган для первого блока подвала.
@@ -19,7 +20,7 @@ const footerIntro = {
 // Этот объект хранит данные о кратком расписании и адресе.
 const hoursInfo = {
   title: "Часы и адрес",
-  todayLabel: "Работаем каждый день с 7:00 до 00:00",
+  todayLabel: businessData.workingHours.dailyLabel,
   addressLabel: "Адрес:",
   addressText: contactData.addressText,
   addressLink:
@@ -41,9 +42,6 @@ const socialLinks = [
   contactData.socialLinks.whatsapp,
 ];
 
-// Этот диапазон лет нужен для строки копирайта внизу подвала.
-const copyrightYears = "2019 - 2026";
-
 export default function Footer() {
   // Этот объект хранит, какие блоки подвала сейчас раскрыты.
   const [openBlocks, setOpenBlocks] = useState({
@@ -51,6 +49,13 @@ export default function Footer() {
     hours: false,
     contact: false,
   });
+  // Этот год нужен, чтобы строка копирайта обновлялась автоматически и не устаревала.
+  const currentYear = new Date().getFullYear();
+  // Этот текст показывает диапазон лет от старта кофейни до текущего года.
+  const copyrightYears =
+    currentYear > businessData.foundedYear
+      ? `${businessData.foundedYear} - ${currentYear}`
+      : String(businessData.foundedYear);
 
   // Эта функция переключает раскрытие блока при нажатии на его заголовок.
   const handleToggle = (blockKey: "intro" | "hours" | "contact") => {

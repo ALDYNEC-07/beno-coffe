@@ -1,7 +1,7 @@
 /*
  Этот файл определяет секцию полного меню.
  Он показывает скролл категорий и отдельные линии позиций для каждой категории.
- Человек может выбрать категорию сверху, пролистывать строки карточек и открыть подробную страницу позиции.
+ Человек может выбрать категорию сверху, пролистывать строки карточек и раскрывать подробности позиции прямо в карточке.
 */
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -46,6 +46,11 @@ const menuPageText = {
   popularCategoryLabel: "Популярные",
   categoriesLabel: "Категории меню",
   detailsLabel: "Подробнее",
+  hideDetailsLabel: "Скрыть",
+  addLabel: "Добавить",
+  descriptionTitle: "Описание",
+  variantsTitle: "Размеры стаканов",
+  sizeFallback: "Размер не указан",
   scrollStoragePrefix: "menu-page-scroll-left",
   itemQueryKey: "item",
   ...commonMenuText,

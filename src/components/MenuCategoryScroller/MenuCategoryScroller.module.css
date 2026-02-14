@@ -1,8 +1,8 @@
 .scrollerContainer {
   position: relative;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
+  width: var(--viewport-inline-size);
+  margin-left: calc(50% - var(--viewport-inline-size) / 2);
+  margin-right: calc(50% - var(--viewport-inline-size) / 2);
   overflow: hidden;
   box-sizing: border-box;
   min-height: clamp(60px, 6vw, 80px);

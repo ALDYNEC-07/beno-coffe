@@ -1,7 +1,10 @@
+:global(html),
 :global(body) {
   scrollbar-gutter: stable;
 }
 
+:global(html:has([data-nav-menu][data-menu-state="open"])),
+:global(html:has([data-nav-menu][data-menu-state="closing"])),
 :global(body:has([data-nav-menu][data-menu-state="open"])),
 :global(body:has([data-nav-menu][data-menu-state="closing"])) {
   overflow: hidden;
@@ -54,10 +57,229 @@
 
 .nav {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.55rem, 1.8vw, 1rem);
+}
+
+.primaryActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  position: relative;
+}
+
+.cartButton {
+  list-style: none;
+  cursor: pointer;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  position: relative;
+}
+
+.cartIcon {
+  width: 21px;
+  height: 21px;
+}
+
+.cartBadge {
+  position: absolute;
+  top: -4px;
+  right: -5px;
+  min-width: 17px;
+  height: 17px;
+  padding-inline: 0.24rem;
+  border-radius: 999px;
+  background: #1b1b1b;
+  color: #fff;
+  font-size: 0.66rem;
+  line-height: 17px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.cartPanel {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  width: min(320px, 86vw);
+  padding: 0.8rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.75),
+    rgba(255, 255, 255, 0.35)
+  );
+  -webkit-backdrop-filter: blur(12px) saturate(145%);
+  backdrop-filter: blur(12px) saturate(145%);
+  box-shadow: 0 10px 28px rgba(17, 12, 8, 0.12);
+  z-index: 80;
+}
+
+.cartPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.55rem;
+}
+
+.cartPanelTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.cartEmptyText {
+  margin: 0;
+  color: #4d3d31;
+  font-size: 0.92rem;
+}
+
+.cartItemsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.cartItemRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 88px 100px;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.cartItemName {
+  font-size: 0.93rem;
+  line-height: 1.25;
+}
+
+.cartItemControls {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  justify-self: center;
+  width: 88px;
+}
+
+.cartQuantityButton {
+  border: none;
+  background: transparent;
+  color: #2d1f13;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1;
+  width: 20px;
+  height: 20px;
+  border-radius: 8px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+}
+
+.cartQuantityButtonMinus {
+  transform: translateY(-1px);
+}
+
+.cartQuantityButtonPlus {
+  transform: translateY(0);
+}
+
+.cartQuantityButton:hover {
+  background: rgba(27, 27, 27, 0.08);
+}
+
+.cartQuantityButton:active {
+  background: rgba(27, 27, 27, 0.14);
+}
+
+.cartItemQuantity {
+  color: #523013;
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 1.2rem;
+  text-align: center;
+}
+
+.cartItemPrice {
+  color: #2d1f13;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: right;
+  justify-self: end;
+  width: 100px;
+}
+
+.cartSummary {
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(27, 27, 27, 0.12);
+  display: grid;
+  gap: 0.55rem;
+}
+
+.cartTotalRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.cartTotalLabel {
+  color: #4d3d31;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.cartTotalValue {
+  color: #2d1f13;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.whatsappOrderButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0.5rem 0.8rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  background: #1f8d47;
+  transition: background-color 0.16s ease;
+}
+
+.whatsappOrderButton:hover {
+  background: #16753a;
+}
+
+.whatsappOrderButton:active {
+  background: #146a34;
 }
 
 .menu {
   position: relative;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
 }
 
 .menuToggle {
@@ -76,6 +298,14 @@
   gap: 0.35rem;
   position: relative;
   z-index: 70;
+}
+
+.menu[data-menu-state="open"] .menuToggle,
+.menu[data-menu-state="closing"] .menuToggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + var(--space-3));
+  right: var(--space-3);
+  z-index: 90;
 }
 
 .navPanel {
@@ -100,7 +330,7 @@
   backdrop-filter: blur(12px);
   display: grid;
   place-items: center;
-  z-index: 60;
+  z-index: 40;
 }
 
 .menu[data-menu-state="closed"] .navPanel {
@@ -196,7 +426,10 @@
 }
 
 .navLink:focus-visible,
-.menuToggle:focus-visible {
+.menuToggle:focus-visible,
+.cartButton:focus-visible,
+.cartQuantityButton:focus-visible,
+.whatsappOrderButton:focus-visible {
   outline: 2px solid #1b1b1b;
   outline-offset: 3px;
   border-radius: 10px;

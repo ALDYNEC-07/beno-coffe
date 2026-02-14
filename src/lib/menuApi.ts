@@ -48,13 +48,3 @@ export async function fetchMenuItems() {
     return [];
   }
 }
-
-// Этот помощник находит конкретную позицию меню по ее идентификатору.
-export async function fetchMenuItemById(
-  itemId: string | number | null | undefined
-) {
-  const items = await fetchMenuItems();
-  const targetId = String(itemId ?? "");
-
-  return items.find((item) => String(item?.id) === targetId) ?? null;
-}

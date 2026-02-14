@@ -1,4 +1,5 @@
 :root {
+  --viewport-inline-size: 100vw;
   --container: 1120px;
   --space-1: clamp(0.5rem, 1.2vw, 0.75rem);
   --space-2: clamp(0.75rem, 1.8vw, 1rem);
@@ -23,10 +24,20 @@
   --text-muted-soft: rgba(27, 27, 27, 0.74);
 }
 
+@supports (width: 100dvw) {
+  :root {
+    --viewport-inline-size: 100dvw;
+  }
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
+}
+
+html {
+  overflow-x: clip;
 }
 
 body {

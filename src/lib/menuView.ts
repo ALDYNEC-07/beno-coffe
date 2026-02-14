@@ -5,12 +5,6 @@ type MenuListPriceText = {
   priceFallback: string;
 };
 
-type MenuDetailPriceText = {
-  priceLabel: string;
-  priceFromLabel: string;
-  priceFallback: string;
-};
-
 type MenuImageEntry = {
   key: string;
   src: string;
@@ -411,24 +405,6 @@ export function getMenuListPriceLabel(item: MenuItem, text: MenuListPriceText) {
     return `${text.priceFromPrefix} ${formatMenuPrice(priceInfo.minVariantPrice)}`;
   }
   return text.priceFallback;
-}
-
-export function getMenuDetailPriceInfo(item: MenuItem, text: MenuDetailPriceText) {
-  const priceInfo = getMenuPriceInfo(item);
-  const hasBasePrice = Number.isFinite(priceInfo.rawPrice);
-  const hasVariantPrices = priceInfo.hasVariantPrices;
-  const priceLabel = hasBasePrice
-    ? formatMenuPrice(priceInfo.rawPrice)
-    : hasVariantPrices
-    ? formatMenuPrice(priceInfo.minVariantPrice)
-    : text.priceFallback;
-  const priceTitle = hasBasePrice
-    ? text.priceLabel
-    : hasVariantPrices
-    ? text.priceFromLabel
-    : text.priceLabel;
-
-  return { priceInfo, priceLabel, priceTitle };
 }
 
 // Этот помощник подбирает фотофон по названию и категории позиции меню.

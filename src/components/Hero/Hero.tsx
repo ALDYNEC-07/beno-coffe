@@ -1,32 +1,39 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает видео, статус работы и быстрые кнопки действий.
- Человек может увидеть атмосферу, узнать время работы и перейти к заказу или меню.
+ Он показывает фоновую картинку, статус работы и кнопки действий.
+ Человек может увидеть текущее состояние кофейни, позвонить или перейти к меню.
 */
 "use client";
 
-import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import Image from "next/image";
+import { useEffect, useLayoutEffect, useState, type CSSProperties } from "react";
 import styles from "./Hero.module.css";
 import { contactData } from "@/components/shared/contactData";
+import { businessData } from "@/components/shared/businessData";
 
-// Этот объект хранит время работы кофейни для блока на первом экране.
-const heroWorkingHours = {
-  startMinutes: 7 * 60,
-  endMinutes: 24 * 60,
-  label: "с 7:00 до 00:00",
-  openLabel: "Открыто сейчас",
-  closedLabel: "Закрыто сейчас",
+// Этот объект берет общее время работы кофейни из одного общего источника.
+const heroWorkingHours = businessData.workingHours;
+
+// Этот объект хранит две картинки для главного экрана: когда кофейня открыта и когда закрыта.
+const heroVisualState = {
+  openImageSrc: "/benocoffe-open.jpg",
+  closedImageSrc: "/benocoffe-close.jpg",
+  openImageAlt: "Кофейня BENO во время работы",
+  closedImageAlt: "Кофейня BENO после закрытия",
 };
 
-// Этот объект хранит подписи и ссылки для быстрых кнопок на первом экране.
-const heroActionText = {
-  primaryLabel: "Смотреть меню",
-  primaryHref: "#menu",
-  primaryAriaLabel: "Прокрутить к меню",
-  secondaryLabel: "Быстрый заказ",
-  secondaryHref: contactData.phoneLink,
-  secondaryAriaLabel: `Позвонить по номеру ${contactData.phoneText}`,
+// Этот объект хранит подписи и цель для большой кнопки заказа на первом экране.
+const heroOrderButtonText = {
+  label: "Заказать",
+  ariaLabel: "Плавно перейти к меню для заказа",
+  menuSelector: "#menu",
+};
+
+// Этот объект хранит текст и ссылку для кнопки звонка рядом со статусом.
+const heroCallButtonText = {
+  label: "Позвонить",
+  href: contactData.phoneLink,
+  ariaLabel: `Позвонить по номеру ${contactData.phoneText}`,
 };
 
 type HeroStyle = CSSProperties & {
@@ -34,8 +41,6 @@ type HeroStyle = CSSProperties & {
 };
 
 export default function Hero() {
-  // Эта ссылка хранит доступ к видео, чтобы включать и останавливать его.
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [heroNavOffset, setHeroNavOffset] = useState(0);
 
   // Этот элемент хранит, открыта ли кофейня прямо сейчас.
@@ -48,53 +53,32 @@ export default function Hero() {
     );
   });
 
-  // Этот код запускается сразу после появления секции, чтобы видео играло только в поле зрения.
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) {
-      return;
-    }
+  // Этот элемент выбирает нужную картинку для первого экрана по текущему статусу кофейни.
+  const currentHeroImage = isOpenNow
+    ? { src: heroVisualState.openImageSrc, alt: heroVisualState.openImageAlt }
+    : { src: heroVisualState.closedImageSrc, alt: heroVisualState.closedImageAlt };
 
-    // Эта функция пытается запустить видео, когда его видно.
-    const startVideo = async () => {
-      try {
-        await video.play();
-      } catch {
-        // Если браузер блокирует запуск, просто оставляем видео на паузе.
-      }
-    };
+  // Этот элемент выбирает подпись времени: до полуночи, когда открыто, или до утра, когда закрыто.
+  const currentWorkingHoursLabel = isOpenNow
+    ? heroWorkingHours.openUntilLabel
+    : heroWorkingHours.closedUntilLabel;
 
-    // Эта функция останавливает видео, когда его не видно.
-    const stopVideo = () => {
-      video.pause();
-    };
-
-    if (!("IntersectionObserver" in window)) {
-      startVideo();
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            startVideo();
-          } else {
-            stopVideo();
-          }
-        });
-      },
-      { threshold: 0.4 }
+  // Эта функция срабатывает по нажатию на кнопку и плавно прокручивает страницу к блоку меню.
+  const handleOrderButtonClick = () => {
+    const menuSection = document.querySelector<HTMLElement>(
+      heroOrderButtonText.menuSelector
     );
+    if (!menuSection) {
+      return;
+    }
 
-    observer.observe(video);
+    menuSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  // Этот код определяет высоту шапки, чтобы оставить видео ровно между ней и нижней границей экрана.
+  // Этот код определяет высоту шапки, чтобы главный блок занимал оставшийся видимый экран.
   useLayoutEffect(() => {
     const header = document.querySelector("header");
     if (!header) {
@@ -148,76 +132,59 @@ export default function Hero() {
     // Этот блок показывает главный экран приветствия кофейни.
     <section className={styles.hero} style={heroStyle}>
       <div className="container">
-        {/* Этот блок размещает видео, статус и кнопки в сетке секции. */}
+        {/* Этот блок размещает главный фон и статус в сетке секции. */}
         <div className={styles.layout}>
-          {/* Этот блок показывает видео кофейни. */}
+          {/* Этот блок показывает главный фон и статус на первом экране. */}
           <div className={styles.media}>
-            {/* Это видео само запускается, когда пользователь видит первый экран. */}
-            <video
-              className={styles.mediaImage}
-              ref={videoRef}
-              autoPlay
-              muted
-              loop
-              playsInline
-              aria-label="Видео интерьера кофейни BENO"
-            >
-              {/* Этот источник отдаёт мобильную заставку для узких экранов. */}
-              <source
-                src="/beno-video-hero-mobile.mp4"
-                type="video/mp4"
-                media="(max-width: 719px)"
+            {/* Этот блок показывает фоновую картинку, которая меняется по статусу кофейни. */}
+            <div className={styles.mediaVisual}>
+              {/* Эта картинка автоматически выбирается: открыто сейчас или закрыто сейчас. */}
+              <Image
+                className={styles.mediaImage}
+                src={currentHeroImage.src}
+                alt={currentHeroImage.alt}
+                fill
+                priority
+                sizes="100vw"
               />
-              {/* Этот источник показывает видео для остальных размеров экрана. */}
-              <source
-                src="/beno-video-hero-decktop.mp4"
-                type="video/mp4"
-              />
-              Ваш браузер не поддерживает видео.
-            </video>
-            {/* Этот блок размещает статус и кнопки поверх видео внизу. */}
-            <div className={styles.mediaOverlay}>
-              {/* Этот блок объединяет статус работы и кнопки на одном фоне. */}
-              <div className={styles.mediaTitle}>
-                <div className={styles.mediaHeading}>
-                  {/* Этот блок показывает статус работы поверх видео, но на маленьких экранах скрывается. */}
-                  <div className={styles.mediaBadge} aria-label="Время работы">
-                    {/* Этот элемент сообщает, открыта ли кофейня и до какого времени. */}
-                    <span
-                      className={`${styles.pill} ${styles.mediaPill} ${
-                        isOpenNow ? styles.mediaPillOpen : styles.mediaPillClosed
-                      }`}
-                      aria-live="polite"
-                    >
-                      <span>
-                        {isOpenNow
-                          ? heroWorkingHours.openLabel
-                          : heroWorkingHours.closedLabel}
-                      </span>
-                      <span aria-hidden="true">•</span>
-                      <span>{heroWorkingHours.label}</span>
-                    </span>
-                  </div>
-                  {/* Этот блок показывает быстрые кнопки для перехода к меню и заказу. */}
-                  <div className={styles.mediaActions}>
-                    {/* Эта кнопка прокручивает страницу к меню. */}
-                    <Link
-                      className={`button ${styles.mediaActionButton}`}
-                      href={heroActionText.primaryHref}
-                      aria-label={heroActionText.primaryAriaLabel}
-                    >
-                      {heroActionText.primaryLabel}
-                    </Link>
-                    {/* Эта кнопка собирается вызвать номер для быстрого заказа. */}
-                    <a
-                      className={`button ${styles.mediaActionButton} ${styles.mediaActionSecondary}`}
-                      href={heroActionText.secondaryHref}
-                      aria-label={heroActionText.secondaryAriaLabel}
-                    >
-                      {heroActionText.secondaryLabel}
-                    </a>
-                  </div>
+            </div>
+            {/* Этот слой делает фон чуть темнее, чтобы статус читался лучше. */}
+            <div className={styles.mediaShade} aria-hidden="true" />
+            {/* Этот блок размещает статус, кнопку и стрелки в нижней части экрана. */}
+            <div className={styles.orderButtonWrap}>
+              {/* Этот блок ставит рядом статус времени и кнопку звонка одинакового визуального размера. */}
+              <div className={styles.orderTopRow}>
+                {/* Этот элемент показывает текст с временем для заказа. */}
+                <div className={styles.orderStatus} aria-label="Время работы">
+                  <span
+                    className={`${styles.pill} ${styles.orderCallButton}`}
+                    aria-live="polite"
+                  >
+                    <span>{currentWorkingHoursLabel}</span>
+                  </span>
                 </div>
+                {/* Эта кнопка рядом со статусом позволяет быстро позвонить в кофейню. */}
+                <a
+                  className={`${styles.pill} ${styles.orderCallButton}`}
+                  href={heroCallButtonText.href}
+                  aria-label={heroCallButtonText.ariaLabel}
+                >
+                  {heroCallButtonText.label}
+                </a>
+              </div>
+              {/* Эта кнопка плавно ведёт пользователя к блоку меню. */}
+              <button
+                type="button"
+                className={styles.orderButton}
+                onClick={handleOrderButtonClick}
+                aria-label={heroOrderButtonText.ariaLabel}
+              >
+                {heroOrderButtonText.label}
+              </button>
+              {/* Этот элемент показывает декоративные стрелки вниз под кнопкой. */}
+              <div className={styles.orderArrow} aria-hidden="true">
+                <span className={styles.orderArrowMark} />
+                <span className={styles.orderArrowMark} />
               </div>
             </div>
           </div>
