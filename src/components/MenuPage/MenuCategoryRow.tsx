@@ -1,15 +1,19 @@
 /*
  Этот файл определяет одну линию позиций внутри категории меню.
  Он показывает горизонтальную ленту карточек с названием и ценой.
- Человек может прокручивать ленту, выделять карточки и открывать подробности позиции.
+ Человек может прокручивать ленту, выделять карточки и раскрывать подробности позиции прямо внутри карточки.
 */
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import styles from "./MenuPage.module.css";
-import type { MenuItem } from "@/lib/menuData";
+import {
+  formatMenuPrice,
+  getMenuPriceInfo,
+  parseMenuPrice,
+  type MenuItem,
+} from "@/lib/menuData";
 import {
   getMenuListPriceLabel,
   getMenuNameLabel,
@@ -28,6 +32,10 @@ type MenuCategoryRowText = {
   priceFallback: string;
   popularLabel: string;
   detailsLabel: string;
+  hideDetailsLabel: string;
+  descriptionTitle: string;
+  variantsTitle: string;
+  sizeFallback: string;
 };
 
 type MenuCategoryRowProps = {
@@ -50,6 +58,8 @@ export default function MenuCategoryRow({
   const gridRef = useRef<HTMLDivElement | null>(null);
   // Это число хранит номер карточки, которая сейчас в центре линии.
   const [activeIndex, setActiveIndex] = useState(0);
+  // Этот текст хранит ключ карточки, у которой сейчас раскрыты описание и размеры.
+  const [expandedCardKey, setExpandedCardKey] = useState<string | null>(null);
   // Этот объект хранит индекс карточки из адреса, чтобы один раз прокрутить ее в центр.
   const initialScrollIndexRef = useRef<number | null>(initialFocusIndex);
 
@@ -180,6 +190,14 @@ export default function MenuCategoryRow({
     scrollCardToCenter(index);
   };
 
+  // Эта функция раскрывает или сворачивает дополнительный текст внутри выбранной карточки.
+  const handleDetailsToggle = (cardKey: string, index: number) => {
+    handleCardFocus(index);
+    setExpandedCardKey((previousKey) =>
+      previousKey === cardKey ? null : cardKey
+    );
+  };
+
   return (
     // Этот блок растягивает ленту на всю ширину и оставляет место для теней.
     <div className={styles.gridWrap}>
@@ -190,6 +208,14 @@ export default function MenuCategoryRow({
           const nameLabel = getMenuNameLabel(item, text.nameFallback);
           const priceLabel = getMenuListPriceLabel(item, text);
           const isPopular = Boolean(item.popular);
+          const cardKey = String(item.id ?? `${categoryKey}-${index}`);
+          const detailsPanelId = `menu-card-details-${categoryKey}-${index}`;
+          const description = item.description?.trim() ?? "";
+          const priceInfo = getMenuPriceInfo(item);
+          const hasDescription = description.length > 0;
+          const hasVariants = priceInfo.variants.length > 0;
+          const hasExtraDetails = hasDescription || hasVariants;
+          const isExpanded = hasExtraDetails && expandedCardKey === cardKey;
           // Этот блок определяет, нужна ли фотография для карточки позиции.
           const imageSrc = getMenuImageSrc(nameLabel, categoryLabel);
           const isSelected = index === activeIndex;
@@ -202,74 +228,130 @@ export default function MenuCategoryRow({
           const cardLinkClassName = isSelected
             ? `${styles.cardLink} ${styles.cardLinkSelected}`
             : `${styles.cardLink} ${styles.cardLinkBlurred}`;
-          // Этот блок определяет ссылку на подробную страницу, если у позиции есть идентификатор.
-          const itemHref =
-            item.id !== undefined && item.id !== null ? `/menu/${item.id}` : null;
+          const cardDetailsClassName = isExpanded
+            ? `${styles.cardDetails} ${styles.cardDetailsExpanded}`
+            : styles.cardDetails;
+          const detailsContentClassName = isExpanded
+            ? `${styles.detailsContent} ${styles.detailsContentExpanded}`
+            : styles.detailsContent;
           // Этот блок собирает содержимое карточки позиции.
-          const cardContent = (
-            <article className={cardClassName}>
-              {/* Этот блок показывает фотографию позиции отдельно от текста. */}
-              {imageSrc ? (
-                <div className={styles.cardVisual} aria-hidden="true">
-                  <Image
-                    className={styles.image}
-                    src={imageSrc}
-                    alt=""
-                    fill
-                    loading={isSelected ? "eager" : "lazy"}
-                    sizes="(max-width: 719px) 67vw, 270px"
-                  />
-                </div>
-              ) : null}
-              {/* Этот блок показывает название, ссылку и цену без фоновых вставок. */}
-              <div className={styles.cardDetails}>
-                {/* Этот блок показывает заголовок «Популярно», если позиция отмечена. */}
-                {isPopular ? (
-                  <p className={styles.popularText}>{text.popularLabel}</p>
-                ) : null}
-                {/* Этот блок выводит название и цену на одной линии. */}
-                <div className={styles.namePriceRow}>
-                  <h3 className={styles.name}>{nameLabel}</h3>
-                  <p className={styles.price}>{priceLabel}</p>
-                </div>
-                {/* Этот блок показывает подпись «Подробнее», если карточка ведёт дальше. */}
-                {itemHref ? (
-                  <p className={styles.detailsLabel}>{text.detailsLabel}</p>
-                ) : (
-                  <p className={styles.detailsLabel} aria-hidden="true">
-                    &nbsp;
-                  </p>
-                )}
-              </div>
-            </article>
-          );
-
-          if (itemHref) {
-            return (
-              // Этот блок делает карточку кликабельной и ведет к странице позиции.
-              <Link
-                key={item.id ?? `${nameLabel}-${index}`}
-                className={cardLinkClassName}
-                href={itemHref}
-                aria-label={`Открыть позицию ${nameLabel}`}
-                data-menu-card="true"
-                onFocus={() => handleCardFocus(index)}
-              >
-                {cardContent}
-              </Link>
-            );
-          }
-
           return (
-            // Этот блок показывает карточку без перехода, если отдельной страницы нет.
+            // Этот блок показывает одну карточку в линии и не уводит человека на отдельную страницу.
             <div
-              key={item.id ?? `${nameLabel}-${index}`}
+              key={cardKey}
               className={cardLinkClassName}
               data-menu-card="true"
               aria-label={`Позиция ${nameLabel}`}
-              aria-disabled="true"
+              onFocusCapture={() => handleCardFocus(index)}
             >
-              {cardContent}
+              <article className={cardClassName}>
+                {/* Этот блок показывает фотографию позиции отдельно от текста. */}
+                {imageSrc ? (
+                  <div className={styles.cardVisual} aria-hidden="true">
+                    <Image
+                      className={styles.image}
+                      src={imageSrc}
+                      alt=""
+                      fill
+                      loading={isSelected ? "eager" : "lazy"}
+                      sizes="(max-width: 719px) 67vw, 270px"
+                    />
+                  </div>
+                ) : null}
+                {/* Этот блок показывает текст карточки поверх фото с блюром, чтобы текст было легче читать. */}
+                <div className={cardDetailsClassName}>
+                  {/* Этот блок показывает заголовок «Популярно», если позиция отмечена. */}
+                  {isPopular ? (
+                    <p className={styles.popularText}>{text.popularLabel}</p>
+                  ) : null}
+                  {/* Этот блок выводит название и цену на одной линии. */}
+                  <div className={styles.namePriceRow}>
+                    <h3 className={styles.name}>{nameLabel}</h3>
+                    <p className={styles.price}>{priceLabel}</p>
+                  </div>
+                  {/* Этот блок позволяет раскрыть подробности о напитке прямо внутри карточки. */}
+                  {hasExtraDetails ? (
+                    <button
+                      type="button"
+                      className={styles.detailsButton}
+                      aria-expanded={isExpanded}
+                      aria-controls={detailsPanelId}
+                      onClick={() => handleDetailsToggle(cardKey, index)}
+                    >
+                      <span className={styles.detailsLabel}>
+                        {isExpanded ? text.hideDetailsLabel : text.detailsLabel}
+                      </span>
+                    </button>
+                  ) : (
+                    <p className={styles.detailsLabel} aria-hidden="true">
+                      &nbsp;
+                    </p>
+                  )}
+                  {/* Этот блок показывает описание и размеры стаканов после нажатия «Подробнее». */}
+                  {hasExtraDetails ? (
+                    <div
+                      id={detailsPanelId}
+                      className={detailsContentClassName}
+                      aria-hidden={!isExpanded}
+                    >
+                      {hasDescription ? (
+                        <div className={styles.detailsSection}>
+                          <p className={styles.detailsSectionTitle}>
+                            {text.descriptionTitle}
+                          </p>
+                          <p className={styles.detailsDescription}>{description}</p>
+                        </div>
+                      ) : null}
+                      {hasVariants ? (
+                        <div className={styles.detailsSection}>
+                          <p className={styles.detailsSectionTitle}>
+                            {text.variantsTitle}
+                          </p>
+                          <ul
+                            className={styles.detailsVariants}
+                            aria-label={text.variantsTitle}
+                          >
+                            {priceInfo.variants.map((variant, variantIndex) => {
+                              const sizeLabel =
+                                variant?.sizeName?.toString().trim() ||
+                                text.sizeFallback;
+                              const mlLabel = Number.isFinite(variant?.ml)
+                                ? `${variant.ml} мл`
+                                : null;
+                              const variantPrice = parseMenuPrice(variant?.price);
+                              const variantPriceLabel = Number.isFinite(
+                                variantPrice
+                              )
+                                ? formatMenuPrice(variantPrice)
+                                : text.priceFallback;
+
+                              return (
+                                <li
+                                  key={`${cardKey}-variant-${variantIndex}`}
+                                  className={styles.detailsVariant}
+                                >
+                                  <span className={styles.detailsVariantSize}>
+                                    {sizeLabel}
+                                    {mlLabel ? (
+                                      <span className={styles.detailsVariantMl}>
+                                        {" "}
+                                        · {mlLabel}
+                                      </span>
+                                    ) : null}
+                                  </span>
+                                  <span className={styles.detailsVariantPrice}>
+                                    {variantPriceLabel}
+                                  </span>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+              </article>
             </div>
           );
         })}
