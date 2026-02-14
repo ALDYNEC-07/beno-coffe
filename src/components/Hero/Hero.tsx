@@ -13,7 +13,8 @@ import styles from "./Hero.module.css";
 const heroWorkingHours = {
   startMinutes: 7 * 60,
   endMinutes: 24 * 60,
-  label: "до 7:00",
+  openUntilLabel: "до 00:00",
+  closedUntilLabel: "до 7:00",
 };
 
 // Этот объект хранит две картинки для главного экрана: когда кофейня открыта и когда закрыта.
@@ -52,6 +53,11 @@ export default function Hero() {
   const currentHeroImage = isOpenNow
     ? { src: heroVisualState.openImageSrc, alt: heroVisualState.openImageAlt }
     : { src: heroVisualState.closedImageSrc, alt: heroVisualState.closedImageAlt };
+
+  // Этот элемент выбирает подпись времени: до полуночи, когда открыто, или до утра, когда закрыто.
+  const currentWorkingHoursLabel = isOpenNow
+    ? heroWorkingHours.openUntilLabel
+    : heroWorkingHours.closedUntilLabel;
 
   // Эта функция срабатывает по нажатию на кнопку и плавно прокручивает страницу к блоку меню.
   const handleOrderButtonClick = () => {
@@ -150,7 +156,7 @@ export default function Hero() {
                   }`}
                   aria-live="polite"
                 >
-                  <span>{heroWorkingHours.label}</span>
+                  <span>{currentWorkingHoursLabel}</span>
                 </span>
               </div>
               {/* Эта кнопка плавно ведёт пользователя к блоку меню. */}
