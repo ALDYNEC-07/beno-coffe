@@ -9,6 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   useContext,
+  useMemo,
   useState,
   useSyncExternalStore,
   type AnimationEvent,
@@ -16,6 +17,7 @@ import {
 import styles from "./Navigation.module.css";
 import { CartContext } from "@/components/Cart/CartProvider";
 import { formatMenuPrice } from "@/lib/menuData";
+import { contactData } from "@/components/shared/contactData";
 
 // Этот список хранит подписи и адреса для пунктов меню.
 const navLinks: { href: string; label: string }[] = [
@@ -121,6 +123,63 @@ export default function Navigation() {
     decreaseItemQuantity(id);
   };
 
+  // Этот признак показывает, есть ли в корзине позиции без точной цены.
+  const hasItemsWithUnknownPrice = useMemo(
+    () =>
+      items.some(
+        (item) => typeof item.price !== "number" || !Number.isFinite(item.price)
+      ),
+    [items]
+  );
+
+  // Эта сумма показывает итоговую цену всех позиций в корзине.
+  const totalCartPrice = useMemo(
+    () =>
+      items.reduce((sum, item) => {
+        if (typeof item.price !== "number" || !Number.isFinite(item.price)) {
+          return sum;
+        }
+
+        return sum + item.price * item.quantity;
+      }, 0),
+    [items]
+  );
+
+  // Этот текст показывает итог корзины в удобном виде для человека.
+  const totalCartPriceText = hasItemsWithUnknownPrice
+    ? "Цена уточняется"
+    : formatMenuPrice(totalCartPrice);
+
+  // Этот текст собирает готовое сообщение для заказа в WhatsApp.
+  const whatsappOrderText = useMemo(() => {
+    const orderLines = items.map((item, index) => {
+      const linePriceText =
+        typeof item.price === "number" && Number.isFinite(item.price)
+          ? formatMenuPrice(item.price * item.quantity)
+          : "Цена уточняется";
+
+      return `${index + 1}. ${item.name} x${item.quantity} — ${linePriceText}`;
+    });
+
+    return [
+      "Здравствуйте! Хочу оформить заказ:",
+      ...orderLines,
+      "",
+      `Итог: ${totalCartPriceText}`,
+    ].join("\n");
+  }, [items, totalCartPriceText]);
+
+  // Этот адрес открывает WhatsApp с уже заполненным текстом заказа.
+  const whatsappOrderLink = useMemo(() => {
+    const rawWhatsappLink = contactData.socialLinks.whatsapp.href;
+    const phoneDigits = rawWhatsappLink.match(/\d+/g)?.join("") ?? "";
+    if (!phoneDigits) {
+      return rawWhatsappLink;
+    }
+
+    return `https://wa.me/${phoneDigits}?text=${encodeURIComponent(whatsappOrderText)}`;
+  }, [whatsappOrderText]);
+
   return (
     <>
       {/* Этот блок показывает шапку с названием и меню. */}
@@ -173,49 +232,70 @@ export default function Navigation() {
                       В корзине пока ничего нет.
                     </p>
                   ) : (
-                    <ul className={styles.cartItemsList}>
-                      {items.map((item) => {
-                        const resolvedItemPrice =
-                          typeof item.price === "number" &&
-                          Number.isFinite(item.price)
-                            ? item.price
-                            : null;
-                        const itemTotalPrice = resolvedItemPrice !== null
-                          ? formatMenuPrice(resolvedItemPrice * item.quantity)
-                          : "Цена уточняется";
+                    <>
+                      {/* Этот список показывает все позиции корзины с количеством и ценой по строке. */}
+                      <ul className={styles.cartItemsList}>
+                        {items.map((item) => {
+                          const resolvedItemPrice =
+                            typeof item.price === "number" &&
+                            Number.isFinite(item.price)
+                              ? item.price
+                              : null;
+                          const itemTotalPrice = resolvedItemPrice !== null
+                            ? formatMenuPrice(resolvedItemPrice * item.quantity)
+                            : "Цена уточняется";
 
-                        return (
-                          <li key={item.id} className={styles.cartItemRow}>
-                            <span className={styles.cartItemName}>{item.name}</span>
-                            {/* Этот блок в центре строки позволяет уменьшать и увеличивать количество позиции. */}
-                            <span className={styles.cartItemControls}>
-                              <button
-                                type="button"
-                                className={`${styles.cartQuantityButton} ${styles.cartQuantityButtonMinus}`}
-                                aria-label={`Уменьшить количество: ${item.name}`}
-                                onClick={() => handleDecreaseItemClick(item.id)}
-                              >
-                                -
-                              </button>
-                              <span className={styles.cartItemQuantity}>
-                                {item.quantity}
+                          return (
+                            <li key={item.id} className={styles.cartItemRow}>
+                              <span className={styles.cartItemName}>{item.name}</span>
+                              {/* Этот блок в центре строки позволяет уменьшать и увеличивать количество позиции. */}
+                              <span className={styles.cartItemControls}>
+                                <button
+                                  type="button"
+                                  className={`${styles.cartQuantityButton} ${styles.cartQuantityButtonMinus}`}
+                                  aria-label={`Уменьшить количество: ${item.name}`}
+                                  onClick={() => handleDecreaseItemClick(item.id)}
+                                >
+                                  -
+                                </button>
+                                <span className={styles.cartItemQuantity}>
+                                  {item.quantity}
+                                </span>
+                                <button
+                                  type="button"
+                                  className={`${styles.cartQuantityButton} ${styles.cartQuantityButtonPlus}`}
+                                  aria-label={`Увеличить количество: ${item.name}`}
+                                  onClick={() => handleIncreaseItemClick(item.id)}
+                                >
+                                  +
+                                </button>
                               </span>
-                              <button
-                                type="button"
-                                className={`${styles.cartQuantityButton} ${styles.cartQuantityButtonPlus}`}
-                                aria-label={`Увеличить количество: ${item.name}`}
-                                onClick={() => handleIncreaseItemClick(item.id)}
-                              >
-                                +
-                              </button>
-                            </span>
-                            <span className={styles.cartItemPrice}>
-                              {itemTotalPrice}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                              <span className={styles.cartItemPrice}>
+                                {itemTotalPrice}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                      {/* Этот блок внизу корзины показывает итог и кнопку заказа в WhatsApp. */}
+                      <div className={styles.cartSummary}>
+                        <div className={styles.cartTotalRow}>
+                          <span className={styles.cartTotalLabel}>Итого</span>
+                          <span className={styles.cartTotalValue}>
+                            {totalCartPriceText}
+                          </span>
+                        </div>
+                        <a
+                          className={styles.whatsappOrderButton}
+                          href={whatsappOrderLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="Заказать в WhatsApp"
+                        >
+                          Заказать в WhatsApp
+                        </a>
+                      </div>
+                    </>
                   )}
                 </section>
               ) : null}

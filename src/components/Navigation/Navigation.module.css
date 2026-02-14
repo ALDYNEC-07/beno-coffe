@@ -225,6 +225,56 @@
   width: 100px;
 }
 
+.cartSummary {
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(27, 27, 27, 0.12);
+  display: grid;
+  gap: 0.55rem;
+}
+
+.cartTotalRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.cartTotalLabel {
+  color: #4d3d31;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.cartTotalValue {
+  color: #2d1f13;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.whatsappOrderButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0.5rem 0.8rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  background: #1f8d47;
+  transition: background-color 0.16s ease;
+}
+
+.whatsappOrderButton:hover {
+  background: #16753a;
+}
+
+.whatsappOrderButton:active {
+  background: #146a34;
+}
+
 .menu {
   position: relative;
   width: 32px;
@@ -378,7 +428,8 @@
 .navLink:focus-visible,
 .menuToggle:focus-visible,
 .cartButton:focus-visible,
-.cartQuantityButton:focus-visible {
+.cartQuantityButton:focus-visible,
+.whatsappOrderButton:focus-visible {
   outline: 2px solid #1b1b1b;
   outline-offset: 3px;
   border-radius: 10px;
