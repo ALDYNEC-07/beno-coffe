@@ -1,7 +1,7 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает фоновую картинку и статус работы.
- Человек может увидеть текущее состояние кофейни.
+ Он показывает фоновую картинку, статус работы и кнопку заказа.
+ Человек может увидеть текущее состояние кофейни и плавно перейти к меню.
 */
 "use client";
 
@@ -20,10 +20,17 @@ const heroWorkingHours = {
 
 // Этот объект хранит две картинки для главного экрана: когда кофейня открыта и когда закрыта.
 const heroVisualState = {
-  openImageSrc: "/benocoffe-open.png",
-  closedImageSrc: "/benocoffe-close.png",
+  openImageSrc: "/benocoffe-open.jpg",
+  closedImageSrc: "/benocoffe-close.jpg",
   openImageAlt: "Кофейня BENO во время работы",
   closedImageAlt: "Кофейня BENO после закрытия",
+};
+
+// Этот объект хранит подписи и цель для большой кнопки заказа на первом экране.
+const heroOrderButtonText = {
+  label: "Заказать",
+  ariaLabel: "Плавно перейти к меню для заказа",
+  menuSelector: "#menu",
 };
 
 type HeroStyle = CSSProperties & {
@@ -47,6 +54,21 @@ export default function Hero() {
   const currentHeroImage = isOpenNow
     ? { src: heroVisualState.openImageSrc, alt: heroVisualState.openImageAlt }
     : { src: heroVisualState.closedImageSrc, alt: heroVisualState.closedImageAlt };
+
+  // Эта функция срабатывает по нажатию на кнопку и плавно прокручивает страницу к блоку меню.
+  const handleOrderButtonClick = () => {
+    const menuSection = document.querySelector<HTMLElement>(
+      heroOrderButtonText.menuSelector
+    );
+    if (!menuSection) {
+      return;
+    }
+
+    menuSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   // Этот код определяет высоту шапки, чтобы главный блок занимал оставшийся видимый экран.
   useLayoutEffect(() => {
@@ -120,6 +142,18 @@ export default function Hero() {
             </div>
             {/* Этот слой делает фон чуть темнее, чтобы статус читался лучше. */}
             <div className={styles.mediaShade} aria-hidden="true" />
+            {/* Этот блок размещает большую кнопку заказа чуть ниже центра экрана. */}
+            <div className={styles.orderButtonWrap}>
+              {/* Эта кнопка плавно ведёт пользователя к блоку меню. */}
+              <button
+                type="button"
+                className={styles.orderButton}
+                onClick={handleOrderButtonClick}
+                aria-label={heroOrderButtonText.ariaLabel}
+              >
+                {heroOrderButtonText.label}
+              </button>
+            </div>
             {/* Этот блок размещает статус в нижней части первого экрана. */}
             <div className={styles.mediaOverlay}>
               {/* Этот блок объединяет элементы статуса работы на одном фоне. */}
