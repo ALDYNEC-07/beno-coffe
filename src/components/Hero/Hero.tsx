@@ -140,7 +140,7 @@ export default function Hero() {
             </div>
             {/* Этот слой делает фон чуть темнее, чтобы статус читался лучше. */}
             <div className={styles.mediaShade} aria-hidden="true" />
-            {/* Этот блок размещает статус и кнопку заказа в центре экрана. */}
+            {/* Этот блок размещает статус, кнопку и стрелки в нижней части экрана. */}
             <div className={styles.orderButtonWrap}>
               {/* Этот элемент показывает текст с временем для заказа. */}
               <div className={styles.orderStatus} aria-label="Время работы">
@@ -162,6 +162,11 @@ export default function Hero() {
               >
                 {heroOrderButtonText.label}
               </button>
+              {/* Этот элемент показывает декоративные стрелки вниз под кнопкой. */}
+              <div className={styles.orderArrow} aria-hidden="true">
+                <span className={styles.orderArrowMark} />
+                <span className={styles.orderArrowMark} />
+              </div>
             </div>
           </div>
         </div>
