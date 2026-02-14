@@ -15,6 +15,7 @@ import {
 } from "react";
 import styles from "./Navigation.module.css";
 import { CartContext } from "@/components/Cart/CartProvider";
+import { formatMenuPrice } from "@/lib/menuData";
 
 // Этот список хранит подписи и адреса для пунктов меню.
 const navLinks: { href: string; label: string }[] = [
@@ -57,7 +58,8 @@ function NavigationLinksList({
 
 export default function Navigation() {
   // Эти данные показывают, сколько напитков в корзине и какие позиции уже добавлены.
-  const { totalCount, items } = useContext(CartContext);
+  const { totalCount, items, increaseItemQuantity, decreaseItemQuantity } =
+    useContext(CartContext);
   // Этот признак показывает, что страница уже прошла гидратацию и можно показывать данные из браузера.
   const isHydrated = useSyncExternalStore(
     () => () => {},
@@ -107,6 +109,16 @@ export default function Navigation() {
   // Этот обработчик открывает и закрывает панель корзины по клику на иконку.
   const handleCartButtonClick = () => {
     setIsCartOpen((previousValue) => !previousValue);
+  };
+
+  // Этот обработчик добавляет одну порцию выбранной позиции прямо в корзине.
+  const handleIncreaseItemClick = (id: string) => {
+    increaseItemQuantity(id);
+  };
+
+  // Этот обработчик убирает одну порцию выбранной позиции прямо в корзине.
+  const handleDecreaseItemClick = (id: string) => {
+    decreaseItemQuantity(id);
   };
 
   return (
@@ -162,14 +174,47 @@ export default function Navigation() {
                     </p>
                   ) : (
                     <ul className={styles.cartItemsList}>
-                      {items.map((item) => (
-                        <li key={item.id} className={styles.cartItemRow}>
-                          <span className={styles.cartItemName}>{item.name}</span>
-                          <span className={styles.cartItemQuantity}>
-                            {item.quantity} шт
-                          </span>
-                        </li>
-                      ))}
+                      {items.map((item) => {
+                        const resolvedItemPrice =
+                          typeof item.price === "number" &&
+                          Number.isFinite(item.price)
+                            ? item.price
+                            : null;
+                        const itemTotalPrice = resolvedItemPrice !== null
+                          ? formatMenuPrice(resolvedItemPrice * item.quantity)
+                          : "Цена уточняется";
+
+                        return (
+                          <li key={item.id} className={styles.cartItemRow}>
+                            <span className={styles.cartItemName}>{item.name}</span>
+                            {/* Этот блок в центре строки позволяет уменьшать и увеличивать количество позиции. */}
+                            <span className={styles.cartItemControls}>
+                              <button
+                                type="button"
+                                className={`${styles.cartQuantityButton} ${styles.cartQuantityButtonMinus}`}
+                                aria-label={`Уменьшить количество: ${item.name}`}
+                                onClick={() => handleDecreaseItemClick(item.id)}
+                              >
+                                -
+                              </button>
+                              <span className={styles.cartItemQuantity}>
+                                {item.quantity}
+                              </span>
+                              <button
+                                type="button"
+                                className={`${styles.cartQuantityButton} ${styles.cartQuantityButtonPlus}`}
+                                aria-label={`Увеличить количество: ${item.name}`}
+                                onClick={() => handleIncreaseItemClick(item.id)}
+                              >
+                                +
+                              </button>
+                            </span>
+                            <span className={styles.cartItemPrice}>
+                              {itemTotalPrice}
+                            </span>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </section>

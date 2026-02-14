@@ -24,6 +24,8 @@ type CartContextValue = {
   items: CartItem[];
   totalCount: number;
   addItem: (item: CartItemInput) => void;
+  increaseItemQuantity: (id: string) => void;
+  decreaseItemQuantity: (id: string) => void;
 };
 
 const cartStorageKey = "beno-cart-items";
@@ -75,6 +77,8 @@ export const CartContext = createContext<CartContextValue>({
   items: [],
   totalCount: 0,
   addItem: () => {},
+  increaseItemQuantity: () => {},
+  decreaseItemQuantity: () => {},
 });
 
 type CartProviderProps = {
@@ -109,6 +113,26 @@ export default function CartProvider({ children }: CartProviderProps) {
     });
   };
 
+  // Эта функция увеличивает количество позиции в корзине по кнопке «+».
+  const increaseItemQuantity = (id: string) => {
+    setItems((previousItems) =>
+      previousItems.map((entry) =>
+        entry.id === id ? { ...entry, quantity: entry.quantity + 1 } : entry
+      )
+    );
+  };
+
+  // Эта функция уменьшает количество позиции по кнопке «−» и убирает позицию, если осталось ноль.
+  const decreaseItemQuantity = (id: string) => {
+    setItems((previousItems) =>
+      previousItems
+        .map((entry) =>
+          entry.id === id ? { ...entry, quantity: entry.quantity - 1 } : entry
+        )
+        .filter((entry) => entry.quantity > 0)
+    );
+  };
+
   // Этот счетчик показывает общее число напитков, которые сейчас лежат в корзине.
   const totalCount = useMemo(
     () => items.reduce((sum, item) => sum + item.quantity, 0),
@@ -117,7 +141,15 @@ export default function CartProvider({ children }: CartProviderProps) {
 
   return (
     // Этот блок передает текущую корзину и действия для нее всем вложенным компонентам.
-    <CartContext.Provider value={{ items, totalCount, addItem }}>
+    <CartContext.Provider
+      value={{
+        items,
+        totalCount,
+        addItem,
+        increaseItemQuantity,
+        decreaseItemQuantity,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
