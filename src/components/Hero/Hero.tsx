@@ -1,15 +1,13 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает фоновую картинку, статус работы и быстрые кнопки действий.
- Человек может увидеть текущее состояние кофейни и сразу перейти к заказу или меню.
+ Он показывает фоновую картинку и статус работы.
+ Человек может увидеть текущее состояние кофейни.
 */
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useLayoutEffect, useState, type CSSProperties } from "react";
 import styles from "./Hero.module.css";
-import { contactData } from "@/components/shared/contactData";
 
 // Этот объект хранит время работы кофейни для блока на первом экране.
 const heroWorkingHours = {
@@ -18,16 +16,6 @@ const heroWorkingHours = {
   label: "с 7:00 до 00:00",
   openLabel: "Открыто сейчас",
   closedLabel: "Закрыто сейчас",
-};
-
-// Этот объект хранит подписи и ссылки для быстрых кнопок на первом экране.
-const heroActionText = {
-  primaryLabel: "Смотреть меню",
-  primaryHref: "#menu",
-  primaryAriaLabel: "Прокрутить к меню",
-  secondaryLabel: "Быстрый заказ",
-  secondaryHref: contactData.phoneLink,
-  secondaryAriaLabel: `Позвонить по номеру ${contactData.phoneText}`,
 };
 
 // Этот объект хранит две картинки для главного экрана: когда кофейня открыта и когда закрыта.
@@ -114,9 +102,9 @@ export default function Hero() {
     // Этот блок показывает главный экран приветствия кофейни.
     <section className={styles.hero} style={heroStyle}>
       <div className="container">
-        {/* Этот блок размещает главный фон, статус и кнопки в сетке секции. */}
+        {/* Этот блок размещает главный фон и статус в сетке секции. */}
         <div className={styles.layout}>
-          {/* Этот блок показывает главный фон и действия на первом экране. */}
+          {/* Этот блок показывает главный фон и статус на первом экране. */}
           <div className={styles.media}>
             {/* Этот блок показывает фоновую картинку, которая меняется по статусу кофейни. */}
             <div className={styles.mediaVisual}>
@@ -130,11 +118,11 @@ export default function Hero() {
                 sizes="100vw"
               />
             </div>
-            {/* Этот слой делает фон чуть темнее, чтобы текст и кнопки читались лучше. */}
+            {/* Этот слой делает фон чуть темнее, чтобы статус читался лучше. */}
             <div className={styles.mediaShade} aria-hidden="true" />
-            {/* Этот блок размещает статус и кнопки в нижней части первого экрана. */}
+            {/* Этот блок размещает статус в нижней части первого экрана. */}
             <div className={styles.mediaOverlay}>
-              {/* Этот блок объединяет статус работы и кнопки на одном фоне. */}
+              {/* Этот блок объединяет элементы статуса работы на одном фоне. */}
               <div className={styles.mediaTitle}>
                 <div className={styles.mediaHeading}>
                   {/* Этот блок показывает статус работы, но на маленьких экранах скрывается. */}
@@ -154,25 +142,6 @@ export default function Hero() {
                       <span aria-hidden="true">•</span>
                       <span>{heroWorkingHours.label}</span>
                     </span>
-                  </div>
-                  {/* Этот блок показывает быстрые кнопки для перехода к меню и заказу. */}
-                  <div className={styles.mediaActions}>
-                    {/* Эта кнопка прокручивает страницу к меню. */}
-                    <Link
-                      className={`button ${styles.mediaActionButton}`}
-                      href={heroActionText.primaryHref}
-                      aria-label={heroActionText.primaryAriaLabel}
-                    >
-                      {heroActionText.primaryLabel}
-                    </Link>
-                    {/* Эта кнопка собирается вызвать номер для быстрого заказа. */}
-                    <a
-                      className={`button ${styles.mediaActionButton} ${styles.mediaActionSecondary}`}
-                      href={heroActionText.secondaryHref}
-                      aria-label={heroActionText.secondaryAriaLabel}
-                    >
-                      {heroActionText.secondaryLabel}
-                    </a>
                   </div>
                 </div>
               </div>

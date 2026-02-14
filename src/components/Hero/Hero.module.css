@@ -86,19 +86,6 @@
   .mediaBadge {
     display: none;
   }
-
-  .mediaActions {
-    gap: 0.5rem;
-  }
-
-  .mediaActionButton {
-    padding: 0.55rem 0.95rem;
-    font-size: var(--text-sm);
-  }
-
-  .mediaActionSecondary {
-    padding: 0.5rem 0.9rem;
-  }
 }
 
 .mediaOverlay {
@@ -135,35 +122,6 @@
 .mediaHeading > * {
   position: relative;
   z-index: 1;
-}
-
-.mediaActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: center;
-  justify-content: center;
-}
-
-.mediaActionButton {
-  border: none;
-  background-color: rgba(255, 255, 255, 0.95);
-  color: #1b1b1b;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  backdrop-filter: blur(18px);
-  padding-inline: 1.3rem;
-}
-
-.mediaActionButton:hover,
-.mediaActionButton:focus-visible {
-  transform: translateY(-1px);
-}
-
-.mediaActionSecondary {
-  background: linear-gradient(140deg, #f08a41 0%, #be4e1f 55%, #a93d1c 100%);
-  color: #fffaf3;
-  backdrop-filter: blur(18px);
-  padding-inline: 1.5rem;
 }
 
 .mediaBadge {
@@ -254,7 +212,7 @@
     gap: var(--space-5);
   }
 
-  /* На широких экранах выравниваем статус и кнопки по центру строки. */
+  /* На широких экранах выравниваем статус по центру строки. */
   .mediaOverlay {
     align-items: center;
     justify-content: center;
@@ -265,9 +223,5 @@
     justify-content: center;
     align-items: center;
     gap: clamp(1rem, 2vw, 1.75rem);
-  }
-
-  .mediaActions {
-    flex-wrap: nowrap;
   }
 }
