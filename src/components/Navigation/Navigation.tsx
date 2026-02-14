@@ -109,11 +109,6 @@ export default function Navigation() {
     setIsCartOpen((previousValue) => !previousValue);
   };
 
-  // Этот обработчик закрывает панель корзины по кнопке «Закрыть».
-  const handleCartCloseClick = () => {
-    setIsCartOpen(false);
-  };
-
   return (
     <>
       {/* Этот блок показывает шапку с названием и меню. */}
@@ -160,13 +155,6 @@ export default function Navigation() {
                 >
                   <div className={styles.cartPanelHeader}>
                     <p className={styles.cartPanelTitle}>Корзина</p>
-                    <button
-                      type="button"
-                      className={styles.cartCloseButton}
-                      onClick={handleCartCloseClick}
-                    >
-                      Закрыть
-                    </button>
                   </div>
                   {items.length === 0 ? (
                     <p className={styles.cartEmptyText}>
