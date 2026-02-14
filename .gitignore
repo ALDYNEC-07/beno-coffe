@@ -1,6 +1,11 @@
 # macOS
 .DS_Store
 
+# Env files
+.env
+.env.*
+!.env.example
+
 # Node/Next
 node_modules/
 .next/
