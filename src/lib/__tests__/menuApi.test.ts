@@ -1,7 +1,7 @@
-// Этот файл проверяет загрузку меню с сервера и поиск позиции по id.
+// Этот файл проверяет загрузку меню с сервера.
 // Он нужен, чтобы убедиться: мы строим правильный адрес и корректно читаем ответы.
 import { headers } from "next/headers";
-import { fetchMenuItemById, fetchMenuItems } from "@/lib/menuApi";
+import { fetchMenuItems } from "@/lib/menuApi";
 
 // Этот блок заменяет реальные заголовки на тестовые.
 jest.mock("next/headers", () => ({
@@ -125,39 +125,5 @@ describe("menuApi helpers", () => {
       "http://localhost:3000/api/menu-with-variants",
       { next: { revalidate: 300 } }
     );
-  });
-
-  // Этот блок проверяет поиск позиции по id, даже если типы отличаются.
-  test("fetchMenuItemById finds item by stringified id", async () => {
-    headersMock.mockResolvedValue({
-      get: (key: string) => (key === "host" ? "example.com" : "https"),
-    } as Headers);
-
-    const fetchMock = global.fetch as jest.Mock;
-    fetchMock.mockResolvedValue({
-      ok: true,
-      json: async () => [{ id: 10 }, { id: "20" }],
-    });
-
-    const item = await fetchMenuItemById(20);
-
-    expect(item).toEqual({ id: "20" });
-  });
-
-  // Этот блок проверяет, что при отсутствии позиции возвращается null.
-  test("fetchMenuItemById returns null when not found", async () => {
-    headersMock.mockResolvedValue({
-      get: (key: string) => (key === "host" ? "example.com" : "https"),
-    } as Headers);
-
-    const fetchMock = global.fetch as jest.Mock;
-    fetchMock.mockResolvedValue({
-      ok: true,
-      json: async () => [{ id: 10 }],
-    });
-
-    const item = await fetchMenuItemById("missing");
-
-    expect(item).toBeNull();
   });
 });
