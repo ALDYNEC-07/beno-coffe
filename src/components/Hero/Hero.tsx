@@ -9,14 +9,10 @@ import Image from "next/image";
 import { useEffect, useLayoutEffect, useState, type CSSProperties } from "react";
 import styles from "./Hero.module.css";
 import { contactData } from "@/components/shared/contactData";
+import { businessData } from "@/components/shared/businessData";
 
-// Этот объект хранит время работы кофейни для блока на первом экране.
-const heroWorkingHours = {
-  startMinutes: 7 * 60,
-  endMinutes: 24 * 60,
-  openUntilLabel: "до 00:00",
-  closedUntilLabel: "до 7:00",
-};
+// Этот объект берет общее время работы кофейни из одного общего источника.
+const heroWorkingHours = businessData.workingHours;
 
 // Этот объект хранит две картинки для главного экрана: когда кофейня открыта и когда закрыта.
 const heroVisualState = {

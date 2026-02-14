@@ -182,12 +182,6 @@
   flex-wrap: wrap;
 }
 
-.legalItem + .legalItem::before {
-  content: "·";
-  margin: 0 0.5rem;
-  color: var(--text-muted-soft);
-}
-
 @media (min-width: 720px) {
   .grid {
     grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr));

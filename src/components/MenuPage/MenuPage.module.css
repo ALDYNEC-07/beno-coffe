@@ -36,16 +36,6 @@
   scroll-margin-top: clamp(65px, 9vw, 92px);
 }
 
-.intro {
-  margin: 0 auto;
-  padding-top: var(--space-2);
-  font-size: var(--text-lg);
-  line-height: 1.35;
-  color: var(--text-muted);
-  max-width: var(--measure);
-  text-align: center;
-}
-
 .header {
   display: block;
   margin-bottom: 0;

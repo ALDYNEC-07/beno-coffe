@@ -15,3 +15,4 @@ out/
 coverage/
 .turbo/
 .vercel/
+tsconfig.tsbuildinfo
