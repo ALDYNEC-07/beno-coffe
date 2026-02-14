@@ -1,10 +1,11 @@
 /*
  Этот файл определяет главный приветственный блок сайта.
- Он показывает статус работы и быстрые кнопки действий.
- Человек может узнать время работы и сразу перейти к заказу или меню.
+ Он показывает фоновую картинку, статус работы и быстрые кнопки действий.
+ Человек может увидеть текущее состояние кофейни и сразу перейти к заказу или меню.
 */
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useState, type CSSProperties } from "react";
 import styles from "./Hero.module.css";
@@ -29,6 +30,14 @@ const heroActionText = {
   secondaryAriaLabel: `Позвонить по номеру ${contactData.phoneText}`,
 };
 
+// Этот объект хранит две картинки для главного экрана: когда кофейня открыта и когда закрыта.
+const heroVisualState = {
+  openImageSrc: "/benocoffe-open.png",
+  closedImageSrc: "/benocoffe-close.png",
+  openImageAlt: "Кофейня BENO во время работы",
+  closedImageAlt: "Кофейня BENO после закрытия",
+};
+
 type HeroStyle = CSSProperties & {
   "--hero-nav-offset"?: string;
 };
@@ -45,6 +54,11 @@ export default function Hero() {
       minutes < heroWorkingHours.endMinutes
     );
   });
+
+  // Этот элемент выбирает нужную картинку для первого экрана по текущему статусу кофейни.
+  const currentHeroImage = isOpenNow
+    ? { src: heroVisualState.openImageSrc, alt: heroVisualState.openImageAlt }
+    : { src: heroVisualState.closedImageSrc, alt: heroVisualState.closedImageAlt };
 
   // Этот код определяет высоту шапки, чтобы главный блок занимал оставшийся видимый экран.
   useLayoutEffect(() => {
@@ -104,6 +118,20 @@ export default function Hero() {
         <div className={styles.layout}>
           {/* Этот блок показывает главный фон и действия на первом экране. */}
           <div className={styles.media}>
+            {/* Этот блок показывает фоновую картинку, которая меняется по статусу кофейни. */}
+            <div className={styles.mediaVisual}>
+              {/* Эта картинка автоматически выбирается: открыто сейчас или закрыто сейчас. */}
+              <Image
+                className={styles.mediaImage}
+                src={currentHeroImage.src}
+                alt={currentHeroImage.alt}
+                fill
+                priority
+                sizes="100vw"
+              />
+            </div>
+            {/* Этот слой делает фон чуть темнее, чтобы текст и кнопки читались лучше. */}
+            <div className={styles.mediaShade} aria-hidden="true" />
             {/* Этот блок размещает статус и кнопки в нижней части первого экрана. */}
             <div className={styles.mediaOverlay}>
               {/* Этот блок объединяет статус работы и кнопки на одном фоне. */}

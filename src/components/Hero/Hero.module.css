@@ -48,6 +48,30 @@
   grid-column: 1 / -1;
 }
 
+.mediaVisual {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.mediaImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+.mediaShade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(22, 13, 6, 0.14) 0%,
+    rgba(22, 13, 6, 0.1) 42%,
+    rgba(22, 13, 6, 0.34) 100%
+  );
+}
+
 @media (max-width: 719px) {
 
   .media {
@@ -85,7 +109,7 @@
   flex-direction: column;
   align-items: stretch;
   gap: 0.6rem;
-  z-index: 1;
+  z-index: 2;
 }
 
 .mediaTitle {
