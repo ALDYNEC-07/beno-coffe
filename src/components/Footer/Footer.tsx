@@ -5,7 +5,7 @@
 */
 "use client";
 
-import { useState } from "react";
+
 import Link from "next/link";
 import { contactData } from "@/components/shared/contactData";
 import { businessData } from "@/components/shared/businessData";
@@ -43,12 +43,6 @@ const socialLinks = [
 ];
 
 export default function Footer() {
-  // Этот объект хранит, какие блоки подвала сейчас раскрыты.
-  const [openBlocks, setOpenBlocks] = useState({
-    intro: false,
-    hours: false,
-    contact: false,
-  });
   // Этот год нужен, чтобы строка копирайта обновлялась автоматически и не устаревала.
   const currentYear = new Date().getFullYear();
   // Этот текст показывает диапазон лет от старта кофейни до текущего года.
@@ -57,69 +51,24 @@ export default function Footer() {
       ? `${businessData.foundedYear} - ${currentYear}`
       : String(businessData.foundedYear);
 
-  // Эта функция переключает раскрытие блока при нажатии на его заголовок.
-  const handleToggle = (blockKey: "intro" | "hours" | "contact") => {
-    setOpenBlocks((prev) => ({ ...prev, [blockKey]: !prev[blockKey] }));
-  };
-
   return (
     // Этот блок показывает подвал с контактами и служебной информацией.
     <footer id="footer" className={styles.footer} aria-label="Контакты и служебная информация">
       <div className="container">
         {/* Этот блок делит подвал на три основные колонки. */}
         <div className={styles.grid}>
-          {/* Этот блок показывает слоган кофейни и раскрывает его по нажатию. */}
+          {/* Этот блок показывает слоган кофейни. */}
           <div className={styles.block}>
-            <h3 className={styles.blockTitle}>
-              {/* Эта кнопка раскрывает и скрывает описание кофейни. */}
-              <button
-                type="button"
-                className={`${styles.blockToggle} ${
-                  openBlocks.intro ? styles.blockToggleOpen : ""
-                }`}
-                aria-expanded={openBlocks.intro}
-                aria-controls="footer-intro"
-                onClick={() => handleToggle("intro")}
-              >
-                <span>{footerIntro.title}</span>
-                <span className={styles.chevron} aria-hidden="true" />
-              </button>
-            </h3>
-            {/* Этот блок показывает слоган кофейни, когда он раскрыт. */}
-            <div
-              id="footer-intro"
-              className={`${styles.blockContent} ${
-                openBlocks.intro ? styles.blockContentOpen : ""
-              }`}
-            >
+            <h3 className={styles.blockTitle}>{footerIntro.title}</h3>
+            <div className={styles.blockContent}>
               <p className={`${styles.muted} ${styles.introText}`}>{footerIntro.slogan}</p>
             </div>
           </div>
 
-          {/* Этот блок показывает часы работы и адрес и раскрывает детали по нажатию. */}
+          {/* Этот блок показывает часы работы и адрес. */}
           <div className={styles.block}>
-            <h3 className={styles.blockTitle}>
-              {/* Эта кнопка раскрывает и скрывает блок с часами и адресом. */}
-              <button
-                type="button"
-                className={`${styles.blockToggle} ${
-                  openBlocks.hours ? styles.blockToggleOpen : ""
-                }`}
-                aria-expanded={openBlocks.hours}
-                aria-controls="footer-hours"
-                onClick={() => handleToggle("hours")}
-              >
-                <span>{hoursInfo.title}</span>
-                <span className={styles.chevron} aria-hidden="true" />
-              </button>
-            </h3>
-            {/* Этот список показывает часы работы одной строкой и адрес, когда блок раскрыт. */}
-            <div
-              id="footer-hours"
-              className={`${styles.blockContent} ${
-                openBlocks.hours ? styles.blockContentOpen : ""
-              }`}
-            >
+            <h3 className={styles.blockTitle}>{hoursInfo.title}</h3>
+            <div className={styles.blockContent}>
               <ul className={styles.list}>
                 <li className={styles.hoursBig}>{hoursInfo.todayLabel}</li>
                 <li>
@@ -132,30 +81,10 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Этот блок показывает телефон, почту и ссылки на соцсети и раскрывает детали по нажатию. */}
+          {/* Этот блок показывает телефон, почту и ссылки на соцсети. */}
           <div className={styles.block}>
-            <h3 className={styles.blockTitle}>
-              {/* Эта кнопка раскрывает и скрывает блок со связью и соцсетями. */}
-              <button
-                type="button"
-                className={`${styles.blockToggle} ${
-                  openBlocks.contact ? styles.blockToggleOpen : ""
-                }`}
-                aria-expanded={openBlocks.contact}
-                aria-controls="footer-contact"
-                onClick={() => handleToggle("contact")}
-              >
-                <span>{contactInfo.title}</span>
-                <span className={styles.chevron} aria-hidden="true" />
-              </button>
-            </h3>
-            {/* Этот список показывает способы связи и соцсети, когда блок раскрыт. */}
-            <div
-              id="footer-contact"
-              className={`${styles.blockContent} ${
-                openBlocks.contact ? styles.blockContentOpen : ""
-              }`}
-            >
+            <h3 className={styles.blockTitle}>{contactInfo.title}</h3>
+            <div className={styles.blockContent}>
               <ul className={styles.list}>
                 <li>
                   <strong>{contactInfo.phoneLabel}</strong>{" "}

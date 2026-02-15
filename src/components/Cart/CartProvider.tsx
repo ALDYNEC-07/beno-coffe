@@ -5,7 +5,7 @@
 */
 "use client";
 
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState, useCallback } from "react";
 
 type CartItem = {
   id: string;
@@ -76,9 +76,9 @@ const getInitialCartItems = () => {
 export const CartContext = createContext<CartContextValue>({
   items: [],
   totalCount: 0,
-  addItem: () => {},
-  increaseItemQuantity: () => {},
-  decreaseItemQuantity: () => {},
+  addItem: () => { },
+  increaseItemQuantity: () => { },
+  decreaseItemQuantity: () => { },
 });
 
 type CartProviderProps = {
@@ -88,15 +88,25 @@ type CartProviderProps = {
 // Этот компонент хранит корзину и передает данные всем вложенным частям сайта.
 export default function CartProvider({ children }: CartProviderProps) {
   // Этот список хранит все позиции, которые человек добавил в корзину.
-  const [items, setItems] = useState<CartItem[]>(getInitialCartItems);
+  // Инициализируем пустым массивом, чтобы избежать ошибок гидратации (HTML с сервера != HTML клиента).
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Этот блок загружает корзину из памяти браузера один раз при старте.
+  useEffect(() => {
+    setItems(getInitialCartItems());
+    setIsInitialized(true);
+  }, []);
 
   // Этот блок автоматически сохраняет корзину в память браузера после каждого изменения.
   useEffect(() => {
+    if (!isInitialized) return;
     window.localStorage.setItem(cartStorageKey, JSON.stringify(items));
-  }, [items]);
+  }, [items, isInitialized]);
 
   // Эта функция срабатывает по нажатию кнопки «Добавить» и увеличивает количество выбранной позиции.
-  const addItem = (item: CartItemInput) => {
+  // Обернута в useCallback, чтобы не создавать новую функцию при каждом обновлении страницы.
+  const addItem = useCallback((item: CartItemInput) => {
     setItems((previousItems) => {
       const existingItemIndex = previousItems.findIndex(
         (entry) => entry.id === item.id
@@ -105,25 +115,26 @@ export default function CartProvider({ children }: CartProviderProps) {
         return [...previousItems, { ...item, quantity: 1 }];
       }
 
-      return previousItems.map((entry, index) =>
-        index === existingItemIndex
-          ? { ...entry, quantity: entry.quantity + 1 }
-          : entry
-      );
+      const newItems = [...previousItems];
+      newItems[existingItemIndex] = {
+        ...newItems[existingItemIndex],
+        quantity: newItems[existingItemIndex].quantity + 1,
+      };
+      return newItems;
     });
-  };
+  }, []);
 
   // Эта функция увеличивает количество позиции в корзине по кнопке «+».
-  const increaseItemQuantity = (id: string) => {
+  const increaseItemQuantity = useCallback((id: string) => {
     setItems((previousItems) =>
       previousItems.map((entry) =>
         entry.id === id ? { ...entry, quantity: entry.quantity + 1 } : entry
       )
     );
-  };
+  }, []);
 
   // Эта функция уменьшает количество позиции по кнопке «−» и убирает позицию, если осталось ноль.
-  const decreaseItemQuantity = (id: string) => {
+  const decreaseItemQuantity = useCallback((id: string) => {
     setItems((previousItems) =>
       previousItems
         .map((entry) =>
@@ -131,7 +142,7 @@ export default function CartProvider({ children }: CartProviderProps) {
         )
         .filter((entry) => entry.quantity > 0)
     );
-  };
+  }, []);
 
   // Этот счетчик показывает общее число напитков, которые сейчас лежат в корзине.
   const totalCount = useMemo(
@@ -139,17 +150,21 @@ export default function CartProvider({ children }: CartProviderProps) {
     [items]
   );
 
+  // Группируем значения контекста, чтобы избежать лишних перерисовок у детей.
+  const contextValue = useMemo(
+    () => ({
+      items,
+      totalCount,
+      addItem,
+      increaseItemQuantity,
+      decreaseItemQuantity,
+    }),
+    [items, totalCount, addItem, increaseItemQuantity, decreaseItemQuantity]
+  );
+
   return (
     // Этот блок передает текущую корзину и действия для нее всем вложенным компонентам.
-    <CartContext.Provider
-      value={{
-        items,
-        totalCount,
-        addItem,
-        increaseItemQuantity,
-        decreaseItemQuantity,
-      }}
-    >
+    <CartContext.Provider value={contextValue}>
       {children}
     </CartContext.Provider>
   );

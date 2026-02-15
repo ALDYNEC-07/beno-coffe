@@ -27,7 +27,7 @@ export default function About() {
         {/* Этот блок делит секцию на текстовую часть и медиа. */}
         <div className={styles.layout}>
           {/* Этот блок содержит заголовок и описание. */}
-          <div className="stack">
+          <div className={`${styles.textColumn} stack`}>
             <h2 className={styles.title}>{aboutContent.title}</h2>
             <p className={styles.lead}>{aboutContent.description}</p>
           </div>

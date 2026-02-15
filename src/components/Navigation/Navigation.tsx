@@ -13,7 +13,6 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
   type AnimationEvent,
 } from "react";
 import styles from "./Navigation.module.css";
@@ -64,14 +63,11 @@ export default function Navigation() {
   // Эти данные показывают, сколько напитков в корзине и какие позиции уже добавлены.
   const { totalCount, items, increaseItemQuantity, decreaseItemQuantity } =
     useContext(CartContext);
-  // Этот признак показывает, что страница уже прошла гидратацию и можно показывать данные из браузера.
-  const isHydrated = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false
-  );
-  // Этот счетчик держит стабильный вывод до конца гидратации, чтобы избежать расхождения с сервером.
-  const visibleCartCount = isHydrated ? totalCount : 0;
+
+  // CartProvider теперь гарантирует безопасность гидратации (начинает с 0), 
+  // поэтому специальные проверки здесь больше не нужны.
+  const visibleCartCount = totalCount;
+
   // Этот признак хранит, открыта ли панель корзины.
   const [isCartOpen, setIsCartOpen] = useState(false);
   // Этот признак хранит, открыто ли меню прямо сейчас.
@@ -98,11 +94,10 @@ export default function Navigation() {
         return;
       }
 
-      if (cartButtonRef.current?.contains(targetNode)) {
-        return;
-      }
-
-      if (cartPanelRef.current?.contains(targetNode)) {
+      if (
+        cartButtonRef.current?.contains(targetNode) ||
+        cartPanelRef.current?.contains(targetNode)
+      ) {
         return;
       }
 
@@ -110,7 +105,6 @@ export default function Navigation() {
     };
 
     document.addEventListener("pointerdown", handleDocumentPointerDown);
-
     return () => {
       document.removeEventListener("pointerdown", handleDocumentPointerDown);
     };
@@ -275,7 +269,7 @@ export default function Navigation() {
                         {items.map((item) => {
                           const resolvedItemPrice =
                             typeof item.price === "number" &&
-                            Number.isFinite(item.price)
+                              Number.isFinite(item.price)
                               ? item.price
                               : null;
                           const itemTotalPrice = resolvedItemPrice !== null

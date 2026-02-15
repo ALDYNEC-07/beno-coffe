@@ -7,16 +7,12 @@
   letter-spacing: 0.2px;
   color: #1b1b1b;
   background-color: #fffaf3;
-  background-image: radial-gradient(
-      70% 120% at 50% -10%,
+  background-image: radial-gradient(70% 120% at 50% -10%,
       rgba(255, 255, 255, 0.9),
-      rgba(255, 255, 255, 0)
-    ),
-    linear-gradient(
-      180deg,
+      rgba(255, 255, 255, 0)),
+    linear-gradient(180deg,
       rgba(255, 248, 236, 0.95),
-      rgba(255, 248, 236, 0.55)
-    );
+      rgba(255, 248, 236, 0.55));
 }
 
 .layout {
@@ -45,16 +41,15 @@
 
 .aside .card {
   border-radius: 10px;
-  border-bottom: 1px solid #1b1b1b38;
+  border-bottom: none;
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .media {
   border-radius: var(--radius);
-  background: linear-gradient(
-      135deg,
+  background: linear-gradient(135deg,
       rgba(255, 248, 236, 0.9),
-      rgba(244, 232, 214, 0.7)
-    ),
+      rgba(244, 232, 214, 0.7)),
     #f7f4ef;
   aspect-ratio: 3 / 3;
   position: relative;
@@ -93,10 +88,10 @@
   gap: 0;
   padding: var(--space-3);
   border-radius: 10px;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.4);
   box-shadow: none;
   margin-top: 0;
-  border-bottom: 1px solid #1b1b1b38;
+  border-bottom: none;
 }
 
 .metaRow {
@@ -145,14 +140,8 @@
 
 @media (max-width: 719px) {
   .aside {
-    box-sizing: border-box;
-    grid-auto-flow: column;
-    grid-auto-columns: 80vw;
-    overflow-x: auto;
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    padding-inline: 10vw;
+    /* Stack vertically on mobile, no scroll */
+    width: 100%;
     padding-bottom: var(--space-2);
   }
 }
