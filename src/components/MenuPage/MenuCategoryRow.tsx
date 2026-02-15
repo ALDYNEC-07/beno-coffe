@@ -272,16 +272,37 @@ export default function MenuCategoryRow({
               <article className={cardClassName}>
                 {/* Этот блок показывает фотографию позиции отдельно от текста. */}
                 {imageSrc ? (
-                  <div className={styles.cardVisual} aria-hidden="true">
-                    <Image
-                      className={styles.image}
-                      src={imageSrc}
-                      alt=""
-                      fill
-                      loading={isSelected ? "eager" : "lazy"}
-                      sizes="(max-width: 719px) 67vw, 270px"
-                    />
-                  </div>
+                  hasExtraDetails ? (
+                    // Эта кнопка на фото открывает или закрывает подробности так же, как «Подробнее».
+                    <button
+                      type="button"
+                      className={`${styles.cardVisual} ${styles.cardVisualButton}`}
+                      aria-label={`${isExpanded ? text.hideDetailsLabel : text.detailsLabel}: ${nameLabel}`}
+                      aria-expanded={isExpanded}
+                      aria-controls={detailsPanelId}
+                      onClick={() => handleDetailsToggle(cardKey, index)}
+                    >
+                      <Image
+                        className={styles.image}
+                        src={imageSrc}
+                        alt=""
+                        fill
+                        loading={isSelected ? "eager" : "lazy"}
+                        sizes="(max-width: 719px) 67vw, 270px"
+                      />
+                    </button>
+                  ) : (
+                    <div className={styles.cardVisual} aria-hidden="true">
+                      <Image
+                        className={styles.image}
+                        src={imageSrc}
+                        alt=""
+                        fill
+                        loading={isSelected ? "eager" : "lazy"}
+                        sizes="(max-width: 719px) 67vw, 270px"
+                      />
+                    </div>
+                  )
                 ) : null}
                 {/* Этот блок показывает текст карточки поверх фото с блюром, чтобы текст было легче читать. */}
                 <div className={cardDetailsClassName}>
