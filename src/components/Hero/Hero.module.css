@@ -1,6 +1,6 @@
 .hero {
-  height: calc(100svh - var(--hero-nav-offset, var(--nav-height)));
-  min-height: calc(100svh - var(--hero-nav-offset, var(--nav-height)));
+  height: calc(100svh - var(--nav-height));
+  min-height: calc(100svh - var(--nav-height));
   padding: 0;
   font-size: var(--text-base);
   line-height: var(--line-height-body);
@@ -153,6 +153,10 @@
   Main CTA Button 
 */
 .mainCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   appearance: none;
   background: #1b1b1b;
   /* Dark strong button */

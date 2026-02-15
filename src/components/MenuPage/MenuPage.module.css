@@ -95,11 +95,8 @@
 }
 
 .gridWrap {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
+  width: 100%;
   overflow: hidden;
-  /* Hide scrollbar if possible or just contain */
 }
 
 .grid {

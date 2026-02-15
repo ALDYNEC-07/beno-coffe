@@ -6,7 +6,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Hero.module.css";
 import { contactData } from "@/components/shared/contactData";
 import { businessData } from "@/components/shared/businessData";
@@ -18,7 +18,6 @@ const heroWorkingHours = businessData.workingHours;
 const heroOrderButtonText = {
   label: "Заказать",
   ariaLabel: "Плавно перейти к меню для заказа",
-  menuSelector: "#menu",
 };
 
 // Этот объект хранит текст и ссылку для кнопки звонка рядом со статусом.
@@ -28,17 +27,9 @@ const heroCallButtonText = {
   ariaLabel: `Позвонить по номеру ${contactData.phoneText}`,
 };
 
-type HeroStyle = CSSProperties & {
-  "--hero-nav-offset"?: string;
-};
+
 
 export default function Hero() {
-  // Это поле хранит последнюю ширину окна, чтобы не пересчитывать высоту шапки при обычном вертикальном скролле.
-  const viewportWidthRef = useRef<number | null>(null);
-  // Это поле хранит текущую высоту верхней шапки, чтобы первый экран занимал остаток видимой области.
-  // Пока точная высота еще не измерена, используется стабильная высота из общих стилей.
-  const [heroNavOffset, setHeroNavOffset] = useState<number | null>(null);
-
   // Этот элемент хранит, открыта ли кофейня прямо сейчас.
   const [isOpenNow, setIsOpenNow] = useState(() => {
     const now = new Date();
@@ -49,84 +40,10 @@ export default function Hero() {
     );
   });
 
-
-
   // Этот элемент выбирает подпись времени: до полуночи, когда открыто, или до утра, когда закрыто.
   const currentWorkingHoursLabel = isOpenNow
     ? heroWorkingHours.openUntilLabel
     : heroWorkingHours.closedUntilLabel;
-
-  // Эта функция срабатывает по нажатию на кнопку и плавно прокручивает страницу к блоку меню.
-  const handleOrderButtonClick = () => {
-    const menuSection = document.querySelector<HTMLElement>(
-      heroOrderButtonText.menuSelector
-    );
-    if (!menuSection) {
-      return;
-    }
-
-    menuSection.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
-
-  // Этот код определяет высоту шапки, чтобы главный блок занимал оставшийся видимый экран.
-  useLayoutEffect(() => {
-    const header = document.querySelector("header");
-    if (!header) {
-      return;
-    }
-
-    // Эта функция обновляет высоту шапки только когда меняется ширина окна.
-    const updateOffset = (force = false) => {
-      const nextWidth = window.innerWidth;
-      const previousWidth = viewportWidthRef.current;
-
-      if (
-        !force &&
-        previousWidth !== null &&
-        Math.abs(nextWidth - previousWidth) < 1
-      ) {
-        return;
-      }
-
-      viewportWidthRef.current = nextWidth;
-      const nextHeaderHeight = header.getBoundingClientRect().height;
-      setHeroNavOffset((previousHeight) =>
-        previousHeight !== null &&
-          Math.abs(previousHeight - nextHeaderHeight) < 0.5
-          ? previousHeight
-          : nextHeaderHeight
-      );
-    };
-
-    // Этот код делает первый точный расчет после того, как браузер закончит начальную разметку.
-    const firstMeasureId = window.requestAnimationFrame(() => {
-      updateOffset(true);
-    });
-
-    const handleResize = () => {
-      updateOffset(false);
-    };
-
-    // Этот код обновляет высоту после поворота устройства, даже если браузер не дал обычный resize в нужный момент.
-    const handleOrientationChange = () => {
-      window.requestAnimationFrame(() => {
-        updateOffset(true);
-      });
-    };
-
-    updateOffset(true);
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("orientationchange", handleOrientationChange);
-
-    return () => {
-      window.cancelAnimationFrame(firstMeasureId);
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("orientationchange", handleOrientationChange);
-    };
-  }, []);
 
   // Этот код обновляет статус работы кофейни в течение дня.
   useEffect(() => {
@@ -140,23 +57,15 @@ export default function Hero() {
       );
     };
 
-    updateOpenStatus();
     const intervalId = window.setInterval(updateOpenStatus, 60 * 1000);
 
     return () => {
       window.clearInterval(intervalId);
     };
   }, []);
-  // Эти стили передают точную высоту шапки секции, когда она уже измерена в браузере.
-  const heroStyle: HeroStyle | undefined =
-    heroNavOffset === null
-      ? undefined
-      : {
-        "--hero-nav-offset": `${heroNavOffset}px`,
-      };
 
   return (
-    <section className={styles.hero} style={heroStyle}>
+    <section className={styles.hero}>
       <div className={styles.backgroundWrapper}>
         <div className={styles.desktopBg}>
           <Image
@@ -206,14 +115,13 @@ export default function Hero() {
             </div>
 
             {/* Main CTA Button */}
-            <button
-              type="button"
+            <a
+              href="#menu"
               className={styles.mainCta}
-              onClick={handleOrderButtonClick}
               aria-label={heroOrderButtonText.ariaLabel}
             >
               {heroOrderButtonText.label}
-            </button>
+            </a>
 
             {/* Scroll Indicator */}
             <div className={styles.scrollIndicator} aria-hidden="true">

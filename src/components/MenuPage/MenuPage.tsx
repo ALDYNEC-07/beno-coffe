@@ -215,46 +215,46 @@ export default function MenuPage({ items }: MenuPageProps) {
     // Этот блок содержит всю секцию меню и верхний выбор категорий.
     <section id="menu" className={styles.menuPage} aria-label="Полное меню">
       <div className="container">
-
-        {/* Этот блок показывает линии категорий с карточками или сообщение об отсутствии данных. */}
-        {categorySections.length === 0 ? (
+        {categorySections.length === 0 && (
           <p className={styles.empty}>{menuPageText.empty}</p>
-        ) : (
-          // Этот блок собирает строки по категориям и показывает их подряд.
-          <div className={styles.categoryList}>
-            {categorySections.map((section) => {
-              const sectionTitleId = `menu-category-title-${section.key}`;
-              const initialIndex =
-                initialSelection?.categoryKey === section.key
-                  ? initialSelection.index
-                  : null;
+        )}
+      </div>
 
-              return (
-                // Этот блок хранит заголовок категории и ее линию карточек.
-                <section
-                  key={section.key}
-                  id={`menu-category-${section.key}`}
-                  className={styles.categorySection}
-                  aria-labelledby={sectionTitleId}
-                  ref={handleCategoryRef(section.key)}
-                >
+      {categorySections.length > 0 && (
+        <div className={styles.categoryList}>
+          {categorySections.map((section) => {
+            const sectionTitleId = `menu-category-title-${section.key}`;
+            const initialIndex =
+              initialSelection?.categoryKey === section.key
+                ? initialSelection.index
+                : null;
+
+            return (
+              <section
+                key={section.key}
+                id={`menu-category-${section.key}`}
+                className={styles.categorySection}
+                aria-labelledby={sectionTitleId}
+                ref={handleCategoryRef(section.key)}
+              >
+                <div className="container">
                   <h2 id={sectionTitleId} className={styles.categoryTitle}>
                     {section.label}
                   </h2>
-                  <MenuCategoryRow
-                    entries={section.entries}
-                    categoryKey={section.key}
-                    initialFocusIndex={initialIndex}
-                    scrollStoragePrefix={menuPageText.scrollStoragePrefix}
-                    text={menuPageText}
-                    onItemClick={handleItemClick}
-                  />
-                </section>
-              );
-            })}
-          </div>
-        )}
-      </div>
+                </div>
+                <MenuCategoryRow
+                  entries={section.entries}
+                  categoryKey={section.key}
+                  initialFocusIndex={initialIndex}
+                  scrollStoragePrefix={menuPageText.scrollStoragePrefix}
+                  text={menuPageText}
+                  onItemClick={handleItemClick}
+                />
+              </section>
+            );
+          })}
+        </div>
+      )}
       <ProductModal
         item={selectedItem}
         isOpen={isModalOpen}
