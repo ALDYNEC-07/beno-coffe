@@ -4,9 +4,8 @@
   --card-width: min(72vw, 300px);
   --card-image-base-height: clamp(230px, 36vw, 320px);
   --card-details-base-height: clamp(86px, 13vw, 108px);
-  --card-scale: 1.06;
   --card-blur: 3px;
-  --card-dim: 0.7;
+  --card-dim: 0.78;
   --card-transition: 220ms ease;
   --edge-padding: max(
     var(--space-4),
@@ -107,8 +106,7 @@
   display: flex;
   flex-direction: column;
   transform-origin: center;
-  transition: transform var(--card-transition), filter var(--card-transition),
-    opacity var(--card-transition);
+  transition: box-shadow var(--card-transition);
   overflow: hidden;
 }
 
@@ -134,7 +132,7 @@
   z-index: 1;
 }
 
-.cardLink:focus-within {
+.cardLink:has(:focus-visible) {
   outline: 2px solid #1b1b1b;
   outline-offset: 4px;
   border-radius: var(--radius);
@@ -149,11 +147,18 @@
 }
 
 .cardSelected {
-  transform: scale(var(--card-scale));
+  box-shadow: 0 14px 28px rgba(34, 24, 17, 0.22);
 }
 
 .cardBlurred {
+  box-shadow: 0 8px 18px rgba(34, 24, 17, 0.1);
+}
+
+.cardBlurred .cardVisual {
   filter: blur(var(--card-blur)) saturate(0.85);
+}
+
+.cardBlurred .cardDetails {
   opacity: var(--card-dim);
 }
 
@@ -165,6 +170,7 @@
   overflow: hidden;
   background: #f2ede5;
   border-radius: var(--radius);
+  transition: filter var(--card-transition);
 }
 
 .cardVisualButton {
@@ -199,10 +205,10 @@
   margin-top: auto;
   padding: var(--space-2);
   border-radius: calc(var(--radius) - 8px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
   background: rgba(255, 255, 255, 0.18);
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
+  transition: opacity var(--card-transition);
 }
 
 .cardWithImage .cardDetails {
@@ -278,7 +284,7 @@
   border-radius: 8px;
 }
 
-.cardLink:focus-within .detailsLabel {
+.cardLink:has(:focus-visible) .detailsLabel {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-decoration-color: currentColor;
