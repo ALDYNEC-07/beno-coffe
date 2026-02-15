@@ -301,23 +301,35 @@
 .addButton {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  padding: 0.38rem 0.82rem;
   border: none;
-  background: transparent;
-  color: #8a5a2d;
+  border-radius: 999px;
+  background: #8a5a2d;
+  color: #fffaf3;
   cursor: pointer;
+  transition: filter 180ms ease, transform 180ms ease;
 }
 
 .addButtonLabel {
   margin: 0;
   font-size: clamp(0.82rem, calc(var(--h2) / 2.35), 0.92rem);
   font-weight: 600;
+  line-height: 1;
   letter-spacing: 0.02em;
 }
 
 .addButton:hover .addButtonLabel {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.18em;
+  text-decoration: none;
+}
+
+.addButton:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.addButton:active {
+  transform: translateY(0);
 }
 
 .addButton:focus-visible {
