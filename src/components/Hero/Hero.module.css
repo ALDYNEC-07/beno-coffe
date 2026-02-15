@@ -1,6 +1,6 @@
 .hero {
-  height: calc(100svh - var(--hero-nav-offset, 0px));
-  min-height: calc(100svh - var(--hero-nav-offset, 0px));
+  height: calc(100svh - var(--hero-nav-offset, var(--nav-height)));
+  min-height: calc(100svh - var(--hero-nav-offset, var(--nav-height)));
   padding: 0;
   font-size: var(--text-base);
   line-height: var(--line-height-body);

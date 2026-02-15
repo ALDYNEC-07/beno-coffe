@@ -44,7 +44,8 @@ export default function Hero() {
   // Это поле хранит последнюю ширину окна, чтобы не пересчитывать высоту шапки при обычном вертикальном скролле.
   const viewportWidthRef = useRef<number | null>(null);
   // Это поле хранит текущую высоту верхней шапки, чтобы первый экран занимал остаток видимой области.
-  const [heroNavOffset, setHeroNavOffset] = useState(0);
+  // Пока точная высота еще не измерена, используется стабильная высота из общих стилей.
+  const [heroNavOffset, setHeroNavOffset] = useState<number | null>(null);
 
   // Этот элемент хранит, открыта ли кофейня прямо сейчас.
   const [isOpenNow, setIsOpenNow] = useState(() => {
@@ -104,6 +105,7 @@ export default function Hero() {
       viewportWidthRef.current = nextWidth;
       const nextHeaderHeight = header.getBoundingClientRect().height;
       setHeroNavOffset((previousHeight) =>
+        previousHeight !== null &&
         Math.abs(previousHeight - nextHeaderHeight) < 0.5
           ? previousHeight
           : nextHeaderHeight
@@ -157,10 +159,13 @@ export default function Hero() {
     };
   }, []);
 
-  // Эти стили передают высоту шапки секции, чтобы сам блок занимал оставшийся видимый экран.
-  const heroStyle: HeroStyle = {
-    "--hero-nav-offset": `${heroNavOffset}px`,
-  };
+  // Эти стили передают точную высоту шапки секции, когда она уже измерена в браузере.
+  const heroStyle: HeroStyle | undefined =
+    heroNavOffset === null
+      ? undefined
+      : {
+          "--hero-nav-offset": `${heroNavOffset}px`,
+        };
 
   return (
     // Этот блок показывает главный экран приветствия кофейни.

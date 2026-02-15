@@ -204,9 +204,9 @@
   margin-top: auto;
   padding: var(--space-2);
   border-radius: calc(var(--radius) - 8px);
-  background: rgba(255, 255, 255, 0.18);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.36);
+  -webkit-backdrop-filter: blur(20px) saturate(135%);
+  backdrop-filter: blur(20px) saturate(135%);
   transition: opacity var(--card-transition);
 }
 
