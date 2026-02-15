@@ -14,8 +14,9 @@ import {
   getMenuCategoryLabel,
   getMenuNameLabel,
 } from "@/lib/menuView";
-import MenuCategoryScroller from "@/components/MenuCategoryScroller/MenuCategoryScroller";
+
 import MenuCategoryRow from "@/components/MenuPage/MenuCategoryRow";
+import ProductModal from "./ProductModal";
 
 type MenuPageProps = {
   items: MenuItem[];
@@ -149,15 +150,7 @@ export default function MenuPage({ items }: MenuPageProps) {
     return sections;
   }, [itemsWithCategory]);
 
-  // Этот блок готовит список категорий для верхнего скролла.
-  const categories = useMemo(
-    () =>
-      categorySections.map((section) => ({
-        key: section.key,
-        label: section.label,
-      })),
-    [categorySections]
-  );
+
 
   // Этот объект выбирает стартовую категорию и карточку на основе адреса.
   const initialSelection = getInitialSelection(
@@ -165,24 +158,13 @@ export default function MenuPage({ items }: MenuPageProps) {
     requestedItemName
   );
 
-  // Этот ключ выбирает стартовую категорию для верхнего скролла.
-  const defaultCategoryKey = categorySections[0]?.key ?? "";
 
-  // Это поле хранит ключ категории, выбранной человеком.
-  const [activeCategoryKey, setActiveCategoryKey] = useState(
-    () => initialSelection?.categoryKey ?? defaultCategoryKey
-  );
   // Этот объект хранит ссылки на секции категорий для прокрутки.
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   // Этот объект хранит ключ категории, к которой нужно прокрутить страницу один раз.
   const initialScrollKeyRef = useRef(initialSelection?.categoryKey ?? null);
 
-  // Этот ключ выбирает доступную категорию, если прежняя больше не существует.
-  const resolvedCategoryKey = categories.some(
-    (category) => category.key === activeCategoryKey
-  )
-    ? activeCategoryKey
-    : defaultCategoryKey;
+
 
   // Эта функция запоминает секцию категории, чтобы потом к ней прокрутиться.
   const handleCategoryRef = useCallback(
@@ -214,27 +196,26 @@ export default function MenuPage({ items }: MenuPageProps) {
     scrollToCategory(targetKey, "auto");
   }, [categorySections.length, scrollToCategory]);
 
-  // Эта функция меняет выбранную категорию в верхнем скролле и прокручивает к ней.
-  const handleCategorySelect = (categoryKey: string) => {
-    setActiveCategoryKey(categoryKey);
-    scrollToCategory(categoryKey);
+
+
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleItemClick = (item: MenuItem) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => setSelectedItem(null), 300);
   };
 
   return (
     // Этот блок содержит всю секцию меню и верхний выбор категорий.
     <section id="menu" className={styles.menuPage} aria-label="Полное меню">
       <div className="container">
-        {/* Этот блок показывает верхний скролл категорий, если есть позиции меню. */}
-        {items.length > 0 ? (
-          <div className={styles.header}>
-            <MenuCategoryScroller
-              categories={categories}
-              activeKey={resolvedCategoryKey}
-              onSelect={handleCategorySelect}
-              ariaLabel={menuPageText.categoriesLabel}
-            />
-          </div>
-        ) : null}
+
         {/* Этот блок показывает линии категорий с карточками или сообщение об отсутствии данных. */}
         {categorySections.length === 0 ? (
           <p className={styles.empty}>{menuPageText.empty}</p>
@@ -266,6 +247,7 @@ export default function MenuPage({ items }: MenuPageProps) {
                     initialFocusIndex={initialIndex}
                     scrollStoragePrefix={menuPageText.scrollStoragePrefix}
                     text={menuPageText}
+                    onItemClick={handleItemClick}
                   />
                 </section>
               );
@@ -273,6 +255,12 @@ export default function MenuPage({ items }: MenuPageProps) {
           </div>
         )}
       </div>
+      <ProductModal
+        item={selectedItem}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        text={menuPageText}
+      />
     </section>
   );
 }

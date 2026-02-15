@@ -46,6 +46,7 @@ type MenuCategoryRowProps = {
   initialFocusIndex: number | null;
   scrollStoragePrefix: string;
   text: MenuCategoryRowText;
+  onItemClick: (item: MenuItem) => void;
 };
 
 // Этот компонент показывает горизонтальную линию карточек для одной категории.
@@ -55,6 +56,7 @@ export default function MenuCategoryRow({
   initialFocusIndex,
   scrollStoragePrefix,
   text,
+  onItemClick,
 }: MenuCategoryRowProps) {
   // Этот объект дает доступ к корзине, чтобы добавлять выбранные напитки.
   const cart = useContext(CartContext);
@@ -62,8 +64,6 @@ export default function MenuCategoryRow({
   const gridRef = useRef<HTMLDivElement | null>(null);
   // Это число хранит номер карточки, которая сейчас в центре линии.
   const [activeIndex, setActiveIndex] = useState(0);
-  // Этот текст хранит ключ карточки, у которой сейчас раскрыты описание и размеры.
-  const [expandedCardKey, setExpandedCardKey] = useState<string | null>(null);
   // Этот объект хранит индекс карточки из адреса, чтобы один раз прокрутить ее в центр.
   const initialScrollIndexRef = useRef<number | null>(initialFocusIndex);
 
@@ -194,33 +194,53 @@ export default function MenuCategoryRow({
     scrollCardToCenter(index);
   };
 
-  // Эта функция раскрывает или сворачивает дополнительный текст внутри выбранной карточки.
-  const handleDetailsToggle = (cardKey: string, index: number) => {
+  const handleCardClick = (item: MenuItem, index: number) => {
     handleCardFocus(index);
-    setExpandedCardKey((previousKey) =>
-      previousKey === cardKey ? null : cardKey
-    );
+    onItemClick(item);
   };
 
+  // Этот Set хранит ID кнопок, которые сейчас анимируются ("летят в корзину").
+  const [animatingItems, setAnimatingItems] = useState<Set<string>>(new Set());
+
   // Эта функция срабатывает по кнопке «Добавить» и кладет выбранный напиток в корзину.
-  const handleAddItemClick = (params: {
+  const handleAddItemClick = (e: React.MouseEvent, params: {
     id: string;
     name: string;
     price: number | null;
     index: number;
   }) => {
+    e.stopPropagation(); // Prevent opening modal
     handleCardFocus(params.index);
     cart.addItem({
       id: params.id,
       name: params.name,
       price: params.price,
     });
+
+    // Запускаем анимацию
+    setAnimatingItems((prev) => {
+      const next = new Set(prev);
+      next.add(params.id);
+      return next;
+    });
+
+    // Убираем анимацию через 500мс
+    setTimeout(() => {
+      setAnimatingItems((prev) => {
+        const next = new Set(prev);
+        next.delete(params.id);
+        return next;
+      });
+    }, 500);
   };
+
+  // Эта функция переключает режим отображения всех карточек (для десктопа).
+  const gridClassName = `${styles.grid} ${styles.gridRow}`;
 
   return (
     // Этот блок растягивает ленту на всю ширину и оставляет место для теней.
     <div className={styles.gridWrap}>
-      <div className={`${styles.grid} ${styles.gridRow}`} ref={gridRef}>
+      <div className={gridClassName} ref={gridRef}>
         {entries.map((entry, index) => {
           const { item, categoryLabel } = entry;
           // Этот блок готовит текст карточки и цену позиции.
@@ -228,14 +248,9 @@ export default function MenuCategoryRow({
           const priceLabel = getMenuListPriceLabel(item, text);
           const isPopular = Boolean(item.popular);
           const cardKey = String(item.id ?? `${categoryKey}-${index}`);
-          const detailsPanelId = `menu-card-details-${categoryKey}-${index}`;
-          const description = item.description?.trim() ?? "";
           const priceInfo = getMenuPriceInfo(item);
           const rawPrice = priceInfo.rawPrice;
-          const hasDescription = description.length > 0;
-          const hasVariants = priceInfo.variants.length > 0;
-          const hasExtraDetails = hasDescription || hasVariants;
-          const isExpanded = hasExtraDetails && expandedCardKey === cardKey;
+
           const addPrice = Number.isFinite(rawPrice)
             ? rawPrice
             : Number.isFinite(priceInfo.minVariantPrice)
@@ -244,102 +259,47 @@ export default function MenuCategoryRow({
           // Этот блок определяет, нужна ли фотография для карточки позиции.
           const imageSrc = getMenuImageSrc(nameLabel, categoryLabel);
           const isSelected = index === activeIndex;
-          const cardBaseClassName = imageSrc
-            ? `${styles.card} ${styles.cardWithImage}`
-            : styles.card;
-          const cardClassName = isSelected
-            ? `${cardBaseClassName} ${styles.cardSelected}`
-            : `${cardBaseClassName} ${styles.cardBlurred}`;
-          const cardLinkClassName = isSelected
-            ? `${styles.cardLink} ${styles.cardLinkSelected}`
-            : `${styles.cardLink} ${styles.cardLinkBlurred}`;
-          const cardDetailsClassName = isExpanded
-            ? `${styles.cardDetails} ${styles.cardDetailsExpanded}`
-            : styles.cardDetails;
-          const detailsContentClassName = isExpanded
-            ? `${styles.detailsContent} ${styles.detailsContentExpanded}`
-            : styles.detailsContent;
+          const isAnimating = animatingItems.has(cardKey);
+
           // Этот блок собирает содержимое карточки позиции.
           return (
             // Этот блок показывает одну карточку в линии и не уводит человека на отдельную страницу.
             <div
               key={cardKey}
-              className={cardLinkClassName}
+              className={`${styles.cardLink} ${isSelected ? styles.cardLinkSelected : ''}`}
               data-menu-card="true"
               aria-label={`Позиция ${nameLabel}`}
               onFocusCapture={() => handleCardFocus(index)}
+              onClick={() => handleCardClick(item, index)}
             >
-              <article className={cardClassName}>
+              <article className={styles.card}>
                 {/* Этот блок показывает фотографию позиции отдельно от текста. */}
-                {imageSrc ? (
-                  hasExtraDetails ? (
-                    // Эта кнопка на фото открывает или закрывает подробности так же, как «Подробнее».
-                    <button
-                      type="button"
-                      className={`${styles.cardVisual} ${styles.cardVisualButton}`}
-                      aria-label={`${isExpanded ? text.hideDetailsLabel : text.detailsLabel}: ${nameLabel}`}
-                      aria-expanded={isExpanded}
-                      aria-controls={detailsPanelId}
-                      onClick={() => handleDetailsToggle(cardKey, index)}
-                    >
-                      <Image
-                        className={styles.image}
-                        src={imageSrc}
-                        alt=""
-                        fill
-                        loading={isSelected ? "eager" : "lazy"}
-                        sizes="(max-width: 719px) 67vw, 270px"
-                      />
-                    </button>
-                  ) : (
-                    <div className={styles.cardVisual} aria-hidden="true">
-                      <Image
-                        className={styles.image}
-                        src={imageSrc}
-                        alt=""
-                        fill
-                        loading={isSelected ? "eager" : "lazy"}
-                        sizes="(max-width: 719px) 67vw, 270px"
-                      />
-                    </div>
-                  )
-                ) : null}
-                {/* Этот блок показывает текст карточки поверх фото с блюром, чтобы текст было легче читать. */}
-                <div className={cardDetailsClassName}>
-                  {/* Этот блок показывает заголовок «Популярно», если позиция отмечена. */}
-                  {isPopular ? (
-                    <p className={styles.popularText}>{text.popularLabel}</p>
-                  ) : null}
-                  {/* Этот блок выводит название и цену на одной линии. */}
-                  <div className={styles.namePriceRow}>
-                    <h3 className={styles.name}>{nameLabel}</h3>
-                    <p className={styles.price}>{priceLabel}</p>
+                {imageSrc && (
+                  <div className={styles.cardVisual}>
+                    <Image
+                      className={styles.image}
+                      src={imageSrc}
+                      alt=""
+                      fill
+                      loading={isSelected ? "eager" : "lazy"}
+                      sizes="(max-width: 719px) 40vw, 200px"
+                    />
                   </div>
+                )}
+
+                <div className={styles.cardDetails}>
+                  {/* Этот блок выводит название и цену на одной линии. */}
+                  <h3 className={styles.name}>{nameLabel}</h3>
+
                   {/* Этот блок показывает действия для карточки: раскрыть подробности и добавить позицию. */}
-                  <div className={styles.cardActions}>
-                    {hasExtraDetails ? (
-                      <button
-                        type="button"
-                        className={styles.detailsButton}
-                        aria-expanded={isExpanded}
-                        aria-controls={detailsPanelId}
-                        onClick={() => handleDetailsToggle(cardKey, index)}
-                      >
-                        <span className={styles.detailsLabel}>
-                          {isExpanded ? text.hideDetailsLabel : text.detailsLabel}
-                        </span>
-                      </button>
-                    ) : (
-                      <p className={styles.detailsLabel} aria-hidden="true">
-                        &nbsp;
-                      </p>
-                    )}
+                  <div className={styles.cardFooter}>
+                    <p className={styles.price}>{priceLabel}</p>
                     <button
                       type="button"
-                      className={styles.addButton}
+                      className={`${styles.addButton} ${isAnimating ? styles.addButtonAnimating : ''}`}
                       aria-label={`Добавить в корзину: ${nameLabel}`}
-                      onClick={() =>
-                        handleAddItemClick({
+                      onClick={(e) =>
+                        handleAddItemClick(e, {
                           id: cardKey,
                           name: nameLabel,
                           price: addPrice,
@@ -350,75 +310,14 @@ export default function MenuCategoryRow({
                       <span className={styles.addButtonLabel}>{text.addLabel}</span>
                     </button>
                   </div>
-                  {/* Этот блок показывает описание и размеры стаканов после нажатия «Подробнее». */}
-                  {hasExtraDetails ? (
-                    <div
-                      id={detailsPanelId}
-                      className={detailsContentClassName}
-                      aria-hidden={!isExpanded}
-                    >
-                      {hasDescription ? (
-                        <div className={styles.detailsSection}>
-                          <p className={styles.detailsSectionTitle}>
-                            {text.descriptionTitle}
-                          </p>
-                          <p className={styles.detailsDescription}>{description}</p>
-                        </div>
-                      ) : null}
-                      {hasVariants ? (
-                        <div className={styles.detailsSection}>
-                          <p className={styles.detailsSectionTitle}>
-                            {text.variantsTitle}
-                          </p>
-                          <ul
-                            className={styles.detailsVariants}
-                            aria-label={text.variantsTitle}
-                          >
-                            {priceInfo.variants.map((variant, variantIndex) => {
-                              const sizeLabel =
-                                variant?.sizeName?.toString().trim() ||
-                                text.sizeFallback;
-                              const mlLabel = Number.isFinite(variant?.ml)
-                                ? `${variant.ml} мл`
-                                : null;
-                              const variantPrice = parseMenuPrice(variant?.price);
-                              const variantPriceLabel = Number.isFinite(
-                                variantPrice
-                              )
-                                ? formatMenuPrice(variantPrice)
-                                : text.priceFallback;
-
-                              return (
-                                <li
-                                  key={`${cardKey}-variant-${variantIndex}`}
-                                  className={styles.detailsVariant}
-                                >
-                                  <span className={styles.detailsVariantSize}>
-                                    {sizeLabel}
-                                    {mlLabel ? (
-                                      <span className={styles.detailsVariantMl}>
-                                        {" "}
-                                        · {mlLabel}
-                                      </span>
-                                    ) : null}
-                                  </span>
-                                  <span className={styles.detailsVariantPrice}>
-                                    {variantPriceLabel}
-                                  </span>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      ) : null}
-                    </div>
-                  ) : null}
                 </div>
               </article>
             </div>
           );
         })}
       </div>
+      {/* Кнопка "Показать еще" для десктопа */}
+
     </div>
   );
 }

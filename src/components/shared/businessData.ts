@@ -6,8 +6,8 @@ export const businessData = {
   workingHours: {
     startMinutes: 7 * 60,
     endMinutes: 24 * 60,
-    openUntilLabel: "до 00:00",
-    closedUntilLabel: "до 7:00",
+    openUntilLabel: "Открыто до 00:00",
+    closedUntilLabel: "Закрыто до 7:00",
     dailyLabel: "Работаем каждый день с 7:00 до 00:00",
   },
   foundedYear: 2019,

@@ -14,14 +14,6 @@ import { businessData } from "@/components/shared/businessData";
 // Этот объект берет общее время работы кофейни из одного общего источника.
 const heroWorkingHours = businessData.workingHours;
 
-// Этот объект хранит две картинки для главного экрана: когда кофейня открыта и когда закрыта.
-const heroVisualState = {
-  openImageSrc: "/benocoffe-open.jpg",
-  closedImageSrc: "/benocoffe-close.jpg",
-  openImageAlt: "Кофейня BENO во время работы",
-  closedImageAlt: "Кофейня BENO после закрытия",
-};
-
 // Этот объект хранит подписи и цель для большой кнопки заказа на первом экране.
 const heroOrderButtonText = {
   label: "Заказать",
@@ -57,10 +49,7 @@ export default function Hero() {
     );
   });
 
-  // Этот элемент выбирает нужную картинку для первого экрана по текущему статусу кофейни.
-  const currentHeroImage = isOpenNow
-    ? { src: heroVisualState.openImageSrc, alt: heroVisualState.openImageAlt }
-    : { src: heroVisualState.closedImageSrc, alt: heroVisualState.closedImageAlt };
+
 
   // Этот элемент выбирает подпись времени: до полуночи, когда открыто, или до утра, когда закрыто.
   const currentWorkingHoursLabel = isOpenNow
@@ -106,7 +95,7 @@ export default function Hero() {
       const nextHeaderHeight = header.getBoundingClientRect().height;
       setHeroNavOffset((previousHeight) =>
         previousHeight !== null &&
-        Math.abs(previousHeight - nextHeaderHeight) < 0.5
+          Math.abs(previousHeight - nextHeaderHeight) < 0.5
           ? previousHeight
           : nextHeaderHeight
       );
@@ -147,7 +136,7 @@ export default function Hero() {
       const minutes = now.getHours() * 60 + now.getMinutes();
       setIsOpenNow(
         minutes >= heroWorkingHours.startMinutes &&
-          minutes < heroWorkingHours.endMinutes
+        minutes < heroWorkingHours.endMinutes
       );
     };
 
@@ -158,74 +147,80 @@ export default function Hero() {
       window.clearInterval(intervalId);
     };
   }, []);
-
   // Эти стили передают точную высоту шапки секции, когда она уже измерена в браузере.
   const heroStyle: HeroStyle | undefined =
     heroNavOffset === null
       ? undefined
       : {
-          "--hero-nav-offset": `${heroNavOffset}px`,
-        };
+        "--hero-nav-offset": `${heroNavOffset}px`,
+      };
 
   return (
-    // Этот блок показывает главный экран приветствия кофейни.
     <section className={styles.hero} style={heroStyle}>
+      <div className={styles.backgroundWrapper}>
+        <div className={styles.desktopBg}>
+          <Image
+            src="/desktopbg.jpg"
+            alt="Beno Coffee Background"
+            fill
+            priority
+            quality={90}
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+        <div className={styles.mobileBg}>
+          <Image
+            src="/mobilebg.png"
+            alt="Beno Coffee Background"
+            fill
+            priority
+            quality={90}
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+        <div className={styles.overlay} />
+      </div>
+
       <div className="container">
-        {/* Этот блок размещает главный фон и статус в сетке секции. */}
-        <div className={styles.layout}>
-          {/* Этот блок показывает главный фон и статус на первом экране. */}
-          <div className={styles.media}>
-            {/* Этот блок показывает фоновую картинку, которая меняется по статусу кофейни. */}
-            <div className={styles.mediaVisual}>
-              {/* Эта картинка автоматически выбирается: открыто сейчас или закрыто сейчас. */}
-              <Image
-                className={styles.mediaImage}
-                src={currentHeroImage.src}
-                alt={currentHeroImage.alt}
-                fill
-                priority
-                sizes="100vw"
-              />
-            </div>
-            {/* Этот слой делает фон чуть темнее, чтобы статус читался лучше. */}
-            <div className={styles.mediaShade} aria-hidden="true" />
-            {/* Этот блок размещает статус, кнопку и стрелки в нижней части экрана. */}
-            <div className={styles.orderButtonWrap}>
-              {/* Этот блок ставит рядом статус времени и кнопку звонка одинакового визуального размера. */}
-              <div className={styles.orderTopRow}>
-                {/* Этот элемент показывает текст с временем для заказа. */}
-                <div className={styles.orderStatus} aria-label="Время работы">
-                  <span
-                    className={`${styles.pill} ${styles.orderCallButton}`}
-                    aria-live="polite"
-                  >
-                    <span>{currentWorkingHoursLabel}</span>
-                  </span>
-                </div>
-                {/* Эта кнопка рядом со статусом позволяет быстро позвонить в кофейню. */}
-                <a
-                  className={`${styles.pill} ${styles.orderCallButton}`}
-                  href={heroCallButtonText.href}
-                  aria-label={heroCallButtonText.ariaLabel}
-                >
-                  {heroCallButtonText.label}
-                </a>
-              </div>
-              {/* Эта кнопка плавно ведёт пользователя к блоку меню. */}
-              <button
-                type="button"
-                className={styles.orderButton}
-                onClick={handleOrderButtonClick}
-                aria-label={heroOrderButtonText.ariaLabel}
+        <div className={styles.content}>
+          {/* Этот блок размещает статус, кнопку и стрелки в нижней части экрана. */}
+          {/* Main Interface Wrapper - Centers everything at the bottom */}
+          <div className={styles.heroInterface}>
+
+            {/* Top Row: Status + Call Button */}
+            <div className={styles.statusRow}>
+              <span
+                className={`${styles.pill} ${styles.statusPill}`}
+                aria-live="polite"
               >
-                {heroOrderButtonText.label}
-              </button>
-              {/* Этот элемент показывает декоративные стрелки вниз под кнопкой. */}
-              <div className={styles.orderArrow} aria-hidden="true">
-                <span className={styles.orderArrowMark} />
-                <span className={styles.orderArrowMark} />
-              </div>
+                <span>{currentWorkingHoursLabel}</span>
+              </span>
+
+              <a
+                className={`${styles.pill} ${styles.callButton}`}
+                href={heroCallButtonText.href}
+                aria-label={heroCallButtonText.ariaLabel}
+              >
+                {heroCallButtonText.label}
+              </a>
             </div>
+
+            {/* Main CTA Button */}
+            <button
+              type="button"
+              className={styles.mainCta}
+              onClick={handleOrderButtonClick}
+              aria-label={heroOrderButtonText.ariaLabel}
+            >
+              {heroOrderButtonText.label}
+            </button>
+
+            {/* Scroll Indicator */}
+            <div className={styles.scrollIndicator} aria-hidden="true">
+              <span className={styles.arrowMark} />
+              <span className={styles.arrowMark} />
+            </div>
+
           </div>
         </div>
       </div>
