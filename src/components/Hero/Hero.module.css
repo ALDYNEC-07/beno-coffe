@@ -82,7 +82,7 @@
 .orderButtonWrap {
   position: absolute;
   left: 50%;
-  bottom: clamp(1.2rem, 3.6vh, 3rem);
+  bottom: clamp(1.2rem, 5%, 3rem);
   transform: translateX(-50%);
   z-index: 2;
   display: flex;
@@ -231,7 +231,7 @@
 
   .orderButtonWrap {
     gap: 0.7rem;
-    bottom: clamp(0.8rem, 2.6vh, 1.6rem);
+    bottom: clamp(0.8rem, 4%, 1.6rem);
   }
 
   .orderTopRow {
