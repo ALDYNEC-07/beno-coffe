@@ -9,7 +9,9 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
   type AnimationEvent,
@@ -76,10 +78,43 @@ export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // Этот признак хранит, что меню уже закрывается и ждет конца анимации.
   const [isMenuClosing, setIsMenuClosing] = useState(false);
+  // Эти ссылки на элементы помогают понять, был ли клик внутри кнопки корзины или внутри панели.
+  const cartButtonRef = useRef<HTMLButtonElement | null>(null);
+  const cartPanelRef = useRef<HTMLElement | null>(null);
   // Этот текст помогает стилям понять, как именно ведет себя меню.
   const menuState = isMenuClosing ? "closing" : isMenuOpen ? "open" : "closed";
   // Этот признак показывает, видно ли мобильное меню на экране.
   const isPanelVisible = menuState !== "closed";
+
+  // Этот блок закрывает корзину, если человек нажал в любом другом месте страницы.
+  useEffect(() => {
+    if (!isCartOpen) {
+      return;
+    }
+
+    const handleDocumentPointerDown = (event: PointerEvent) => {
+      const targetNode = event.target as Node | null;
+      if (!targetNode) {
+        return;
+      }
+
+      if (cartButtonRef.current?.contains(targetNode)) {
+        return;
+      }
+
+      if (cartPanelRef.current?.contains(targetNode)) {
+        return;
+      }
+
+      setIsCartOpen(false);
+    };
+
+    document.addEventListener("pointerdown", handleDocumentPointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handleDocumentPointerDown);
+    };
+  }, [isCartOpen]);
 
   // Этот обработчик срабатывает при клике по кнопке меню.
   const handleMenuButtonClick = () => {
@@ -197,6 +232,7 @@ export default function Navigation() {
               <button
                 type="button"
                 className={styles.cartButton}
+                ref={cartButtonRef}
                 aria-label={`Корзина: ${visibleCartCount}`}
                 aria-expanded={isCartOpen}
                 aria-controls="nav-cart-panel"
@@ -221,6 +257,7 @@ export default function Navigation() {
               {isCartOpen ? (
                 <section
                   className={styles.cartPanel}
+                  ref={cartPanelRef}
                   id="nav-cart-panel"
                   aria-label="Корзина"
                 >
