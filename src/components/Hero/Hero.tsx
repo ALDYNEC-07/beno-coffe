@@ -31,30 +31,38 @@ const heroCallButtonText = {
 
 export default function Hero() {
   // Этот элемент хранит, открыта ли кофейня прямо сейчас.
-  const [isOpenNow, setIsOpenNow] = useState(() => {
-    const now = new Date();
-    const minutes = now.getHours() * 60 + now.getMinutes();
-    return (
-      minutes >= heroWorkingHours.startMinutes &&
-      minutes < heroWorkingHours.endMinutes
-    );
-  });
+  // Инициализируем null, чтобы не было расхождения с сервером.
+  const [isOpenNow, setIsOpenNow] = useState<boolean | null>(null);
 
-  // Этот элемент выбирает подпись времени: до полуночи, когда открыто, или до утра, когда закрыто.
-  const currentWorkingHoursLabel = isOpenNow
-    ? heroWorkingHours.openUntilLabel
-    : heroWorkingHours.closedUntilLabel;
+  // Этот элемент выбирает подпись времени. Пока не знаем (null), показываем заглушку или ничего.
+  // Можно показать "Загрузка..." или дефолтное состояние, но лучше ничего, чтобы не мелькало неверное.
+  // В данном макете, если null, можно вернуть пустую строку или скелетон,
+  // но для простоты предположим, что мы показываем "Закрыто" или просто ждем.
+  // Ниже в коде мы обработаем это.
+
+  const currentWorkingHoursLabel = isOpenNow === null
+    ? "" // Или лоадер, если нужно
+    : isOpenNow
+      ? heroWorkingHours.openUntilLabel
+      : heroWorkingHours.closedUntilLabel;
 
   // Этот код обновляет статус работы кофейни в течение дня.
   useEffect(() => {
     // Эта функция пересчитывает, открыта ли кофейня в текущий момент.
-    const updateOpenStatus = () => {
+    const calculateOpenStatus = () => {
       const now = new Date();
       const minutes = now.getHours() * 60 + now.getMinutes();
-      setIsOpenNow(
+      return (
         minutes >= heroWorkingHours.startMinutes &&
         minutes < heroWorkingHours.endMinutes
       );
+    };
+
+    // Устанавливаем начальное значение сразу после монтирования
+    setIsOpenNow(calculateOpenStatus());
+
+    const updateOpenStatus = () => {
+      setIsOpenNow(calculateOpenStatus());
     };
 
     const intervalId = window.setInterval(updateOpenStatus, 60 * 1000);

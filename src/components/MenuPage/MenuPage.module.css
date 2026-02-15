@@ -174,17 +174,7 @@
   transform: scale(1);
 }
 
-.cardWithImage {
-  display: none;
-}
 
-.cardWithImage .cardVisual {
-  /* min-height: var(--card-image-base-height); Removed to enforce square */
-  /* flex: 0 0 var(--card-image-base-height); */
-  border-radius: var(--radius) var(--radius) 0 0;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-}
 
 /* ... existing styles ... */
 
@@ -222,19 +212,9 @@
   padding: 0 4px;
 }
 
-.cardWithImage .cardDetails {
-  position: absolute;
-  left: -1px;
-  right: -1px;
-  bottom: 0;
-  z-index: 2;
-  min-height: var(--card-details-base-height);
-  border-radius: 0 0 var(--radius) var(--radius);
-}
 
-.cardDetailsExpanded {
-  display: none;
-}
+
+
 
 @media (min-width: 1024px) {
   .menuPage {
@@ -329,39 +309,7 @@
   letter-spacing: 0.04em;
 }
 
-.cardActions {
-  display: none;
-}
 
-.detailsButton {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  text-align: left;
-}
-
-.detailsButton:focus-visible {
-  outline: 2px solid #1b1b1b;
-  outline-offset: 3px;
-  border-radius: 8px;
-}
-
-.cardLink:has(:focus-visible) .detailsLabel {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-decoration-color: currentColor;
-  text-underline-offset: 0.2em;
-}
-
-.detailsButton:hover .detailsLabel {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-decoration-color: currentColor;
-  text-underline-offset: 0.2em;
-}
 
 .addButton {
   display: inline-flex;
@@ -445,24 +393,7 @@
   box-shadow: 0 0 8px 1px rgba(196, 154, 108, 0.6);
 }
 
-.addButtonIcon {
-  display: none;
-}
 
-.detailsContent {
-  display: none;
-}
-
-.detailsContentExpanded {
-  max-height: 24rem;
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-.detailsSection {
-  display: none;
-}
 
 .detailsSectionTitle {
   margin: 0;
@@ -547,8 +478,8 @@
   }
 
   .gridWrap {
-    width: 100%;
-    margin: 0;
+    width: min(100% - 2 * var(--space-3), var(--container));
+    margin-inline: auto;
     overflow: visible;
   }
 

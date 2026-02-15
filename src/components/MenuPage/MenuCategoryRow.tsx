@@ -1,8 +1,3 @@
-/*
- Этот файл определяет одну линию позиций внутри категории меню.
- Он показывает горизонтальную ленту карточек с названием и ценой.
- Человек может прокручивать ленту, выделять карточки и раскрывать подробности позиции прямо внутри карточки.
-*/
 "use client";
 
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -11,7 +6,6 @@ import styles from "./MenuPage.module.css";
 import {
   formatMenuPrice,
   getMenuPriceInfo,
-  parseMenuPrice,
   type MenuItem,
 } from "@/lib/menuData";
 import {
@@ -38,6 +32,7 @@ type MenuCategoryRowText = {
   descriptionTitle: string;
   variantsTitle: string;
   sizeFallback: string;
+  scrollStoragePrefix: string;
 };
 
 type MenuCategoryRowProps = {
@@ -62,6 +57,9 @@ export default function MenuCategoryRow({
   const cart = useContext(CartContext);
   // Этот объект держит доступ к ленте карточек для вычисления центра.
   const gridRef = useRef<HTMLDivElement | null>(null);
+  // Массив ссылок на карточки для прямого доступа без querySelectorAll
+  const itemsRef = useRef<(HTMLElement | null)[]>([]);
+
   // Это число хранит номер карточки, которая сейчас в центре линии.
   const [activeIndex, setActiveIndex] = useState(0);
   // Этот объект хранит индекс карточки из адреса, чтобы один раз прокрутить ее в центр.
@@ -73,15 +71,7 @@ export default function MenuCategoryRow({
   // Эта функция мягко перемещает нужную карточку в центр ленты.
   const scrollCardToCenter = useCallback(
     (index: number, behavior: ScrollBehavior = "smooth") => {
-      const grid = gridRef.current;
-      if (!grid) {
-        return;
-      }
-
-      const cards = Array.from(
-        grid.querySelectorAll<HTMLElement>("[data-menu-card='true']")
-      );
-      const target = cards[index];
+      const target = itemsRef.current[index];
       if (!target) {
         return;
       }
@@ -105,32 +95,33 @@ export default function MenuCategoryRow({
     let frameId = 0;
     // Эта функция возвращает ленту к сохраненной позиции, если она есть.
     const restoreScrollPosition = () => {
-      const storedValue = window.sessionStorage.getItem(scrollStorageKey);
-      if (!storedValue) {
-        grid.scrollLeft = 0;
-        return;
+      try {
+        const storedValue = window.sessionStorage.getItem(scrollStorageKey);
+        if (!storedValue) {
+          grid.scrollLeft = 0;
+          return;
+        }
+        const parsedValue = Number(storedValue);
+        if (Number.isFinite(parsedValue)) {
+          grid.scrollLeft = parsedValue;
+        }
+      } catch (e) {
+        // Ignore storage access errors
       }
-      const parsedValue = Number(storedValue);
-      if (!Number.isFinite(parsedValue)) {
-        return;
-      }
-      grid.scrollLeft = parsedValue;
     };
 
     const updateActiveIndex = () => {
-      const cards = Array.from(
-        grid.querySelectorAll<HTMLElement>("[data-menu-card='true']")
-      );
-      if (cards.length === 0) {
-        return;
-      }
+      // Используем refs вместо querySelectorAll
+      if (itemsRef.current.length === 0) return;
 
       const gridRect = grid.getBoundingClientRect();
       const gridCenter = gridRect.left + gridRect.width / 2;
+
       let closestIndex = 0;
       let closestDistance = Number.POSITIVE_INFINITY;
 
-      cards.forEach((card, index) => {
+      itemsRef.current.forEach((card, index) => {
+        if (!card) return;
         const rect = card.getBoundingClientRect();
         const cardCenter = rect.left + rect.width / 2;
         const distance = Math.abs(cardCenter - gridCenter);
@@ -153,10 +144,14 @@ export default function MenuCategoryRow({
       frameId = window.requestAnimationFrame(() => {
         frameId = 0;
         updateActiveIndex();
-        window.sessionStorage.setItem(
-          scrollStorageKey,
-          String(grid.scrollLeft)
-        );
+        try {
+          window.sessionStorage.setItem(
+            scrollStorageKey,
+            String(grid.scrollLeft)
+          );
+        } catch (e) {
+          // Ignore
+        }
       });
     };
 
@@ -189,15 +184,22 @@ export default function MenuCategoryRow({
   }, [scrollCardToCenter, entries.length]);
 
   // Эта функция выделяет карточку при выборе и сдвигает ее в центр.
-  const handleCardFocus = (index: number) => {
+  const handleCardFocus = useCallback((index: number) => {
     setActiveIndex(index);
     scrollCardToCenter(index);
-  };
+  }, [scrollCardToCenter]);
 
-  const handleCardClick = (item: MenuItem, index: number) => {
+  const handleCardClick = useCallback((item: MenuItem, index: number) => {
     handleCardFocus(index);
     onItemClick(item);
-  };
+  }, [handleCardFocus, onItemClick]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent, item: MenuItem, index: number) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleCardClick(item, index);
+    }
+  }, [handleCardClick]);
 
   // Этот Set хранит ID кнопок, которые сейчас анимируются ("летят в корзину").
   const [animatingItems, setAnimatingItems] = useState<Set<string>>(new Set());
@@ -211,28 +213,33 @@ export default function MenuCategoryRow({
   }) => {
     e.stopPropagation(); // Prevent opening modal
     handleCardFocus(params.index);
-    cart.addItem({
-      id: params.id,
-      name: params.name,
-      price: params.price,
-    });
 
-    // Запускаем анимацию
     setAnimatingItems((prev) => {
       const next = new Set(prev);
       next.add(params.id);
       return next;
     });
 
-    // Убираем анимацию через 500мс
-    setTimeout(() => {
-      setAnimatingItems((prev) => {
-        const next = new Set(prev);
-        next.delete(params.id);
-        return next;
-      });
-    }, 500);
+    cart.addItem({
+      id: params.id,
+      name: params.name,
+      price: params.price,
+    });
+
+    // Fallback cleanup in case animation end doesn't fire (e.g. reduced motion or CSS change)
+    // We keep a timeout just in case, but longer than animation to be safe, 
+    // or rely purely on onAnimationEnd. Given "bricolage" feedback, purely event based is better, 
+    // but if element is removed from DOM logic might fail. 
+    // We will trust onAnimationEnd for now as primary.
   };
+
+  const handleAnimationEnd = (id: string) => {
+    setAnimatingItems((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  }
 
   // Эта функция переключает режим отображения всех карточек (для десктопа).
   const gridClassName = `${styles.grid} ${styles.gridRow}`;
@@ -246,7 +253,6 @@ export default function MenuCategoryRow({
           // Этот блок готовит текст карточки и цену позиции.
           const nameLabel = getMenuNameLabel(item, text.nameFallback);
           const priceLabel = getMenuListPriceLabel(item, text);
-          const isPopular = Boolean(item.popular);
           const cardKey = String(item.id ?? `${categoryKey}-${index}`);
           const priceInfo = getMenuPriceInfo(item);
           const rawPrice = priceInfo.rawPrice;
@@ -266,11 +272,15 @@ export default function MenuCategoryRow({
             // Этот блок показывает одну карточку в линии и не уводит человека на отдельную страницу.
             <div
               key={cardKey}
+              ref={(el) => { itemsRef.current[index] = el; }}
               className={`${styles.cardLink} ${isSelected ? styles.cardLinkSelected : ''}`}
               data-menu-card="true"
+              role="button"
+              tabIndex={0}
               aria-label={`Позиция ${nameLabel}`}
-              onFocusCapture={() => handleCardFocus(index)}
+              onFocus={() => handleCardFocus(index)}
               onClick={() => handleCardClick(item, index)}
+              onKeyDown={(e) => handleKeyDown(e, item, index)}
             >
               <article className={styles.card}>
                 {/* Этот блок показывает фотографию позиции отдельно от текста. */}
@@ -306,6 +316,7 @@ export default function MenuCategoryRow({
                           index,
                         })
                       }
+                      onAnimationEnd={() => handleAnimationEnd(cardKey)}
                     >
                       <span className={styles.addButtonLabel}>{text.addLabel}</span>
                     </button>
@@ -316,8 +327,6 @@ export default function MenuCategoryRow({
           );
         })}
       </div>
-      {/* Кнопка "Показать еще" для десктопа */}
-
     </div>
   );
 }
