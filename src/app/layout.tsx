@@ -3,7 +3,7 @@
  Он показывает общий HTML и обертку body.
  Здесь позже можно разместить общие элементы.
 */
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
@@ -16,6 +16,12 @@ import CartProvider from "@/components/Cart/CartProvider";
 export const metadata: Metadata = {
   title: "BENO COFFEE",
   description: "Clean starting point",
+};
+
+// Этот блок задает корректный масштаб и ширину для мобильных браузеров.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 // Этот блок автоматически оборачивает содержимое каждой страницы.

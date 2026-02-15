@@ -6,7 +6,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useLayoutEffect, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import styles from "./Hero.module.css";
 import { contactData } from "@/components/shared/contactData";
 import { businessData } from "@/components/shared/businessData";
@@ -41,7 +41,11 @@ type HeroStyle = CSSProperties & {
 };
 
 export default function Hero() {
-  const [heroNavOffset, setHeroNavOffset] = useState(0);
+  // Это поле хранит последнюю ширину окна, чтобы не пересчитывать высоту шапки при обычном вертикальном скролле.
+  const viewportWidthRef = useRef<number | null>(null);
+  // Это поле хранит текущую высоту верхней шапки, чтобы первый экран занимал остаток видимой области.
+  // Пока точная высота еще не измерена, используется стабильная высота из общих стилей.
+  const [heroNavOffset, setHeroNavOffset] = useState<number | null>(null);
 
   // Этот элемент хранит, открыта ли кофейня прямо сейчас.
   const [isOpenNow, setIsOpenNow] = useState(() => {
@@ -85,21 +89,53 @@ export default function Hero() {
       return;
     }
 
-    const updateOffset = () => {
-      setHeroNavOffset(header.offsetHeight);
+    // Эта функция обновляет высоту шапки только когда меняется ширина окна.
+    const updateOffset = (force = false) => {
+      const nextWidth = window.innerWidth;
+      const previousWidth = viewportWidthRef.current;
+
+      if (
+        !force &&
+        previousWidth !== null &&
+        Math.abs(nextWidth - previousWidth) < 1
+      ) {
+        return;
+      }
+
+      viewportWidthRef.current = nextWidth;
+      const nextHeaderHeight = header.getBoundingClientRect().height;
+      setHeroNavOffset((previousHeight) =>
+        previousHeight !== null &&
+        Math.abs(previousHeight - nextHeaderHeight) < 0.5
+          ? previousHeight
+          : nextHeaderHeight
+      );
     };
 
-    updateOffset();
-    window.addEventListener("resize", updateOffset);
-    let resizeObserver: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== "undefined") {
-      resizeObserver = new ResizeObserver(updateOffset);
-      resizeObserver.observe(header);
-    }
+    // Этот код делает первый точный расчет после того, как браузер закончит начальную разметку.
+    const firstMeasureId = window.requestAnimationFrame(() => {
+      updateOffset(true);
+    });
+
+    const handleResize = () => {
+      updateOffset(false);
+    };
+
+    // Этот код обновляет высоту после поворота устройства, даже если браузер не дал обычный resize в нужный момент.
+    const handleOrientationChange = () => {
+      window.requestAnimationFrame(() => {
+        updateOffset(true);
+      });
+    };
+
+    updateOffset(true);
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleOrientationChange);
 
     return () => {
-      window.removeEventListener("resize", updateOffset);
-      resizeObserver?.disconnect();
+      window.cancelAnimationFrame(firstMeasureId);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleOrientationChange);
     };
   }, []);
 
@@ -123,10 +159,13 @@ export default function Hero() {
     };
   }, []);
 
-  // Эти стили передают высоту шапки секции, чтобы сам блок занимал оставшийся видимый экран.
-  const heroStyle: HeroStyle = {
-    "--hero-nav-offset": `${heroNavOffset}px`,
-  };
+  // Эти стили передают точную высоту шапки секции, когда она уже измерена в браузере.
+  const heroStyle: HeroStyle | undefined =
+    heroNavOffset === null
+      ? undefined
+      : {
+          "--hero-nav-offset": `${heroNavOffset}px`,
+        };
 
   return (
     // Этот блок показывает главный экран приветствия кофейни.

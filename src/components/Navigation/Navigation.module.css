@@ -1,6 +1,13 @@
 :global(html),
 :global(body) {
-  scrollbar-gutter: stable;
+  scrollbar-gutter: auto;
+}
+
+@media (min-width: 720px) {
+  :global(html),
+  :global(body) {
+    scrollbar-gutter: stable;
+  }
 }
 
 :global(html:has([data-nav-menu][data-menu-state="open"])),
@@ -11,8 +18,10 @@
 }
 
 .header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   border-bottom: none;
   padding-block: var(--space-3);

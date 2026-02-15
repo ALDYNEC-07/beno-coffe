@@ -1,6 +1,7 @@
 :root {
   --viewport-inline-size: 100vw;
   --container: 1120px;
+  --nav-height: clamp(65px, 9vw, 92px);
   --space-1: clamp(0.5rem, 1.2vw, 0.75rem);
   --space-2: clamp(0.75rem, 1.8vw, 1rem);
   --space-3: clamp(1rem, 2.6vw, 1.5rem);
@@ -34,6 +35,8 @@ html,
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 html {
@@ -41,6 +44,8 @@ html {
 }
 
 body {
+  overflow-x: hidden;
+  padding-top: var(--nav-height);
   font-family: var(--font-body), sans-serif;
   font-weight: 400;
   line-height: var(--line-height-body);
