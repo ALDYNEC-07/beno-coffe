@@ -169,9 +169,11 @@
   opacity: 1;
 }
 
-.card:hover {
-  opacity: 1;
-  transform: scale(1);
+@media (hover: hover) {
+  .card:hover {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 
@@ -339,19 +341,23 @@
   text-transform: uppercase;
 }
 
-.addButton:hover {
-  background: #8a5a2d;
-  color: #fff;
-  text-decoration: none;
+@media (hover: hover) {
+  .addButton:hover {
+    background: #8a5a2d;
+    color: #fff;
+    text-decoration: none;
+  }
 }
 
 .addButton:active {
   transform: scale(0.95);
 }
 
-.addButton:focus-visible {
-  outline: 2px solid #1b1b1b;
-  outline-offset: 3px;
+@media (hover: hover) {
+  .addButton:focus-visible {
+    outline: 2px solid #1b1b1b;
+    outline-offset: 3px;
+  }
 }
 
 /* Animation: Fly to Cart - Fast & Stylish, Up-Right */
@@ -448,8 +454,10 @@
   transition: transform 0.4s ease;
 }
 
-.card:hover .image {
-  transform: scale(1.05);
+@media (hover: hover) {
+  .card:hover .image {
+    transform: scale(1.05);
+  }
 }
 
 @media (min-width: 720px) {
