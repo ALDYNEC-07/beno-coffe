@@ -88,21 +88,13 @@ type CartProviderProps = {
 // Этот компонент хранит корзину и передает данные всем вложенным частям сайта.
 export default function CartProvider({ children }: CartProviderProps) {
   // Этот список хранит все позиции, которые человек добавил в корзину.
-  // Инициализируем пустым массивом, чтобы избежать ошибок гидратации (HTML с сервера != HTML клиента).
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  // Этот блок загружает корзину из памяти браузера один раз при старте.
-  useEffect(() => {
-    setItems(getInitialCartItems());
-    setIsInitialized(true);
-  }, []);
+  // Значение читается из памяти браузера при первом рендере на клиенте.
+  const [items, setItems] = useState<CartItem[]>(getInitialCartItems);
 
   // Этот блок автоматически сохраняет корзину в память браузера после каждого изменения.
   useEffect(() => {
-    if (!isInitialized) return;
     window.localStorage.setItem(cartStorageKey, JSON.stringify(items));
-  }, [items, isInitialized]);
+  }, [items]);
 
   // Эта функция срабатывает по нажатию кнопки «Добавить» и увеличивает количество выбранной позиции.
   // Обернута в useCallback, чтобы не создавать новую функцию при каждом обновлении страницы.

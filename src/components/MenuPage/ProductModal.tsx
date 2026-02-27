@@ -1,3 +1,8 @@
+/*
+ Этот файл определяет всплывающее окно товара в меню.
+ Он показывает фото, описание, варианты объема и цену выбранной позиции.
+ Человек может закрыть окно или добавить товар в корзину.
+*/
 "use client";
 
 import { useEffect, useState, useContext } from "react";
@@ -16,7 +21,13 @@ type ProductModalProps = {
     item: MenuItem | null;
     isOpen: boolean;
     onClose: () => void;
-    text: any; // Using 'any' briefly to match the text object structure from MenuPage, or we can export the type
+    text: {
+        nameFallback: string;
+        variantsTitle: string;
+        sizeFallback: string;
+        priceFallback: string;
+        addLabel: string;
+    };
 };
 
 export default function ProductModal({
@@ -25,21 +36,33 @@ export default function ProductModal({
     onClose,
     text,
 }: ProductModalProps) {
+    // Этот элемент хранит состояние анимации закрытия, чтобы окно успело плавно исчезнуть.
     const [isClosing, setIsClosing] = useState(false);
+    // Этот объект дает доступ к корзине, чтобы добавлять выбранные товары.
     const cart = useContext(CartContext);
 
+    // Этот блок управляет блокировкой прокрутки страницы и сбрасывает состояние анимации при открытии окна.
     useEffect(() => {
+        let reopenTimerId: number | null = null;
+
         if (isOpen) {
-            setIsClosing(false);
+            reopenTimerId = window.setTimeout(() => {
+                setIsClosing(false);
+            }, 0);
             document.body.style.overflow = "hidden";
         } else {
             document.body.style.overflow = "";
         }
+
         return () => {
             document.body.style.overflow = "";
+            if (reopenTimerId !== null) {
+                window.clearTimeout(reopenTimerId);
+            }
         };
     }, [isOpen]);
 
+    // Эта функция запускает анимацию закрытия и закрывает окно после завершения анимации.
     const handleClose = () => {
         setIsClosing(true);
         setTimeout(() => {
@@ -50,7 +73,7 @@ export default function ProductModal({
 
     if (!item && !isOpen) return null;
 
-    // We keep rendering while closing to show the animation
+    // Этот объект сохраняет текущий товар на время анимации закрытия.
     const visibleItem = item;
 
     if (!visibleItem) return null;
@@ -70,6 +93,7 @@ export default function ProductModal({
             : null;
 
     return (
+        // Этот блок рисует затемнение и контейнер модального окна.
         <div
             className={`${styles.modalOverlay} ${isClosing ? styles.modalClosing : ""
                 } ${!isOpen && !isClosing ? styles.hidden : ""}`}

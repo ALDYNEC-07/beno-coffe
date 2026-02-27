@@ -58,9 +58,12 @@ export default function Hero() {
       );
     };
 
-    // Устанавливаем начальное значение сразу после монтирования
-    setIsOpenNow(calculateOpenStatus());
+    // Запускаем первое обновление через таймер, чтобы не вызывать изменение данных синхронно внутри эффекта.
+    const initialTimerId = window.setTimeout(() => {
+      setIsOpenNow(calculateOpenStatus());
+    }, 0);
 
+    // Этот обработчик обновляет статус раз в минуту.
     const updateOpenStatus = () => {
       setIsOpenNow(calculateOpenStatus());
     };
@@ -68,6 +71,7 @@ export default function Hero() {
     const intervalId = window.setInterval(updateOpenStatus, 60 * 1000);
 
     return () => {
+      window.clearTimeout(initialTimerId);
       window.clearInterval(intervalId);
     };
   }, []);

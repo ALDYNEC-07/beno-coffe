@@ -1,10 +1,14 @@
+/*
+ Этот файл определяет горизонтальную строку карточек для одной категории меню.
+ Он показывает товары категории, цену и кнопку добавления в корзину.
+ Человек может листать карточки, открыть подробности товара и добавить товар в корзину.
+*/
 "use client";
 
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./MenuPage.module.css";
 import {
-  formatMenuPrice,
   getMenuPriceInfo,
   type MenuItem,
 } from "@/lib/menuData";
@@ -105,7 +109,7 @@ export default function MenuCategoryRow({
         if (Number.isFinite(parsedValue)) {
           grid.scrollLeft = parsedValue;
         }
-      } catch (e) {
+      } catch {
         // Ignore storage access errors
       }
     };
@@ -149,7 +153,7 @@ export default function MenuCategoryRow({
             scrollStorageKey,
             String(grid.scrollLeft)
           );
-        } catch (e) {
+        } catch {
           // Ignore
         }
       });
@@ -239,7 +243,7 @@ export default function MenuCategoryRow({
       next.delete(id);
       return next;
     });
-  }
+  };
 
   // Эта функция переключает режим отображения всех карточек (для десктопа).
   const gridClassName = `${styles.grid} ${styles.gridRow}`;
