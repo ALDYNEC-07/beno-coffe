@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { CartContext } from "@/components/Cart/CartProvider";
 import { localMenu } from "@/lib/localMenu";
 import { buildBaristaPrompt } from "./baristaPrompt";
@@ -27,6 +27,7 @@ const MODEL = "models/gemini-2.5-flash-native-audio-latest";
 const SAMPLE_RATE_IN  = 16000;
 const SAMPLE_RATE_OUT = 24000;
 const BUFFER_SIZE = 4096;
+const SILENCE_TIMEOUT_MS = 60_000; // 60 сек без активности → закрыть сессию
 
 // Float32 → Int16 → base64
 function encodePCM(float32: Float32Array): string {
@@ -80,6 +81,27 @@ export default function VoiceBarista() {
   const streamRef      = useRef<MediaStream | null>(null);
   // Очередь воспроизведения: следующий чанк стартует когда закончится предыдущий
   const playAtRef      = useRef<number>(0);
+  // true когда пользователь сам нажал X — чтобы onclose не показывал ошибку
+  const intentionalCloseRef = useRef(false);
+  const silenceTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // true пока идёт async-подключение (до wsRef.current = ws) — блокирует двойной клик
+  const connectingRef       = useRef(false);
+
+  // Cleanup при размонтировании + закрытие при уходе со вкладки
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.hidden) handleClose();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      intentionalCloseRef.current = true;
+      stopMic();
+      wsRef.current?.close();
+      wsRef.current = null;
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Воспроизводим очередной PCM-чанк от Gemini
   function playChunk(b64: string) {
@@ -101,8 +123,20 @@ export default function VoiceBarista() {
     playAtRef.current = startAt + buffer.duration;
   }
 
+  function resetSilenceTimer() {
+    if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+    silenceTimerRef.current = setTimeout(() => {
+      silenceTimerRef.current = null;
+      handleClose();
+    }, SILENCE_TIMEOUT_MS);
+  }
+
   // Останавливаем микрофон и аудио-граф
   function stopMic() {
+    if (silenceTimerRef.current) {
+      clearTimeout(silenceTimerRef.current);
+      silenceTimerRef.current = null;
+    }
     processorRef.current?.disconnect();
     processorRef.current = null;
     audioCtxRef.current?.close();
@@ -140,7 +174,8 @@ export default function VoiceBarista() {
   }
 
   async function handleOpen() {
-    if (wsRef.current) return;
+    if (wsRef.current || connectingRef.current) return;
+    connectingRef.current = true;
     setActive(true);
     setPhase("connecting");
 
@@ -151,6 +186,7 @@ export default function VoiceBarista() {
 
       const ws = new WebSocket(url);
       wsRef.current = ws;
+      connectingRef.current = false; // wsRef теперь охраняет от повторов
 
       ws.onopen = () => {
         ws.send(JSON.stringify({
@@ -194,6 +230,9 @@ export default function VoiceBarista() {
             : (event.data as string);
         const msg = JSON.parse(text);
         console.log("[Barista] msg:", msg);
+
+        // Любое сообщение от Gemini = активность, сбрасываем таймер тишины
+        resetSilenceTimer();
 
         if (msg.setupComplete !== undefined) {
           // Setup готов → запускаем микрофон
@@ -267,10 +306,12 @@ export default function VoiceBarista() {
         console.log("[Barista] closed:", event.code, event.reason);
         stopMic();
         wsRef.current = null;
-        if (phase !== "idle") setPhase("error");
+        if (!intentionalCloseRef.current) setPhase("error");
+        intentionalCloseRef.current = false;
       };
 
     } catch (err) {
+      connectingRef.current = false;
       console.error("[Barista] connect error:", err);
       stopMic();
       setPhase("error");
@@ -278,6 +319,8 @@ export default function VoiceBarista() {
   }
 
   function handleClose() {
+    intentionalCloseRef.current = true;
+    connectingRef.current = false;
     stopMic();
     wsRef.current?.close();
     wsRef.current = null;
