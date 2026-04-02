@@ -22,11 +22,67 @@ const PHASE_LABELS: Record<Phase, string> = {
 };
 
 const MODEL = "models/gemini-2.5-flash-native-audio-latest";
+const SAMPLE_RATE_IN = 16000;
+const BUFFER_SIZE = 4096;
+
+// Float32 → Int16 → base64
+function encodePCM(float32: Float32Array): string {
+  const int16 = new Int16Array(float32.length);
+  for (let i = 0; i < float32.length; i++) {
+    const s = Math.max(-1, Math.min(1, float32[i]));
+    int16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+  }
+  const bytes = new Uint8Array(int16.buffer);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
 
 export default function VoiceBarista() {
-  const [active, setActive] = useState(false);
-  const [phase, setPhase] = useState<Phase>("idle");
-  const wsRef = useRef<WebSocket | null>(null);
+  const [active, setActive]   = useState(false);
+  const [phase, setPhase]     = useState<Phase>("idle");
+
+  const wsRef          = useRef<WebSocket | null>(null);
+  const audioCtxRef    = useRef<AudioContext | null>(null);
+  const processorRef   = useRef<ScriptProcessorNode | null>(null);
+  const streamRef      = useRef<MediaStream | null>(null);
+
+  // Останавливаем микрофон и аудио-граф
+  function stopMic() {
+    processorRef.current?.disconnect();
+    processorRef.current = null;
+    audioCtxRef.current?.close();
+    audioCtxRef.current = null;
+    streamRef.current?.getTracks().forEach(t => t.stop());
+    streamRef.current = null;
+  }
+
+  async function startMic(ws: WebSocket) {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    streamRef.current = stream;
+
+    // iOS Safari требует resume() внутри пользовательского жеста — здесь это клик
+    const ctx = new AudioContext({ sampleRate: SAMPLE_RATE_IN });
+    if (ctx.state === "suspended") await ctx.resume();
+    audioCtxRef.current = ctx;
+
+    const source    = ctx.createMediaStreamSource(stream);
+    const processor = ctx.createScriptProcessor(BUFFER_SIZE, 1, 1);
+    processorRef.current = processor;
+
+    processor.onaudioprocess = (e) => {
+      if (ws.readyState !== WebSocket.OPEN) return;
+      const pcm = encodePCM(e.inputBuffer.getChannelData(0));
+      ws.send(JSON.stringify({
+        realtimeInput: {
+          audio: { data: pcm, mimeType: `audio/pcm;rate=${SAMPLE_RATE_IN}` },
+        },
+      }));
+    };
+
+    source.connect(processor);
+    processor.connect(ctx.destination);
+  }
 
   async function handleOpen() {
     if (wsRef.current) return;
@@ -34,17 +90,14 @@ export default function VoiceBarista() {
     setPhase("connecting");
 
     try {
-      // 1. Получаем URL от нашего сервера
       const res = await fetch("/api/gemini-session");
       if (!res.ok) throw new Error("Failed to get session URL");
       const { url } = await res.json() as { url: string };
 
-      // 2. Открываем WebSocket
       const ws = new WebSocket(url);
       wsRef.current = ws;
 
       ws.onopen = () => {
-        // 3. Отправляем setup
         ws.send(JSON.stringify({
           setup: {
             model: MODEL,
@@ -72,43 +125,42 @@ export default function VoiceBarista() {
         const msg = JSON.parse(text);
         console.log("[Barista] msg:", msg);
 
-        // 4. Setup завершён → начинаем слушать
         if (msg.setupComplete !== undefined) {
+          // Setup готов → запускаем микрофон
+          await startMic(ws);
           setPhase("listening");
           return;
         }
 
-        // Модель начала генерировать → thinking
         if (msg.serverContent?.generationComplete === false) {
           setPhase("thinking");
         }
-
-        // Модель говорит → speaking
         if (msg.serverContent?.modelTurn?.parts?.length) {
           setPhase("speaking");
         }
-
-        // Ход завершён → обратно слушаем
         if (msg.serverContent?.turnComplete) {
           setPhase("listening");
         }
       };
 
-      ws.onerror = () => setPhase("error");
+      ws.onerror = () => { stopMic(); setPhase("error"); };
 
       ws.onclose = (event) => {
         console.log("[Barista] closed:", event.code, event.reason);
+        stopMic();
         wsRef.current = null;
         if (phase !== "idle") setPhase("error");
       };
 
     } catch (err) {
       console.error("[Barista] connect error:", err);
+      stopMic();
       setPhase("error");
     }
   }
 
   function handleClose() {
+    stopMic();
     wsRef.current?.close();
     wsRef.current = null;
     setActive(false);
@@ -118,7 +170,6 @@ export default function VoiceBarista() {
   return (
     <div className={`${s.pill} ${active ? s.active : ""}`}>
 
-      {/* Idle: иконка микрофона + "Бариста" */}
       <div
         className={s.idleContent}
         onClick={!active ? handleOpen : undefined}
@@ -134,7 +185,6 @@ export default function VoiceBarista() {
         Бариста
       </div>
 
-      {/* Active: орб + фаза + кнопка закрыть */}
       <div className={s.activeContent}>
         <div className={s.orb} data-phase={phase} />
         <span className={s.label}>{PHASE_LABELS[phase]}</span>
