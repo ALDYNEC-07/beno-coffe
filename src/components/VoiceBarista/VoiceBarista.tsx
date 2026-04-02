@@ -150,10 +150,8 @@ export default function VoiceBarista() {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     streamRef.current = stream;
 
-    // iOS Safari требует resume() внутри пользовательского жеста — здесь это клик
-    const ctx = new AudioContext({ sampleRate: SAMPLE_RATE_IN });
-    if (ctx.state === "suspended") await ctx.resume();
-    audioCtxRef.current = ctx;
+    // AudioContext создаётся в handleOpen синхронно внутри жеста — здесь просто берём его
+    const ctx = audioCtxRef.current!;
 
     const source    = ctx.createMediaStreamSource(stream);
     const processor = ctx.createScriptProcessor(BUFFER_SIZE, 1, 1);
@@ -178,6 +176,12 @@ export default function VoiceBarista() {
     connectingRef.current = true;
     setActive(true);
     setPhase("connecting");
+
+    // Создаём AudioContext синхронно здесь — внутри пользовательского жеста (клик).
+    // iOS Safari не позволяет создавать и resume() контекст вне жеста пользователя.
+    const ctx = new AudioContext({ sampleRate: SAMPLE_RATE_IN });
+    if (ctx.state === "suspended") await ctx.resume();
+    audioCtxRef.current = ctx;
 
     try {
       const res = await fetch("/api/gemini-session");
