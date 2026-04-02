@@ -11,6 +11,7 @@ import "@fontsource/spectral/600.css";
 import "@fontsource/spectral/700.css";
 import "./globals.css";
 import CartProvider from "@/components/Cart/CartProvider";
+import VoiceBaristaLoader from "@/components/VoiceBarista/VoiceBaristaLoader";
 
 // Здесь хранится заголовок страницы и короткое описание для браузера.
 export const metadata: Metadata = {
@@ -37,6 +38,7 @@ export default function RootLayout({
         <CartProvider>
           {/* Здесь показывается каждая страница внутри общего каркаса. */}
           {children}
+          <VoiceBaristaLoader />
         </CartProvider>
       </body>
     </html>
