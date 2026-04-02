@@ -22,7 +22,8 @@ const PHASE_LABELS: Record<Phase, string> = {
 };
 
 const MODEL = "models/gemini-2.5-flash-native-audio-latest";
-const SAMPLE_RATE_IN = 16000;
+const SAMPLE_RATE_IN  = 16000;
+const SAMPLE_RATE_OUT = 24000;
 const BUFFER_SIZE = 4096;
 
 // Float32 → Int16 → base64
@@ -38,6 +39,17 @@ function encodePCM(float32: Float32Array): string {
   return btoa(bin);
 }
 
+// base64 → Int16 → Float32
+function decodePCM(b64: string): Float32Array<ArrayBuffer> {
+  const bin   = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const int16   = new Int16Array(bytes.buffer);
+  const float32 = new Float32Array(int16.length);
+  for (let i = 0; i < int16.length; i++) float32[i] = int16[i] / 0x8000;
+  return float32;
+}
+
 export default function VoiceBarista() {
   const [active, setActive]   = useState(false);
   const [phase, setPhase]     = useState<Phase>("idle");
@@ -46,6 +58,28 @@ export default function VoiceBarista() {
   const audioCtxRef    = useRef<AudioContext | null>(null);
   const processorRef   = useRef<ScriptProcessorNode | null>(null);
   const streamRef      = useRef<MediaStream | null>(null);
+  // Очередь воспроизведения: следующий чанк стартует когда закончится предыдущий
+  const playAtRef      = useRef<number>(0);
+
+  // Воспроизводим очередной PCM-чанк от Gemini
+  function playChunk(b64: string) {
+    const ctx = audioCtxRef.current;
+    if (!ctx) return;
+
+    const samples = decodePCM(b64);
+    const buffer  = ctx.createBuffer(1, samples.length, SAMPLE_RATE_OUT);
+    buffer.copyToChannel(samples, 0);
+
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+
+    // Ставим в очередь — начинаем сразу после предыдущего чанка
+    const now    = ctx.currentTime;
+    const startAt = Math.max(now, playAtRef.current);
+    source.start(startAt);
+    playAtRef.current = startAt + buffer.duration;
+  }
 
   // Останавливаем микрофон и аудио-граф
   function stopMic() {
@@ -55,6 +89,7 @@ export default function VoiceBarista() {
     audioCtxRef.current = null;
     streamRef.current?.getTracks().forEach(t => t.stop());
     streamRef.current = null;
+    playAtRef.current = 0;
   }
 
   async function startMic(ws: WebSocket) {
@@ -135,9 +170,17 @@ export default function VoiceBarista() {
         if (msg.serverContent?.generationComplete === false) {
           setPhase("thinking");
         }
-        if (msg.serverContent?.modelTurn?.parts?.length) {
-          setPhase("speaking");
+
+        // Воспроизводим аудио-чанки от Gemini
+        const parts = msg.serverContent?.modelTurn?.parts ?? [];
+        for (const part of parts) {
+          const b64 = part?.inlineData?.data;
+          if (b64) {
+            setPhase("speaking");
+            playChunk(b64);
+          }
         }
+
         if (msg.serverContent?.turnComplete) {
           setPhase("listening");
         }
