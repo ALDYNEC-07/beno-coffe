@@ -1,6 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
+import { CartContext } from "@/components/Cart/CartProvider";
+import { localMenu } from "@/lib/localMenu";
 import { buildBaristaPrompt } from "./baristaPrompt";
 import s from "./VoiceBarista.module.css";
 
@@ -50,7 +52,25 @@ function decodePCM(b64: string): Float32Array<ArrayBuffer> {
   return float32;
 }
 
+// Ищем товар по имени (регистронезависимо) и опциональному размеру
+function findMenuItem(itemName: string, variantSize?: string) {
+  const name = itemName.toLowerCase().trim();
+  const item = localMenu.find(m => m.name?.toLowerCase().includes(name));
+  if (!item) return null;
+
+  const variants = item.variants ?? [];
+  if (variants.length === 0) return null;
+
+  // Если размер указан — ищем по нему, иначе берём первый вариант
+  const variant = variantSize
+    ? (variants.find(v => v.sizeName?.toLowerCase().includes(variantSize.toLowerCase())) ?? variants[0])
+    : variants[0];
+
+  return { item, variant };
+}
+
 export default function VoiceBarista() {
+  const { addItem }           = useContext(CartContext);
   const [active, setActive]   = useState(false);
   const [phase, setPhase]     = useState<Phase>("idle");
 
@@ -148,6 +168,21 @@ export default function VoiceBarista() {
             systemInstruction: {
               parts: [{ text: buildBaristaPrompt() }],
             },
+            tools: [{
+              functionDeclarations: [{
+                name: "add_to_cart",
+                description: "Добавляет напиток или десерт в корзину заказа гостя",
+                parameters: {
+                  type: "OBJECT",
+                  properties: {
+                    item_name:    { type: "STRING",  description: "Название товара из меню" },
+                    variant_size: { type: "STRING",  description: "Размер: маленький, средний, большой и т.д." },
+                    quantity:     { type: "INTEGER", description: "Количество, по умолчанию 1" },
+                  },
+                  required: ["item_name"],
+                },
+              }],
+            }],
           },
         }));
       };
@@ -183,6 +218,46 @@ export default function VoiceBarista() {
 
         if (msg.serverContent?.turnComplete) {
           setPhase("listening");
+        }
+
+        // Gemini вызывает функцию add_to_cart
+        if (msg.toolCall?.functionCalls?.length) {
+          const responses = msg.toolCall.functionCalls.map((call: {
+            id: string;
+            name: string;
+            args: { item_name: string; variant_size?: string; quantity?: number };
+          }) => {
+            let output = "";
+
+            if (call.name === "add_to_cart") {
+              const { item_name, variant_size, quantity = 1 } = call.args;
+              const found = findMenuItem(item_name, variant_size);
+
+              if (found) {
+                const { item, variant } = found;
+                const qty = Math.max(1, Math.floor(quantity));
+                for (let i = 0; i < qty; i++) {
+                  addItem({
+                    id:    String(item.id),
+                    name:  item.name ?? item_name,
+                    price: variant.price !== null && variant.price !== undefined
+                      ? Number(variant.price)
+                      : null,
+                  });
+                }
+                const sizeLabel = variant.sizeName ? ` ${variant.sizeName}` : "";
+                output = `Добавлено: ${item.name}${sizeLabel}${variant.price ? `, ${variant.price}₽` : ""}${qty > 1 ? ` × ${qty}` : ""}`;
+              } else {
+                output = `Товар "${item_name}" не найден в меню`;
+              }
+            }
+
+            return { id: call.id, response: { output } };
+          });
+
+          ws.send(JSON.stringify({
+            toolResponse: { functionResponses: responses },
+          }));
         }
       };
 
