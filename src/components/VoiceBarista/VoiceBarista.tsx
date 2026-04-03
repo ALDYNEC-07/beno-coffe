@@ -173,6 +173,7 @@ export default function VoiceBarista() {
 
   async function handleOpen() {
     if (wsRef.current || connectingRef.current) return;
+    intentionalCloseRef.current = false; // сбрасываем флаг (Strict Mode мог поставить true)
     connectingRef.current = true;
     setActive(true);
     setPhase("connecting");
@@ -191,6 +192,12 @@ export default function VoiceBarista() {
       const ws = new WebSocket(url);
       wsRef.current = ws;
       connectingRef.current = false; // wsRef теперь охраняет от повторов
+
+      // Если Gemini не ответит setupComplete за 15 сек — закрываем с ошибкой
+      let setupTimer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+        console.error("[Barista] setup timeout");
+        ws.close();
+      }, 15_000);
 
       ws.onopen = () => {
         ws.send(JSON.stringify({
@@ -239,7 +246,8 @@ export default function VoiceBarista() {
         resetSilenceTimer();
 
         if (msg.setupComplete !== undefined) {
-          // Setup готов → запускаем микрофон
+          // Setup готов → отменяем таймаут и запускаем микрофон
+          if (setupTimer) { clearTimeout(setupTimer); setupTimer = null; }
           await startMic(ws);
           setPhase("listening");
           return;
@@ -304,9 +312,14 @@ export default function VoiceBarista() {
         }
       };
 
-      ws.onerror = () => { stopMic(); setPhase("error"); };
+      ws.onerror = () => {
+        if (setupTimer) { clearTimeout(setupTimer); setupTimer = null; }
+        stopMic();
+        setPhase("error");
+      };
 
       ws.onclose = (event) => {
+        if (setupTimer) { clearTimeout(setupTimer); setupTimer = null; }
         console.log("[Barista] closed:", event.code, event.reason);
         stopMic();
         wsRef.current = null;
