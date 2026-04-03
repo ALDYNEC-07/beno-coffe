@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext, useEffect, useRef, useState } from "react";
+import { track } from "@vercel/analytics";
 import { CartContext } from "@/components/Cart/CartProvider";
 import { localMenu } from "@/lib/localMenu";
 import { buildBaristaPrompt } from "./baristaPrompt";
@@ -26,21 +27,7 @@ const PHASE_LABELS: Record<Phase, string> = {
 const MODEL = "models/gemini-2.5-flash-native-audio-latest";
 const SAMPLE_RATE_IN  = 16000;
 const SAMPLE_RATE_OUT = 24000;
-const BUFFER_SIZE = 4096;
 const SILENCE_TIMEOUT_MS = 60_000; // 60 сек без активности → закрыть сессию
-
-// Float32 → Int16 → base64
-function encodePCM(float32: Float32Array): string {
-  const int16 = new Int16Array(float32.length);
-  for (let i = 0; i < float32.length; i++) {
-    const s = Math.max(-1, Math.min(1, float32[i]));
-    int16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
-  }
-  const bytes = new Uint8Array(int16.buffer);
-  let bin = "";
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-  return btoa(bin);
-}
 
 // base64 → Int16 → Float32
 function decodePCM(b64: string): Float32Array<ArrayBuffer> {
@@ -77,7 +64,7 @@ export default function VoiceBarista() {
 
   const wsRef          = useRef<WebSocket | null>(null);
   const audioCtxRef    = useRef<AudioContext | null>(null);
-  const processorRef   = useRef<ScriptProcessorNode | null>(null);
+  const processorRef   = useRef<AudioWorkletNode | null>(null);
   const streamRef      = useRef<MediaStream | null>(null);
   // Очередь воспроизведения: следующий чанк стартует когда закончится предыдущий
   const playAtRef      = useRef<number>(0);
@@ -86,6 +73,7 @@ export default function VoiceBarista() {
   const silenceTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
   // true пока идёт async-подключение (до wsRef.current = ws) — блокирует двойной клик
   const connectingRef       = useRef(false);
+  const sessionStartRef     = useRef<number>(0);
 
   // Cleanup при размонтировании + закрытие при уходе со вкладки
   useEffect(() => {
@@ -153,22 +141,28 @@ export default function VoiceBarista() {
     // AudioContext создаётся в handleOpen синхронно внутри жеста — здесь просто берём его
     const ctx = audioCtxRef.current!;
 
-    const source    = ctx.createMediaStreamSource(stream);
-    const processor = ctx.createScriptProcessor(BUFFER_SIZE, 1, 1);
-    processorRef.current = processor;
+    // Загружаем процессор в отдельный аудио-поток
+    await ctx.audioWorklet.addModule("/audioProcessor.js");
 
-    processor.onaudioprocess = (e) => {
+    const source     = ctx.createMediaStreamSource(stream);
+    const workletNode = new AudioWorkletNode(ctx, "pcm-processor");
+    processorRef.current = workletNode;
+
+    // Получаем PCM16-чанки из аудио-потока и отправляем в WebSocket
+    workletNode.port.onmessage = (event: MessageEvent<ArrayBuffer>) => {
       if (ws.readyState !== WebSocket.OPEN) return;
-      const pcm = encodePCM(e.inputBuffer.getChannelData(0));
+      const bytes = new Uint8Array(event.data);
+      let bin = "";
+      for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
       ws.send(JSON.stringify({
         realtimeInput: {
-          audio: { data: pcm, mimeType: `audio/pcm;rate=${SAMPLE_RATE_IN}` },
+          audio: { data: btoa(bin), mimeType: `audio/pcm;rate=${SAMPLE_RATE_IN}` },
         },
       }));
     };
 
-    source.connect(processor);
-    processor.connect(ctx.destination);
+    source.connect(workletNode);
+    // AudioWorkletNode не нужно подключать к destination — он работает без вывода звука
   }
 
   async function handleOpen() {
@@ -250,6 +244,8 @@ export default function VoiceBarista() {
           if (setupTimer) { clearTimeout(setupTimer); setupTimer = null; }
           await startMic(ws);
           setPhase("listening");
+          sessionStartRef.current = Date.now();
+          track("barista_session_start");
           return;
         }
 
@@ -297,6 +293,7 @@ export default function VoiceBarista() {
                   });
                 }
                 const sizeLabel = variant.sizeName ? ` ${variant.sizeName}` : "";
+                track("barista_item_added", { item: item.name ?? item_name, quantity: qty });
                 output = `Добавлено: ${item.name}${sizeLabel}${variant.price ? `, ${variant.price}₽` : ""}${qty > 1 ? ` × ${qty}` : ""}`;
               } else {
                 output = `Товар "${item_name}" не найден в меню`;
@@ -336,6 +333,11 @@ export default function VoiceBarista() {
   }
 
   function handleClose() {
+    if (sessionStartRef.current) {
+      const duration = Math.round((Date.now() - sessionStartRef.current) / 1000);
+      track("barista_session_end", { duration_seconds: duration });
+      sessionStartRef.current = 0;
+    }
     intentionalCloseRef.current = true;
     connectingRef.current = false;
     stopMic();

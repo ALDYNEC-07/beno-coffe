@@ -10,6 +10,7 @@ import "@fontsource/inter/600.css";
 import "@fontsource/spectral/600.css";
 import "@fontsource/spectral/700.css";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import CartProvider from "@/components/Cart/CartProvider";
 import VoiceBaristaLoader from "@/components/VoiceBarista/VoiceBaristaLoader";
 
@@ -41,6 +42,7 @@ export default function RootLayout({
           {children}
           <VoiceBaristaLoader />
         </CartProvider>
+        <Analytics />
       </body>
     </html>
   );
