@@ -144,6 +144,32 @@
   color: #fff;
 }
 
+/* ── Кнопка повторить ────────────────────────────────────────────────────── */
+
+.retryBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.retryBtn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.1);
+}
+.retryBtn svg {
+  width: 12px;
+  height: 12px;
+}
+
 /* ── Кнопка закрыть ──────────────────────────────────────────────────────── */
 
 .closeBtn {
