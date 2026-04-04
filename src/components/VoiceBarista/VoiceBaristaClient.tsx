@@ -31,6 +31,7 @@ export default function VoiceBaristaClient({ systemPrompt }: Props) {
       systemPrompt={systemPrompt}
       voice="Kore"
       lang="ru-RU"
+      greeting="Привет! Я голосовой бариста BENO. Чем могу помочь?"
       pages={[
         { name: "Главная",           path: "/",      description: "Главная страница сайта" },
         { name: "Меню",              path: "/",      section: "menu",                    description: "Полное меню кофейни" },
@@ -76,9 +77,8 @@ export default function VoiceBaristaClient({ systemPrompt }: Props) {
             for (let i = 0; i < quantity; i++) {
               addItem({ id: String(item.id), name: item.name ?? itemName, price });
             }
-            const sizeLabel = variant.sizeName ? ` (${variant.sizeName})` : "";
             track("barista_item_added", { item: item.name ?? itemName, quantity });
-            return { success: true, message: `${item.name}${sizeLabel} добавлен` };
+            return { success: true, message: `${item.name} добавлен` };
           } else {
             return { success: false, message: `"${itemName}" не найден в меню` };
           }
