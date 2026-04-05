@@ -23,7 +23,7 @@ interface Props {
 }
 
 export default function VoiceBaristaClient({ systemPrompt }: Props) {
-  const { addItem } = useContext(CartContext);
+  const { addItem, items, decreaseItemQuantity } = useContext(CartContext);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -85,6 +85,26 @@ export default function VoiceBaristaClient({ systemPrompt }: Props) {
             required: ["item_name"],
           },
         },
+        {
+          name: "get_cart",
+          description: "Возвращает текущее содержимое корзины гостя",
+          parameters: {
+            type: "OBJECT",
+            properties: {},
+          },
+        },
+        {
+          name: "remove_from_cart",
+          description: "Убирает напиток или десерт из корзины заказа гостя",
+          parameters: {
+            type: "OBJECT",
+            properties: {
+              item_name: { type: "STRING",  description: "Название товара из меню" },
+              quantity:  { type: "INTEGER", description: "Количество для удаления. Если не указано — убирает все" },
+            },
+            required: ["item_name"],
+          },
+        },
       ]}
       onToolCall={(name, args) => {
         if (name === "add_to_cart") {
@@ -106,6 +126,33 @@ export default function VoiceBaristaClient({ systemPrompt }: Props) {
           } else {
             return { success: false, message: `"${itemName}" не найден в меню` };
           }
+        }
+
+        if (name === "get_cart") {
+          if (items.length === 0) return { success: true, cart: "Корзина пуста" };
+          const contents = items
+            .map(i => `${i.name}${i.price ? ` ${i.price}₽` : ""} × ${i.quantity}`)
+            .join(", ");
+          const total = items.reduce((sum, i) => sum + (i.price ?? 0) * i.quantity, 0);
+          return { success: true, cart: contents, total: `${total}₽` };
+        }
+
+        if (name === "remove_from_cart") {
+          const itemName = args.item_name as string;
+          const found    = findMenuItem(itemName);
+          if (!found) return { success: false, message: `"${itemName}" не найден в меню` };
+
+          const cartItem = items.find(i => i.id === String(found.item.id));
+          if (!cartItem) return { success: false, message: `${found.item.name} нет в корзине` };
+
+          const qty = args.quantity
+            ? Math.min(Math.max(1, Math.floor(args.quantity as number)), cartItem.quantity)
+            : cartItem.quantity;
+
+          for (let i = 0; i < qty; i++) decreaseItemQuantity(String(found.item.id));
+
+          track("barista_item_removed", { item: found.item.name ?? itemName, quantity: qty });
+          return { success: true, message: `${found.item.name} убран` };
         }
       }}
       onSessionStart={() => track("barista_session_start")}
