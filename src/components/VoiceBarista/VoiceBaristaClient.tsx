@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { VoiceAssistant } from "voice-assistant-ai";
 import { CartContext } from "@/components/Cart/CartProvider";
 import { localMenu } from "@/lib/localMenu";
@@ -24,6 +24,17 @@ interface Props {
 
 export default function VoiceBaristaClient({ systemPrompt }: Props) {
   const { addItem } = useContext(CartContext);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const burger = document.querySelector<HTMLElement>('[aria-controls="nav-panel"]');
+    if (!burger) return;
+
+    const update = () => setMenuOpen(burger.getAttribute("aria-expanded") === "true");
+    const observer = new MutationObserver(update);
+    observer.observe(burger, { attributes: true, attributeFilter: ["aria-expanded"] });
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <VoiceAssistant
@@ -31,7 +42,20 @@ export default function VoiceBaristaClient({ systemPrompt }: Props) {
       systemPrompt={systemPrompt}
       voice="Kore"
       lang="ru-RU"
+      hidden={menuOpen}
+      memory
       greeting="Привет! Я голосовой бариста BENO. Чем могу помочь?"
+      hints={[
+        "Что у вас популярное?",
+        "Добавь капучино в корзину",
+        "Покажи лимонады",
+      ]}
+      borderRadius="1.5rem"
+      colors={{
+        background: "#1b1b1b",
+        text:       "#fff",
+        glow:       "212, 160, 100",
+      }}
       pages={[
         { name: "Главная",           path: "/",      description: "Главная страница сайта" },
         { name: "Меню",              path: "/",      section: "menu",                    description: "Полное меню кофейни" },
