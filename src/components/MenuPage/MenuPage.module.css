@@ -605,11 +605,75 @@
   line-height: 1.2;
 }
 
+.modalDescriptionRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
 .modalDescription {
   margin: 0;
   font-size: 0.95rem;
   color: #5f4308;
   line-height: 1.5;
+  flex: 1;
+}
+
+.audioBtn {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: #1b1b1b;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+  margin-top: 0.1rem;
+}
+
+.audioBtn:active {
+  transform: scale(0.92);
+}
+
+.audioBtn:hover {
+  box-shadow: 0 0 0 4px rgba(27, 27, 27, 0.1);
+}
+
+/* Живое кольцо управляется через JS (box-shadow на элементе) */
+.audioBtnPlaying {
+  transition: box-shadow 0.08s ease-out;
+}
+
+/* Sound wave bars */
+.audioBars {
+  display: flex;
+  align-items: center;
+  gap: 2.5px;
+  height: 16px;
+}
+
+.audioBars span {
+  display: block;
+  width: 3px;
+  background: #fff;
+  border-radius: 2px;
+  animation: audioBar 1s ease-in-out infinite;
+}
+
+.audioBars span:nth-child(1) { height: 6px; animation-delay: 0s; }
+.audioBars span:nth-child(2) { height: 12px; animation-delay: 0.15s; }
+.audioBars span:nth-child(3) { height: 8px; animation-delay: 0.3s; }
+.audioBars span:nth-child(4) { height: 14px; animation-delay: 0.45s; }
+
+@keyframes audioBar {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
 }
 
 .modalVariants {

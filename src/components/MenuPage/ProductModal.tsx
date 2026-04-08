@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef, useCallback } from "react";
 import Image from "next/image";
 import styles from "./MenuPage.module.css"; // We'll add modal styles here
 import {
@@ -26,7 +26,101 @@ export default function ProductModal({
     text,
 }: ProductModalProps) {
     const [isClosing, setIsClosing] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [hasAudio, setHasAudio] = useState(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const audioCtxRef = useRef<AudioContext | null>(null);
+    const analyserRef = useRef<AnalyserNode | null>(null);
+    const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+    const rafRef = useRef<number>(0);
+    const btnRef = useRef<HTMLButtonElement | null>(null);
     const cart = useContext(CartContext);
+
+    // Анимация кольца по громкости
+    const startVisualizer = useCallback(() => {
+        const analyser = analyserRef.current;
+        const btn = btnRef.current;
+        if (!analyser || !btn) return;
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        const tick = () => {
+            analyser.getByteFrequencyData(data);
+            let sum = 0;
+            for (let i = 0; i < data.length; i++) sum += data[i];
+            const avg = sum / data.length / 255; // 0..1
+            const ring1 = 3 + avg * 10;
+            const ring2 = 8 + avg * 18;
+            const ring3 = 14 + avg * 26;
+            const op1 = 0.2 + avg * 0.35;
+            const op2 = 0.12 + avg * 0.25;
+            const op3 = 0.06 + avg * 0.15;
+            btn.style.boxShadow = [
+                `0 0 0 ${ring1}px rgba(27, 27, 27, ${op1})`,
+                `0 0 0 ${ring2}px rgba(27, 27, 27, ${op2})`,
+                `0 0 0 ${ring3}px rgba(27, 27, 27, ${op3})`,
+            ].join(", ");
+            rafRef.current = requestAnimationFrame(tick);
+        };
+        tick();
+    }, []);
+
+    const stopVisualizer = useCallback(() => {
+        cancelAnimationFrame(rafRef.current);
+        if (btnRef.current) btnRef.current.style.boxShadow = "";
+    }, []);
+
+    const stopAudio = useCallback(() => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            setIsPlaying(false);
+        }
+        stopVisualizer();
+    }, [stopVisualizer]);
+
+    const toggleAudio = useCallback(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
+        if (isPlaying) {
+            audio.pause();
+            setIsPlaying(false);
+            stopVisualizer();
+        } else {
+            // Создаём AudioContext и AnalyserNode при первом воспроизведении
+            if (!audioCtxRef.current) {
+                const ctx = new AudioContext();
+                const analyser = ctx.createAnalyser();
+                analyser.fftSize = 256;
+                const source = ctx.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(ctx.destination);
+                audioCtxRef.current = ctx;
+                analyserRef.current = analyser;
+                sourceRef.current = source;
+            }
+            audio.play();
+            setIsPlaying(true);
+            startVisualizer();
+        }
+    }, [isPlaying, startVisualizer, stopVisualizer]);
+
+    // Проверяем есть ли аудиофайл для позиции
+    useEffect(() => {
+        if (!item?.id) { setHasAudio(false); return; }
+        // При смене позиции — сбрасываем всё
+        stopVisualizer();
+        if (audioCtxRef.current) { audioCtxRef.current.close(); audioCtxRef.current = null; }
+        analyserRef.current = null;
+        sourceRef.current = null;
+        setIsPlaying(false);
+
+        const audio = new Audio(`/audio/${item.id}.mp3`);
+        audio.crossOrigin = "anonymous";
+        audio.addEventListener("canplaythrough", () => setHasAudio(true));
+        audio.addEventListener("error", () => setHasAudio(false));
+        audio.addEventListener("ended", () => { setIsPlaying(false); stopVisualizer(); });
+        audioRef.current = audio;
+        return () => { audio.pause(); audioRef.current = null; };
+    }, [item?.id, stopVisualizer]);
 
     useEffect(() => {
         if (isOpen) {
@@ -41,11 +135,12 @@ export default function ProductModal({
     }, [isOpen]);
 
     const handleClose = () => {
+        stopAudio();
         setIsClosing(true);
         setTimeout(() => {
             onClose();
             setIsClosing(false);
-        }, 300); // Match CSS animation duration
+        }, 300);
     };
 
     if (!item && !isOpen) return null;
@@ -107,7 +202,27 @@ export default function ProductModal({
                     <h2 className={styles.modalTitle}>{nameLabel}</h2>
 
                     {description && (
-                        <p className={styles.modalDescription}>{description}</p>
+                        <div className={styles.modalDescriptionRow}>
+                            <p className={styles.modalDescription}>{description}</p>
+                            {hasAudio && (
+                                <button
+                                    ref={btnRef}
+                                    className={`${styles.audioBtn} ${isPlaying ? styles.audioBtnPlaying : ""}`}
+                                    onClick={toggleAudio}
+                                    aria-label={isPlaying ? "Остановить" : "Послушать описание"}
+                                >
+                                    {isPlaying ? (
+                                        <span className={styles.audioBars}>
+                                            <span /><span /><span /><span />
+                                        </span>
+                                    ) : (
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M8 5v14l11-7z" />
+                                        </svg>
+                                    )}
+                                </button>
+                            )}
+                        </div>
                     )}
 
                     {hasVariants ? (
