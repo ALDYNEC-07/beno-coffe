@@ -12,11 +12,9 @@
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
     "@fontsource/spectral": "^5.2.8",
-    "@vercel/analytics": "^2.0.1",
     "next": "16.1.1",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "voice-assistant-ai": "github:ALDYNEC-07/voice-assistant-ai"
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.8.0",
