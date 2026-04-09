@@ -120,27 +120,14 @@ export default function ProductModal({
         analyserRef.current = null;
         sourceRef.current = null;
         setIsPlaying(false);
-        setHasAudio(false);
 
-        let cancelled = false;
-        const audioUrl = `/audio/${item.id}.mp3`;
-
-        // На мобильных canplaythrough не срабатывает — проверяем HEAD-запросом
-        fetch(audioUrl, { method: "HEAD" })
-            .then((res) => {
-                if (cancelled) return;
-                if (res.ok) {
-                    setHasAudio(true);
-                }
-            })
-            .catch(() => {});
-
-        const audio = new Audio(audioUrl);
+        const audio = new Audio(`/audio/${item.id}.mp3`);
         audio.crossOrigin = "anonymous";
-        audio.preload = "none";
+        audio.addEventListener("canplaythrough", () => setHasAudio(true));
+        audio.addEventListener("error", () => setHasAudio(false));
         audio.addEventListener("ended", () => { setIsPlaying(false); stopVisualizer(); });
         audioRef.current = audio;
-        return () => { cancelled = true; audio.pause(); audioRef.current = null; };
+        return () => { audio.pause(); audioRef.current = null; };
     }, [item?.id, stopVisualizer]);
 
     useEffect(() => {
