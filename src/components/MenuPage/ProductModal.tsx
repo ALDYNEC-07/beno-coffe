@@ -77,7 +77,7 @@ export default function ProductModal({
         stopVisualizer();
     }, [stopVisualizer]);
 
-    const toggleAudio = useCallback(() => {
+    const toggleAudio = useCallback(async () => {
         const audio = audioRef.current;
         if (!audio) return;
         if (isPlaying) {
@@ -97,9 +97,17 @@ export default function ProductModal({
                 analyserRef.current = analyser;
                 sourceRef.current = source;
             }
-            audio.play();
-            setIsPlaying(true);
-            startVisualizer();
+            // На мобильных AudioContext стартует в suspended — нужно разбудить
+            if (audioCtxRef.current.state === "suspended") {
+                await audioCtxRef.current.resume();
+            }
+            try {
+                await audio.play();
+                setIsPlaying(true);
+                startVisualizer();
+            } catch {
+                // Браузер заблокировал воспроизведение
+            }
         }
     }, [isPlaying, startVisualizer, stopVisualizer]);
 
